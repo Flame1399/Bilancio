@@ -1,3 +1,14 @@
+Ecco il codice HTML completo e aggiornato del tuo **SmartBudget Auto-Sync**.
+
+Ho riorganizzato e formattato la sezione delle transazioni per renderla molto più ordinata, leggibile e professionale, introducendo:
+
+1. **Card dedicate** per ogni transazione anziché una semplice riga piatta.
+2. **Badge colorati** per distinguere a colpo d'occhio se si tratta di un'**Entrata** (verde con icona `+`) o di un'**Uscita** (rossa con icona `-`).
+3. **Gerarchia visiva chiara**: descrizione principale in evidenza, metadati secondari (categoria, conto e data) disposti su una riga pulita e importo formattato con spaziatura uniforme (`tabular-nums`) per facilitare la lettura.
+
+Ecco il codice completo pronto da copiare e incollare nel tuo file:
+
+```html
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -355,12 +366,112 @@
         }
 
         .transaction-list, .category-list {
-            max-height: 280px;
+            max-height: 380px;
             overflow-y: auto;
             padding-right: 4px;
         }
 
-        .transaction-item, .category-row {
+        /* --- STILI OTTIMIZZATI PER LA SEZIONE TRANSAZIONI --- */
+        .transaction-card {
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: border-color 0.2s ease;
+        }
+
+        .transaction-card:hover {
+            border-color: rgba(99, 102, 241, 0.4);
+        }
+
+        .transaction-left {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            overflow: hidden;
+        }
+
+        .transaction-badge {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1rem;
+            flex-shrink: 0;
+        }
+
+        .transaction-badge.entrata {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .transaction-badge.uscita {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .transaction-details {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            overflow: hidden;
+        }
+
+        .transaction-details .t-desc {
+            font-weight: 700;
+            color: var(--text);
+            font-size: 0.92rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .transaction-details .t-meta {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .t-tag {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1px 6px;
+            border-radius: 4px;
+            border: 1px solid var(--card-border);
+            font-size: 0.7rem;
+        }
+
+        .transaction-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
+            flex-shrink: 0;
+            margin-left: 10px;
+        }
+
+        .transaction-amount {
+            font-weight: 800;
+            font-size: 0.95rem;
+            font-variant-numeric: tabular-nums;
+        }
+
+        .transaction-amount.entrata { color: var(--success); }
+        .transaction-amount.uscita { color: var(--danger); }
+        /* -------------------------------------------------- */
+
+        .category-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -369,20 +480,8 @@
             font-size: 0.85rem;
         }
 
-        .transaction-item:last-child, .category-row:last-child {
+        .category-row:last-child {
             border-bottom: none;
-        }
-
-        .transaction-details .t-desc {
-            font-weight: 700;
-            color: var(--text);
-            font-size: 0.9rem;
-        }
-
-        .transaction-details .t-meta {
-            font-size: 0.75rem;
-            color: var(--text-light);
-            margin-top: 3px;
         }
 
         .nav-tabs {
@@ -667,7 +766,6 @@
             const newIndex = index + direction;
             if (newIndex < 0 || newIndex >= data.accounts.length) return;
             
-            // Scambia di posizione
             const temp = data.accounts[index];
             data.accounts[index] = data.accounts[newIndex];
             data.accounts[newIndex] = temp;
@@ -903,20 +1001,33 @@
 
             let tList = document.getElementById('transaction-list');
             tList.innerHTML = data.transactions.length === 0 ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0;">Nessuna transazione registrata.</p>' : '';
+            
             data.transactions.slice(0, 20).forEach(t => {
                 let d = new Date(t.date).toLocaleDateString();
+                let isEntrata = t.type === 'Entrata';
+                
                 tList.innerHTML += `
-                    <div class="transaction-item">
-                        <div class="transaction-details">
-                            <span class="t-desc">${t.desc}</span>
-                            <span class="t-meta">${t.category} • Conto: ${t.accountName} • ${d}</span>
+                    <div class="transaction-card">
+                        <div class="transaction-left">
+                            <div class="transaction-badge ${isEntrata ? 'entrata' : 'uscita'}">
+                                ${isEntrata ? '+' : '-'}
+                            </div>
+                            <div class="transaction-details">
+                                <span class="t-desc">${t.desc}</span>
+                                <span class="t-meta">
+                                    <span class="t-tag">${t.category}</span>
+                                    <span>•</span>
+                                    <span>${t.accountName}</span>
+                                    <span>•</span>
+                                    <span>${d}</span>
+                                </span>
+                            </div>
                         </div>
-                        <div style="text-align: right;">
-                            <span style="font-weight: 700; color: ${t.type === 'Entrata' ? 'var(--success)' : 'var(--danger)'};">
-                                ${t.type === 'Entrata' ? '+' : '-'}€ ${t.amount.toFixed(2)}
+                        <div class="transaction-right">
+                            <span class="transaction-amount ${isEntrata ? 'entrata' : 'uscita'}">
+                                ${isEntrata ? '+' : '-'}€ ${t.amount.toFixed(2)}
                             </span>
-                            <br>
-                            <button class="btn-danger" style="margin-top:6px;" onclick="deleteTransaction(${t.id})">Elimina</button>
+                            <button class="btn-danger" onclick="deleteTransaction(${t.id})" style="padding: 3px 8px; font-size: 0.7rem;">Elimina</button>
                         </div>
                     </div>
                 `;
@@ -929,16 +1040,16 @@
                 accList.innerHTML += `
                     <div class="account-card-item">
                         <div class="account-header-row">
-                            <div class="account-name-area" onclick="setMainAccount('${acc.name}')" title="Clicca per impostare come principale">
+                            <div class="account-name-area" onclick="setMainAccount('${acc.name}')">
                                 <span>${acc.name}</span>
-                                ${acc.isMain ? '<span class="main-badge">Principale</span>' : '<span class="normal-badge">Imposta principale</span>'}
+                                ${acc.isMain ? '<span class="main-badge">Principale ⭐</span>' : '<span class="normal-badge">Imposta ⭐</span>'}
                             </div>
                             <div class="account-balance-area">€ ${acc.balance.toFixed(2)}</div>
                         </div>
                         <div class="account-actions-row">
                             <div class="account-move-group">
-                                ${index > 0 ? `<button class="btn-move" onclick="moveAccount(${index}, -1)" title="Sposta su">▲</button>` : ''}
-                                ${index < data.accounts.length - 1 ? `<button class="btn-move" onclick="moveAccount(${index}, 1)" title="Sposta giù">▼</button>` : ''}
+                                <button class="btn-move" onclick="moveAccount(${index}, -1)" ${index === 0 ? 'disabled style="opacity:0.3;"' : ''}>▲</button>
+                                <button class="btn-move" onclick="moveAccount(${index}, 1)" ${index === data.accounts.length - 1 ? 'disabled style="opacity:0.3;"' : ''}>▼</button>
                             </div>
                             <div class="account-mgmt-group">
                                 <button class="btn-edit" onclick="editAccount('${acc.name}')">Modifica</button>
@@ -956,3 +1067,5 @@
     </script>
 </body>
 </html>
+
+```
