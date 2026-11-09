@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartBudget PWA Ultimate Pro</title>
+    <title>SmartBudget PWA Stabile</title>
     <!-- Libreria Chart.js per i grafici visivi -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -52,7 +52,6 @@
             transition: background 0.3s, color 0.3s;
         }
 
-        /* TOAST NOTIFICATION MODERNA */
         #toast-container {
             position: fixed;
             bottom: 20px;
@@ -91,7 +90,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* OVERLAY SCHERMATA DI BLOCCO */
         #app-lock-screen {
             position: fixed;
             top: 0;
@@ -694,8 +692,8 @@
                 <div class="value patrimony" id="net-worth">€ 0.00</div>
             </div>
             <div class="stat-box">
-                <h3>Previsione a 30 Giorni</h3>
-                <div class="value" id="forecast-balance">€ 0.00</div>
+                <h3>Flusso Netto Mese</h3>
+                <div class="value" id="monthly-flow">€ 0.00</div>
             </div>
             <div class="stat-box">
                 <h3>Entrate Mese</h3>
@@ -871,73 +869,30 @@
         </div>
     </div>
 
-    <!-- TAB 5: PIANO & OBIETTIVI MULTIPLI -->
+    <!-- TAB 5: OBIETTIVO RISPARMIO -->
     <div id="tab-savings" class="tab-content">
         <div class="card">
-            <h2>
-                <span>⚙️ Configurazione Piano Base</span>
-                <button class="btn-edit" onclick="toggleEditSavingsPlan()" id="btn-toggle-edit-plan" style="padding: 5px 8px; width:auto;">✏️ Modifica</button>
-            </h2>
-            
-            <div id="savings-plan-edit-form" style="display: none; border-top: 1px solid var(--card-border); padding-top: 12px; margin-top: 10px; margin-bottom: 12px;">
-                <div class="form-group">
-                    <label>Stipendio Mensile Fisso (€)</label>
-                    <input type="number" id="savings-salary" placeholder="Es. 1800" oninput="saveSavingsPlanSettings()">
-                </div>
-                
-                <div class="form-group">
-                    <label>Regola di Ripartizione</label>
-                    <select id="savings-rule" onchange="saveSavingsPlanSettings()">
-                        <option value="50-30-20">Regola 50 / 30 / 20 (Consigliata)</option>
-                        <option value="60-20-10-10">Regola 60 / 20 / 10 / 10</option>
-                        <option value="custom-20">Risparmio Fisso 20%</option>
-                        <option value="custom-30">Risparmio Aggressivo 30%</option>
-                    </select>
-                </div>
-                <button class="btn-secondary" onclick="toggleEditSavingsPlan()">Chiudi Modifica</button>
-            </div>
-
-            <div style="margin-top: 4px;">
-                <p style="font-size: 0.72rem; color: var(--text-light); margin-bottom: 8px; font-weight: 600; text-transform: uppercase;">Ripartizione Stipendio Attuale</p>
-                <div class="analytics-card-grid" style="margin-bottom: 0;">
-                    <div class="analytics-mini-box">
-                        <span>Necessità</span>
-                        <strong class="value expense" id="plan-needs">€ 0.00</strong>
-                    </div>
-                    <div class="analytics-mini-box">
-                        <span>Svago</span>
-                        <strong class="value" id="plan-wants" style="color:#f59e0b;">€ 0.00</strong>
-                    </div>
-                    <div class="analytics-mini-box">
-                        <span>Risparmio</span>
-                        <strong class="value income" id="plan-savings">€ 0.00</strong>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <h2>🎯 Nuova Meta / Salvadanaio</h2>
-            <form id="goal-form">
+            <h2>🎯 Obiettivo di Risparmio Globale</h2>
+            <form id="savings-form">
                 <div class="form-group">
                     <label>Nome Obiettivo</label>
-                    <input type="text" id="goal-name" placeholder="Es. Fondo Emergenza, Auto Nuova" required>
+                    <input type="text" id="s-name" placeholder="Es. Fondo Emergenza, Vacanze" required>
                 </div>
                 <div class="form-group">
                     <label>Cifra Target (€)</label>
-                    <input type="number" id="goal-target-amount" step="0.01" placeholder="Es. 3000" required>
+                    <input type="number" id="s-target" step="0.01" placeholder="3000" required>
                 </div>
                 <div class="form-group">
                     <label>Già Accantonato (€)</label>
-                    <input type="number" id="goal-saved-amount" step="0.01" placeholder="0.00" value="0">
+                    <input type="number" id="s-saved" step="0.01" placeholder="0.00" required>
                 </div>
-                <button type="submit">Crea Salvadanaio</button>
+                <button type="submit">Salva Obiettivo</button>
             </form>
         </div>
 
         <div class="card">
-            <h2>🏆 I tuoi Obiettivi di Risparmio</h2>
-            <div id="goals-list-container"></div>
+            <h2>Stato Avanzamento</h2>
+            <div id="savings-card-view"></div>
         </div>
     </div>
 
@@ -1075,6 +1030,7 @@
     </div>
 
     <script>
+        // CARICAMENTO SICURO DAL BROWSER
         let data = JSON.parse(localStorage.getItem('smart_budget_data_autosync')) || {
             categories: {
                 Uscita: [
@@ -1095,15 +1051,7 @@
                 { name: "Conto Corrente", balance: 0, isMain: true }
             ],
             recurring: [],
-            goals: [
-                { id: 1, name: "Fondo d'Emergenza", target: 3000, saved: 1000 },
-                { id: 2, name: "Vacanze Estive", target: 1200, saved: 400 }
-            ]
-        };
-
-        let savingsSettings = JSON.parse(localStorage.getItem('smart_budget_savings_settings')) || {
-            salary: 1800,
-            rule: '50-30-20'
+            savingsGoal: { name: "Fondo d'Emergenza", target: 3000, saved: 1000 }
         };
 
         let userSecurityPin = localStorage.getItem('smart_budget_security_pin') || null;
@@ -1273,69 +1221,16 @@
             fileReader.readAsText(event.target.files[0]);
         }
 
-        function toggleEditSavingsPlan() {
-            const form = document.getElementById('savings-plan-edit-form');
-            const btn = document.getElementById('btn-toggle-edit-plan');
-            if (form.style.display === 'none') {
-                form.style.display = 'block';
-                btn.textContent = '✕ Chiudi';
-            } else {
-                form.style.display = 'none';
-                btn.textContent = '✏️ Modifica';
-            }
-        }
-
-        function saveSavingsPlanSettings() {
-            savingsSettings.salary = parseFloat(document.getElementById('savings-salary').value) || 0;
-            savingsSettings.rule = document.getElementById('savings-rule').value;
-            localStorage.setItem('smart_budget_savings_settings', JSON.stringify(savingsSettings));
-            updateSavingsPlanUI();
-        }
-
-        function updateSavingsPlanUI() {
-            const salary = savingsSettings.salary;
-            const rule = savingsSettings.rule;
-
-            let needs = 0, wants = 0, savingsPerMonth = 0;
-            if (rule === '50-30-20') { needs = salary * 0.50; wants = salary * 0.30; savingsPerMonth = salary * 0.20; }
-            else if (rule === '60-20-10-10') { needs = salary * 0.60; wants = salary * 0.20; savingsPerMonth = salary * 0.20; }
-            else if (rule === 'custom-20') { savingsPerMonth = salary * 0.20; needs = salary * 0.55; wants = salary * 0.25; }
-            else if (rule === 'custom-30') { savingsPerMonth = salary * 0.30; needs = salary * 0.50; wants = salary * 0.20; }
-
-            document.getElementById('plan-needs').textContent = `€ ${needs.toFixed(2)}`;
-            document.getElementById('plan-wants').textContent = `€ ${wants.toFixed(2)}`;
-            document.getElementById('plan-savings').textContent = `€ ${savingsPerMonth.toFixed(2)}`;
-        }
-
-        // GESTIONE OBIETTIVI MULTIPLI
-        document.getElementById('goal-form').addEventListener('submit', function(e) {
+        document.getElementById('savings-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            const name = document.getElementById('goal-name').value.trim();
-            const target = parseFloat(document.getElementById('goal-target-amount').value) || 0;
-            const saved = parseFloat(document.getElementById('goal-saved-amount').value) || 0;
+            const name = document.getElementById('s-name').value;
+            const target = parseFloat(document.getElementById('s-target').value);
+            const saved = parseFloat(document.getElementById('s-saved').value);
 
-            if (!data.goals) data.goals = [];
-            data.goals.push({ id: Date.now(), name, target, saved });
+            data.savingsGoal = { name, target, saved };
             saveData();
-            this.reset();
-            document.getElementById('goal-saved-amount').value = "0";
-            showToast("Nuovo obiettivo salvato!", "success");
+            showToast("Obiettivo di risparmio aggiornato!", "success");
         });
-
-        function addMoneyToGoal(goalId, amount) {
-            let g = data.goals.find(item => item.id === goalId);
-            if (g) {
-                g.saved += amount;
-                saveData();
-                showToast(`Accantonati € ${amount.toFixed(2)} in "${g.name}"!`, "success");
-            }
-        }
-
-        function deleteGoal(goalId) {
-            data.goals = data.goals.filter(item => item.id !== goalId);
-            saveData();
-            showToast("Obiettivo eliminato", "info");
-        }
 
         function toggleAccountsVisibility() {
             hideAccounts = !hideAccounts;
@@ -1357,7 +1252,6 @@
             toggleSidebar();
 
             if(tabId === 'analytics') renderAnalytics();
-            else if(tabId === 'savings') { updateSavingsPlanUI(); renderGoalsUI(); }
             else if(tabId === 'patrimony') renderNetWorthChart();
         }
 
@@ -1757,55 +1651,6 @@
             showToast(`Applicato: "${r.desc}" per € ${finalAmount.toFixed(2)}`, "success");
         }
 
-        // CALCOLO PREVISIONE A 30 GIORNI (SMART FORECASTING)
-        function calculate30DayForecast() {
-            let currentNetWorth = data.accounts.reduce((sum, acc) => sum + acc.balance, 0);
-            let estimatedChange = 0;
-
-            if (data.recurring) {
-                data.recurring.forEach(r => {
-                    if (r.amount && r.amount > 0) {
-                        if (r.type === 'Entrata') estimatedChange += r.amount;
-                        else if (r.type === 'Uscita') estimatedChange -= r.amount;
-                    }
-                });
-            }
-            return currentNetWorth + estimatedChange;
-        }
-
-        // RENDER DELLA SEZIONE OBIETTIVI MULTIPLI
-        function renderGoalsUI() {
-            let container = document.getElementById('goals-list-container');
-            if (!container) return;
-            container.innerHTML = '';
-
-            if (!data.goals || data.goals.length === 0) {
-                container.innerHTML = '<p style="color:var(--text-light); text-align:center; font-size:0.8rem;">Nessun obiettivo impostato.</p>';
-                return;
-            }
-
-            data.goals.forEach(g => {
-                let percentage = g.target > 0 ? (g.saved / g.target) * 100 : 0;
-                container.innerHTML += `
-                    <div style="background:var(--input-bg); border:1px solid var(--card-border); border-radius:var(--radius-md); padding:12px; margin-bottom:10px;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                            <span style="font-weight:700; font-size:0.9rem;">${g.name}</span>
-                            <span style="font-weight:800; color:var(--success); font-size:0.85rem;">€ ${g.saved.toFixed(2)} / € ${g.target.toFixed(2)}</span>
-                        </div>
-                        <div class="progress-bar-container" style="height:8px; margin-bottom:8px;">
-                            <div class="progress-bar" style="width:${Math.min(percentage, 100)}%; background-color:var(--success);"></div>
-                        </div>
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <div style="display:flex; gap:6px;">
-                                <button class="btn-secondary" onclick="addMoneyToGoal(${g.id}, 50)" style="padding:4px 8px!important; font-size:0.7rem!important;">+ €50</button>
-                                <button class="btn-secondary" onclick="addMoneyToGoal(${g.id}, 200)" style="padding:4px 8px!important; font-size:0.7rem!important;">+ €200</button>
-                            </div>
-                            <button class="btn-danger" onclick="deleteGoal(${g.id})" style="padding:4px 8px!important; font-size:0.7rem!important;">Elimina</button>
-                        </div>
-                    </div>`;
-            });
-        }
-
         function renderNetWorthChart() {
             const ctx = document.getElementById('netWorthChart').getContext('2d');
             const isDark = currentTheme === 'dark';
@@ -1976,33 +1821,41 @@
 
         function renderApp() {
             let totalNetWorth = data.accounts.reduce((sum, acc) => sum + acc.balance, 0);
-            let forecast30 = calculate30DayForecast();
             
             const netWorthEl = document.getElementById('net-worth');
-            const forecastEl = document.getElementById('forecast-balance');
             const eyeBtn = document.getElementById('eye-btn');
             const eyeAccBtn = document.getElementById('eye-accounts-btn');
             const eyeTransBtn = document.getElementById('eye-trans-btn');
 
             if (hideAccounts) {
                 netWorthEl.textContent = "€ ••••••";
-                forecastEl.textContent = "€ ••••••";
                 if(eyeBtn) eyeBtn.textContent = "🙈"; if(eyeAccBtn) eyeAccBtn.textContent = "🙈"; if(eyeTransBtn) eyeTransBtn.textContent = "🙈";
             } else {
                 netWorthEl.textContent = `€ ${totalNetWorth.toFixed(2)}`;
-                forecastEl.textContent = `€ ${forecast30.toFixed(2)}`;
-                forecastEl.className = `value ${forecast30 >= totalNetWorth ? 'income' : 'expense'}`;
                 if(eyeBtn) eyeBtn.textContent = "👁️"; if(eyeAccBtn) eyeAccBtn.textContent = "👁️"; if(eyeTransBtn) eyeTransBtn.textContent = "👁️";
             }
 
-            document.getElementById('savings-salary').value = savingsSettings.salary;
-            document.getElementById('savings-rule').value = savingsSettings.rule;
-            updateSavingsPlanUI();
-            renderGoalsUI();
+            if(data.savingsGoal) {
+                document.getElementById('s-name').value = data.savingsGoal.name;
+                document.getElementById('s-target').value = data.savingsGoal.target;
+                document.getElementById('s-saved').value = data.savingsGoal.saved;
+
+                let sPct = data.savingsGoal.target > 0 ? (data.savingsGoal.saved / data.savingsGoal.target) * 100 : 0;
+                document.getElementById('savings-card-view').innerHTML = `
+                    <div style="background:var(--input-bg); border:1px solid var(--card-border); border-radius:var(--radius-md); padding:12px;">
+                        <div style="display:flex; justify-content:space-between; font-size:0.82rem; margin-bottom:6px;">
+                            <span><strong>${data.savingsGoal.name}</strong></span>
+                            <span style="font-weight:800; color:var(--success);">€ ${data.savingsGoal.saved.toFixed(2)} / € ${data.savingsGoal.target.toFixed(2)}</span>
+                        </div>
+                        <div class="progress-bar-container"><div class="progress-bar" style="width: ${Math.min(sPct, 100)}%; background-color: var(--success);"></div></div>
+                    </div>`;
+            }
 
             const now = new Date();
             let monthlyIncome = 0, monthlyExpense = 0, categoryExpenses = {};
-            data.categories["Uscita"].forEach(c => categoryExpenses[c.name] = 0);
+            if(data.categories && data.categories["Uscita"]) {
+                data.categories["Uscita"].forEach(c => categoryExpenses[c.name] = 0);
+            }
 
             data.transactions.forEach(t => {
                 let tDate = new Date(t.date);
@@ -2015,7 +1868,9 @@
             let monthlyFlow = monthlyIncome - monthlyExpense;
             document.getElementById('monthly-income').textContent = `€ ${monthlyIncome.toFixed(2)}`;
             document.getElementById('monthly-expense').textContent = `€ ${monthlyExpense.toFixed(2)}`;
-            document.getElementById('monthly-flow').textContent = `€ ${monthlyFlow.toFixed(2)}`;
+            let flowEl = document.getElementById('monthly-flow');
+            flowEl.textContent = `€ ${monthlyFlow.toFixed(2)}`;
+            flowEl.className = `value ${monthlyFlow >= 0 ? 'income' : 'expense'}`;
 
             let adviceText = "Gestione stabile.";
             let savingsRateMonth = monthlyIncome > 0 ? ((monthlyIncome - monthlyExpense) / monthlyIncome) * 100 : 0;
@@ -2030,17 +1885,19 @@
 
             let budgetContainer = document.getElementById('budget-alerts-container');
             budgetContainer.innerHTML = '';
-            data.categories["Uscita"].forEach(cat => {
-                let spent = categoryExpenses[cat.name] || 0;
-                let limit = cat.limit;
-                let percentage = limit > 0 ? (spent / limit) * 100 : 0;
-                let barColor = percentage >= 100 ? 'var(--danger)' : (percentage >= 80 ? 'var(--warning)' : 'var(--success)');
-                budgetContainer.innerHTML += `
-                    <div class="budget-item">
-                        <div class="budget-info"><span><strong>${cat.name}</strong></span><span>€ ${spent.toFixed(2)} / € ${limit.toFixed(2)}</span></div>
-                        <div class="progress-bar-container"><div class="progress-bar" style="width: ${Math.min(percentage, 100)}%; background-color: ${barColor};"></div></div>
-                    </div>`;
-            });
+            if(data.categories && data.categories["Uscita"]) {
+                data.categories["Uscita"].forEach(cat => {
+                    let spent = categoryExpenses[cat.name] || 0;
+                    let limit = cat.limit;
+                    let percentage = limit > 0 ? (spent / limit) * 100 : 0;
+                    let barColor = percentage >= 100 ? 'var(--danger)' : (percentage >= 80 ? 'var(--warning)' : 'var(--success)');
+                    budgetContainer.innerHTML += `
+                        <div class="budget-item">
+                            <div class="budget-info"><span><strong>${cat.name}</strong></span><span>€ ${spent.toFixed(2)} / € ${limit.toFixed(2)}</span></div>
+                            <div class="progress-bar-container"><div class="progress-bar" style="width: ${Math.min(percentage, 100)}%; background-color: ${barColor};"></div></div>
+                        </div>`;
+                });
+            }
 
             let catManagerList = document.getElementById('category-list-manager');
             if (catManagerList) {
