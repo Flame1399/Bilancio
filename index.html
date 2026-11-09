@@ -411,7 +411,6 @@
         .category-header-row { display: flex; justify-content: space-between; align-items: center; }
         .category-name-area { font-weight: 700; font-size: 0.88rem; }
         .category-limit-area { font-weight: 700; color: var(--text-light); font-size: 0.8rem; }
-        .category-actions-row { display: flex; justify-content: space-between; border-top: 1px solid var(--card-border); padding-top: 6px; }
 
         .main-badge { font-size: 0.68rem; background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 5px; border-radius: 4px; }
         .normal-badge { font-size: 0.68rem; background: rgba(255, 255, 255, 0.05); color: var(--text-light); border: 1px solid var(--card-border); padding: 2px 5px; border-radius: 4px; cursor: pointer; }
@@ -485,6 +484,7 @@
         <button class="menu-btn" onclick="toggleSidebar()">☰</button>
         <div class="header-title-area">
             <h1>SmartBudget</h1>
+            <p>PWA Auto-Sync Conto & Patrimonio</p>
         </div>
         <div class="header-actions">
             <button class="theme-btn" onclick="toggleTheme()" id="theme-toggle-icon" title="Cambia Tema">☀️</button>
@@ -569,9 +569,9 @@
                 <div class="form-group">
                     <label>Tipo di Operazione</label>
                     <select id="t-type" onchange="onTransactionTypeChange()">
-                        <option value="Uscita">Uscita</option>
-                        <option value="Entrata">Entrata</option>
-                        <option value="Giroconto">Giroconto 🔄 </option>
+                        <option value="Uscita">Uscita (Spesa)</option>
+                        <option value="Entrata">Entrata (Stipendio/Extra)</option>
+                        <option value="Giroconto">🔄 Giroconto (Tra i tuoi conti)</option>
                     </select>
                 </div>
 
@@ -702,7 +702,7 @@
     <div id="tab-savings" class="tab-content">
         <div class="card">
             <h2>
-                <span>Configurazione Piano</span>
+                <span>⚙️ Configurazione Piano</span>
                 <button class="btn-edit" onclick="toggleEditSavingsPlan()" id="btn-toggle-edit-plan" style="padding: 5px 10px; width:auto;">✏️ Modifica Piano</button>
             </h2>
             
@@ -746,7 +746,7 @@
                         <strong class="value" id="plan-wants" style="color:#f59e0b;">€ 0.00</strong>
                     </div>
                     <div class="analytics-mini-box">
-                        <span>Risparmio/M</span>
+                        <span>Risparmio/Mese</span>
                         <strong class="value income" id="plan-savings">€ 0.00</strong>
                     </div>
                 </div>
@@ -774,14 +774,14 @@
     <!-- TAB 6: MOVIMENTI RICORRENTI -->
     <div id="tab-recurring" class="tab-content">
         <div class="card">
-            <h2>Nuovo Movimento Ricorrente</h2>
+            <h2>Nuovo Promemoria Ricorrente</h2>
             <form id="recurring-form">
                 <div class="form-group">
                     <label>Tipo</label>
                     <select id="r-type" onchange="onRecurringTypeChange()">
-                        <option value="Uscita">Uscita Ricorrente (Abbonamento/Affitto)</option>
+                        <option value="Uscita">Uscita Ricorrente / Variabile (Es. Bolletta Acqua, Affitto)</option>
                         <option value="Entrata">Entrata Ricorrente (Stipendio)</option>
-                        <option value="Giroconto">Giroconto Ricorrente 🔄 (Risparmio)</option>
+                        <option value="Giroconto">🔄 Giroconto Ricorrente (Risparmio)</option>
                     </select>
                 </div>
                 
@@ -792,7 +792,7 @@
                     </div>
                     <div class="form-group">
                         <label>Categoria</label>
-                        <input type="text" id="r-category" placeholder="Es. Abbonamento, Affitto">
+                        <input type="text" id="r-category" placeholder="Es. Utenze, Abbonamento">
                     </div>
                 </div>
 
@@ -808,21 +808,21 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Importo (€)</label>
-                    <input type="number" id="r-amount" step="0.01" required>
+                    <label>Importo (€) <span style="font-size:0.7rem; color:var(--text-light);">(Lascia 0 se variabile o da definire)</span></label>
+                    <input type="number" id="r-amount" step="0.01" value="0.00" placeholder="0.00">
                 </div>
                 <div class="form-group">
-                    <label>Descrizione</label>
-                    <input type="text" id="r-desc" placeholder="Es. Netflix, Prelievo Risparmi Mensile" required>
+                    <label>Descrizione / Nome Tipologia</label>
+                    <input type="text" id="r-desc" placeholder="Es. Bolletta Acqua, Netflix..." required>
                 </div>
-                <button type="submit">Salva Ricorrenza</button>
+                <button type="submit">Crea Tipologia Ricorrente</button>
             </form>
         </div>
 
         <div class="card">
-            <h2>I tuoi Movimenti Ricorrenti</h2>
+            <h2>I tuoi Promemoria e Spese Ricorrenti</h2>
             <div class="analytics-report-banner" style="margin-bottom: 12px; font-size: 0.78rem;">
-                🔔 Ricordati di applicare i movimenti fissi se non l'hai ancora fatto questo mese.
+                💡 Se una spesa è variabile (es. bolletta), puoi inserire l'importo esatto al momento di applicarla o modificarla.
             </div>
             <div id="recurring-list"></div>
         </div>
@@ -1213,6 +1213,34 @@
             }
         }
 
+        // GESTIONE DELLE CATEGORIE NELLA SCHEDA DEDICATA
+        document.getElementById('category-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const type = document.getElementById('c-type').value;
+            const name = document.getElementById('c-name').value.trim();
+            const limit = parseFloat(document.getElementById('c-limit').value) || 0;
+
+            if(!data.categories[type]) data.categories[type] = [];
+
+            let existing = data.categories[type].find(c => c.name.toLowerCase() === name.toLowerCase());
+            if (existing) {
+                existing.limit = limit;
+            } else {
+                data.categories[type].push({ name, limit });
+            }
+
+            saveData();
+            this.reset();
+            document.getElementById('c-limit').value = "150";
+        });
+
+        function deleteCategory(type, name) {
+            if(data.categories[type]) {
+                data.categories[type] = data.categories[type].filter(c => c.name !== name);
+                saveData();
+            }
+        }
+
         function updateAccountSelect() {
             const select = document.getElementById('t-account');
             const rSelect = document.getElementById('r-account');
@@ -1330,7 +1358,7 @@
         document.getElementById('recurring-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const type = document.getElementById('r-type').value;
-            const amount = parseFloat(document.getElementById('r-amount').value);
+            const amount = parseFloat(document.getElementById('r-amount').value) || 0;
             const desc = document.getElementById('r-desc').value;
 
             let item = { id: Date.now(), type, amount, desc };
@@ -1347,6 +1375,7 @@
             data.recurring.push(item);
             saveData();
             this.reset();
+            document.getElementById('r-amount').value = "0.00";
             onRecurringTypeChange();
         });
 
@@ -1358,18 +1387,30 @@
         function executeRecurring(id) {
             let r = data.recurring.find(item => item.id === id);
             if(!r) return;
+
+            let finalAmount = r.amount;
+            if (finalAmount <= 0) {
+                let promptVal = prompt(`Inserisci l'importo per "${r.desc}" per questo mese (€):`, "0.00");
+                if (promptVal === null) return;
+                finalAmount = parseFloat(promptVal);
+                if (isNaN(finalAmount) || finalAmount <= 0) {
+                    alert("Importo non valido!");
+                    return;
+                }
+            }
+
             if(r.type === 'Giroconto') {
                 let accFrom = data.accounts.find(acc => acc.name === r.fromAccount);
                 let accTo = data.accounts.find(acc => acc.name === r.toAccount);
-                if(accFrom && accTo) { accFrom.balance -= r.amount; accTo.balance += r.amount; }
-                data.transactions.unshift({ id: Date.now(), type: 'Giroconto', fromAccount: r.fromAccount, toAccount: r.toAccount, amount: r.amount, desc: r.desc, date: new Date().toISOString() });
+                if(accFrom && accTo) { accFrom.balance -= finalAmount; accTo.balance += finalAmount; }
+                data.transactions.unshift({ id: Date.now(), type: 'Giroconto', fromAccount: r.fromAccount, toAccount: r.toAccount, amount: finalAmount, desc: r.desc, date: new Date().toISOString() });
             } else {
                 let account = data.accounts.find(acc => acc.name === r.accountName);
-                if(account) { if(r.type === 'Entrata') account.balance += r.amount; else account.balance -= r.amount; }
-                data.transactions.unshift({ id: Date.now(), type: r.type, accountName: r.accountName, amount: r.amount, category: r.category, desc: r.desc, date: new Date().toISOString() });
+                if(account) { if(r.type === 'Entrata') account.balance += finalAmount; else account.balance -= finalAmount; }
+                data.transactions.unshift({ id: Date.now(), type: r.type, accountName: r.accountName, amount: finalAmount, category: r.category, desc: r.desc, date: new Date().toISOString() });
             }
             saveData();
-            alert(`Operazione ricorrente "${r.desc}" applicata con successo!`);
+            alert(`Operazione "${r.desc}" registrata con successo per € ${finalAmount.toFixed(2)}!`);
         }
 
         function renderAnalytics() {
@@ -1552,6 +1593,29 @@
                     </div>`;
             });
 
+            // RENDER LISTA CATEGORIE NELLA SCHEDA CATEGORIE
+            let catManagerList = document.getElementById('category-list-manager');
+            if (catManagerList) {
+                catManagerList.innerHTML = '';
+                ['Uscita', 'Entrata'].forEach(type => {
+                    if (data.categories[type]) {
+                        data.categories[type].forEach(c => {
+                            let limitText = type === 'Uscita' ? ` (Budget: € ${c.limit.toFixed(2)})` : '';
+                            catManagerList.innerHTML += `
+                                <div class="category-card-item">
+                                    <div class="category-header-row">
+                                        <div class="category-name-area">
+                                            <span>${type === 'Uscita' ? '🔴' : '🟢'} ${c.name}</span>
+                                            <span style="font-size:0.75rem; color:var(--text-light); font-weight:normal;">${limitText}</span>
+                                        </div>
+                                        <button class="btn-danger" onclick="deleteCategory('${type}', '${c.name}')">Elimina</button>
+                                    </div>
+                                </div>`;
+                        });
+                    }
+                });
+            }
+
             let tList = document.getElementById('transaction-list');
             tList.innerHTML = '';
             let filterType = document.getElementById('filter-type').value;
@@ -1619,7 +1683,7 @@
             });
 
             let rList = document.getElementById('recurring-list');
-            rList.innerHTML = (!data.recurring || data.recurring.length === 0) ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0;">Nessun movimento ricorrente impostato.</p>' : '';
+            rList.innerHTML = (!data.recurring || data.recurring.length === 0) ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0;">Nessun promemoria ricorrente impostato.</p>' : '';
             
             const recurringBadge = document.getElementById('recurring-badge');
             if (data.recurring && data.recurring.length > 0) {
@@ -1631,16 +1695,17 @@
             if(data.recurring) {
                 data.recurring.forEach(r => {
                     let infoText = r.type === 'Giroconto' ? `${r.fromAccount} ➡️ ${r.toAccount}` : `${r.accountName} (${r.category})`;
+                    let displayAmt = r.amount > 0 ? `€ ${r.amount.toFixed(2)}` : `Variabile (Da definire)`;
                     rList.innerHTML += `
                         <div class="transaction-card">
                             <div class="transaction-left">
                                 <div class="transaction-details">
-                                    <span class="t-desc">${r.desc} (€ ${r.amount.toFixed(2)})</span>
+                                    <span class="t-desc">${r.desc} (${displayAmt})</span>
                                     <span class="t-meta">${r.type} • ${infoText}</span>
                                 </div>
                             </div>
                             <div class="transaction-right" style="flex-direction:row; gap:4px;">
-                                <button class="btn-edit" onclick="executeRecurring(${r.id})">▶️ Applica Ora</button>
+                                <button class="btn-edit" onclick="executeRecurring(${r.id})">▶️ Applica</button>
                                 <button class="btn-danger" onclick="deleteRecurring(${r.id})">Elimina</button>
                             </div>
                         </div>`;
