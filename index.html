@@ -470,7 +470,7 @@
         <div class="lock-card">
             <div class="lock-icon">🔐</div>
             <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 6px;">SmartBudget Protezione</h3>
-            <p style="font-size: 0.82rem; color: var(--text-light);">Inserisci il PIN a 4 cifre per sbloccare</p>
+            <p style="font-size: 0.82rem; color: var(--text-light);">Digita il PIN di 4 cifre per accedere</p>
             
             <div class="pin-inputs">
                 <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-digit" id="p1" oninput="focusNextPin(this, 'p2')">
@@ -478,10 +478,6 @@
                 <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-digit" id="p3" oninput="focusNextPin(this, 'p4')">
                 <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-digit" id="p4" oninput="checkEnteredPin()">
             </div>
-
-            <button onclick="requestBiometricUnlock()" style="margin-top: 10px; background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);">
-                👤 Sblocca con Face ID
-            </button>
         </div>
     </div>
 
@@ -750,7 +746,7 @@
                         <strong class="value" id="plan-wants" style="color:#f59e0b;">€ 0.00</strong>
                     </div>
                     <div class="analytics-mini-box">
-                        <span>Risparmio/M</span>
+                        <span>Risparmio/Mese</span>
                         <strong class="value income" id="plan-savings">€ 0.00</strong>
                     </div>
                 </div>
@@ -934,7 +930,7 @@
         let pieChartInstance = null;
         let barChartInstance = null;
 
-        // LOGICA BLOCCO E SICUREZZA
+        // VERIFICA BLOCCO APPLICAZIONE
         function checkAppSecurityLock() {
             if (userSecurityPin) {
                 document.getElementById('app-lock-screen').style.display = 'flex';
@@ -966,7 +962,7 @@
             } else if (pin.length === 4 && !isNaN(pin)) {
                 localStorage.setItem('smart_budget_security_pin', pin);
                 userSecurityPin = pin;
-                alert("PIN salvato con successo!");
+                alert("PIN salvato con successo! Verrà richiesto all'apertura dell'app.");
             } else {
                 alert("Inserisci esattamente 4 cifre numeriche!");
             }
@@ -999,15 +995,6 @@
                 alert("PIN non corretto!");
                 clearPinFields();
                 document.getElementById('p1').focus();
-            }
-        }
-
-        function requestBiometricUnlock() {
-            // Invoca il Face ID / Biometria o guida all'inserimento PIN
-            if (window.PublicKeyCredential) {
-                alert("Posiziona il viso di fronte al sensore o usa il PIN sopra.");
-            } else {
-                alert("Usa il PIN di 4 cifre per accedere.");
             }
         }
 
