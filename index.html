@@ -161,6 +161,16 @@
             border: 1px solid rgba(248, 113, 113, 0.3);
         }
 
+        .btn-edit {
+            background-color: rgba(129, 140, 248, 0.15);
+            color: #818cf8;
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            width: auto;
+            border-radius: 8px;
+            border: 1px solid rgba(129, 140, 248, 0.3);
+        }
+
         .budget-item {
             margin-bottom: 14px;
             padding-bottom: 12px;
@@ -326,9 +336,7 @@
                 </div>
                 <div class="form-group">
                     <label>Seleziona Conto di Riferimento</label>
-                    <select id="t-account" required>
-                        <!-- Popolato dinamicamente -->
-                    </select>
+                    <select id="t-account" required></select>
                 </div>
                 <div class="form-group">
                     <label>Importo (€)</label>
@@ -355,17 +363,17 @@
     <!-- TAB 3: PATRIMONIO -->
     <div id="tab-patrimony" class="tab-content">
         <div class="card">
-            <h2>Gestione Conti & Asset</h2>
+            <h2 id="account-form-title">Aggiungi / Crea Conto</h2>
             <form id="account-form">
                 <div class="form-group">
                     <label>Nome Conto / Investimento</label>
                     <input type="text" id="acc-name" placeholder="Es. Conto Corrente, Contanti" required>
                 </div>
                 <div class="form-group">
-                    <label>Saldo Iniziale (€)</label>
+                    <label>Saldo Iniziale / Attuale (€)</label>
                     <input type="number" id="acc-balance" step="0.01" placeholder="0.00" required>
                 </div>
-                <button type="submit">Aggiungi / Crea Conto</button>
+                <button type="submit" id="account-submit-btn">Salva Conto</button>
             </form>
         </div>
 
@@ -481,6 +489,51 @@
             });
         }
 
+        // Funzione per preparare la modifica di un conto esistente
+        function editAccount(name) {
+            let account = data.accounts.find(acc => acc.name === name);
+            if(account) {
+                document.getElementById('acc-name').value = account.name;
+                // Blocchiamo temporaneamente il nome per evitare duplicati in modifica, oppure lo gestiamo sotto
+                document.getElementById('acc-balance').value = account.balance;
+                document.getElementById('account-form-title').textContent = "Modifica Conto";
+                document.getElementById('account-submit-btn').textContent = "Aggiorna Conto";
+                
+                // Portiamo l'utente in cima alla sezione patrimonio se necessario
+                document.getElementById('acc-name').focus();
+            }
+        }
+
+        // Aggiungi o Modifica Conto
+        document.getElementById('account-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const name = document.getElementById('acc-name').value.trim();
+            const balance = parseFloat(document.getElementById('acc-balance').value);
+
+            let existing = data.accounts.find(acc => acc.name.toLowerCase() === name.toLowerCase());
+            if (existing) {
+                existing.balance = balance; // Aggiorna il saldo se esiste già
+            } else {
+                data.accounts.push({ name, balance }); // Aggiunge nuovo conto
+            }
+
+            saveData();
+            this.reset();
+            
+            // Ripristina il titolo del form
+            document.getElementById('account-form-title').textContent = "Aggiungi / Crea Conto";
+            document.getElementById('account-submit-btn').textContent = "Salva Conto";
+            
+            updateAccountSelect();
+            alert('Conto salvato con successo!');
+        });
+
+        function deleteAccount(name) {
+            data.accounts = data.accounts.filter(acc => acc.name !== name);
+            saveData();
+            updateAccountSelect();
+        }
+
         // Aggiungi Transazione con Auto-Sync sul conto
         document.getElementById('transaction-form').addEventListener('submit', function(e) {
             e.preventDefault();
@@ -495,7 +548,6 @@
                 return;
             }
 
-            // Trova il conto e aggiorna il saldo automaticamente
             let account = data.accounts.find(acc => acc.name === accountName);
             if(account) {
                 if(type === 'Entrata') {
@@ -505,7 +557,6 @@
                 }
             }
 
-            // Salva la transazione
             data.transactions.unshift({
                 id: Date.now(),
                 type,
@@ -550,31 +601,6 @@
             saveData();
         }
 
-        document.getElementById('account-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const name = document.getElementById('acc-name').value.trim();
-            const balance = parseFloat(document.getElementById('acc-balance').value);
-
-            let existing = data.accounts.find(acc => acc.name.toLowerCase() === name.toLowerCase());
-            if (existing) {
-                existing.balance = balance;
-            } else {
-                data.accounts.push({ name, balance });
-            }
-
-            saveData();
-            this.reset();
-            updateAccountSelect();
-            alert('Conto salvato!');
-        });
-
-        function deleteAccount(name) {
-            data.accounts = data.accounts.filter(acc => acc.name !== name);
-            saveData();
-            updateAccountSelect();
-        }
-
-        // Se elimini una transazione, ripristina il saldo sul conto
         function deleteTransaction(id) {
             let t = data.transactions.find(item => item.id === id);
             if(t) {
@@ -714,8 +740,9 @@
                         <div class="transaction-details">
                             <span class="t-desc" style="font-size:0.95rem;">${acc.name}</span>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="display: flex; align-items: center; gap: 8px;">
                             <span style="font-weight: 700; color: #818cf8;">€ ${acc.balance.toFixed(2)}</span>
+                            <button class="btn-edit" onclick="editAccount('${acc.name}')">Modifica</button>
                             <button class="btn-danger" onclick="deleteAccount('${acc.name}')">Elimina</button>
                         </div>
                     </div>
