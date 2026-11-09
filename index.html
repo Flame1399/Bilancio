@@ -3,19 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartBudget Dinamico</title>
+    <title>SmartBudget Dark</title>
     <style>
         :root {
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text: #1e293b;
-            --text-light: #64748b;
-            --border: #e2e8f0;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --success: #34d399;
+            --danger: #f87171;
+            --warning: #fbbf24;
+            --bg: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --text-light: #94a3b8;
+            --border: #334155;
+            --input-bg: #0f172a;
         }
 
         * {
@@ -36,25 +37,29 @@
 
         header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
+            padding-top: 10px;
         }
 
         header h1 {
-            font-size: 1.5rem;
-            color: var(--primary);
+            font-size: 1.75rem;
+            color: #818cf8;
+            font-weight: 700;
+            letter-spacing: -0.5px;
         }
 
         header p {
             font-size: 0.85rem;
             color: var(--text-light);
+            margin-top: 4px;
         }
 
         .card {
             background: var(--card-bg);
-            border-radius: 12px;
-            padding: 16px;
+            border-radius: 16px;
+            padding: 18px;
             margin-bottom: 16px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
             border: 1px solid var(--border);
         }
 
@@ -67,55 +72,65 @@
 
         .stat-box {
             background: var(--card-bg);
-            padding: 14px;
-            border-radius: 10px;
+            padding: 16px;
+            border-radius: 14px;
             border: 1px solid var(--border);
             text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
         .stat-box h3 {
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             color: var(--text-light);
             text-transform: uppercase;
-            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
         }
 
         .stat-box .value {
-            font-size: 1.15rem;
-            font-weight: bold;
+            font-size: 1.2rem;
+            font-weight: 700;
         }
 
         .value.income { color: var(--success); }
         .value.expense { color: var(--danger); }
-        .value.patrimony { color: var(--primary); }
+        .value.patrimony { color: #818cf8; }
 
         h2 {
             font-size: 1.1rem;
-            margin-bottom: 12px;
+            margin-bottom: 14px;
             color: var(--text);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            font-weight: 600;
         }
 
         .form-group {
-            margin-bottom: 12px;
+            margin-bottom: 14px;
         }
 
         label {
             display: block;
             font-size: 0.8rem;
             color: var(--text-light);
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
         input, select {
             width: 100%;
-            padding: 10px;
+            padding: 12px;
             border: 1px solid var(--border);
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 0.95rem;
-            background: #fff;
+            background: var(--input-bg);
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary);
         }
 
         button {
@@ -124,92 +139,116 @@
             background-color: var(--primary);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 1rem;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: background 0.2s, transform 0.1s;
         }
 
         button:active {
             background-color: var(--primary-hover);
+            transform: scale(0.98);
         }
 
         .btn-danger {
-            background-color: var(--danger);
-            padding: 6px 10px;
-            font-size: 0.8rem;
+            background-color: rgba(248, 113, 113, 0.15);
+            color: var(--danger);
+            padding: 6px 12px;
+            font-size: 0.75rem;
             width: auto;
-            border-radius: 6px;
+            border-radius: 8px;
+            border: 1px solid rgba(248, 113, 113, 0.3);
+        }
+
+        .btn-danger:active {
+            background-color: rgba(248, 113, 113, 0.3);
         }
 
         .budget-item {
-            margin-bottom: 12px;
-            padding-bottom: 10px;
+            margin-bottom: 14px;
+            padding-bottom: 12px;
             border-bottom: 1px solid var(--border);
+        }
+
+        .budget-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
         }
 
         .budget-info {
             display: flex;
             justify-content: space-between;
             font-size: 0.85rem;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
         .progress-bar-container {
             width: 100%;
-            background: var(--border);
-            border-radius: 4px;
+            background: var(--input-bg);
+            border-radius: 6px;
             height: 8px;
             overflow: hidden;
+            border: 1px solid var(--border);
         }
 
         .progress-bar {
             height: 100%;
             width: 0%;
-            transition: width 0.3s ease;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 6px;
         }
 
         .alert-text {
             font-size: 0.75rem;
-            margin-top: 2px;
-            font-weight: bold;
+            margin-top: 4px;
+            font-weight: 500;
         }
 
         .transaction-list, .category-list {
-            max-height: 220px;
+            max-height: 240px;
             overflow-y: auto;
+            padding-right: 2px;
         }
 
         .transaction-item, .category-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 8px 0;
+            padding: 10px 0;
             border-bottom: 1px solid var(--border);
             font-size: 0.85rem;
         }
 
+        .transaction-item:last-child, .category-row:last-child {
+            border-bottom: none;
+        }
+
         .transaction-details .t-desc {
-            font-weight: 500;
+            font-weight: 600;
+            color: var(--text);
         }
 
         .transaction-details .t-meta {
             font-size: 0.75rem;
             color: var(--text-light);
+            margin-top: 2px;
         }
 
-        /* Menu di navigazione inferiore fisso */
+        /* Menu di navigazione inferiore in stile Glassmorphism */
         .nav-tabs {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            background: #fff;
+            background: rgba(30, 41, 59, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
             border-top: 1px solid var(--border);
             display: flex;
             justify-content: space-around;
-            padding: 10px 0;
+            padding: 12px 0;
             z-index: 100;
         }
 
@@ -218,14 +257,15 @@
             border: none;
             color: var(--text-light);
             font-size: 0.70rem;
-            font-weight: normal;
+            font-weight: 500;
             width: auto;
             padding: 0;
+            transition: color 0.2s;
         }
 
         .nav-tab.active {
-            color: var(--primary);
-            font-weight: bold;
+            color: #818cf8;
+            font-weight: 700;
         }
 
         .tab-content {
@@ -234,6 +274,12 @@
 
         .tab-content.active {
             display: block;
+            animation: fadeIn 0.25s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
@@ -241,7 +287,7 @@
 
     <header>
         <h1>SmartBudget</h1>
-        <p>Versione Smart & Dinamica</p>
+        <p>Dark Experience • Offline & Locale</p>
     </header>
 
     <!-- TAB 1: DASHBOARD -->
@@ -295,7 +341,7 @@
                     <label>Nota / Descrizione</label>
                     <input type="text" id="t-desc" placeholder="Es. Caffè, Stipendio, ecc.">
                 </div>
-                <button type="submit">Registra</button>
+                <button type="submit">Registra Operazione</button>
             </form>
         </div>
 
@@ -328,7 +374,7 @@
         </div>
     </div>
 
-    <!-- TAB 4: CATEGORIE & BUDGET PERSONALIZZABILI -->
+    <!-- TAB 4: CATEGORIE -->
     <div id="tab-categories" class="tab-content">
         <div class="card">
             <h2>Aggiungi Nuova Categoria</h2>
@@ -344,7 +390,7 @@
                     <label>Nome Categoria</label>
                     <input type="text" id="c-name" placeholder="Es. Abbigliamento, Freelance" required>
                 </div>
-                <div class="form-group" id="limit-group">
+                <div class="form-group">
                     <label>Limite di Budget Mensile (€) (Solo Uscite)</label>
                     <input type="number" id="c-limit" value="150" step="10">
                 </div>
@@ -367,8 +413,7 @@
     </nav>
 
     <script>
-        // Dati strutturati salvati in locale o predefiniti intelligenti
-        let data = JSON.parse(localStorage.getItem('smart_budget_data_v2')) || {
+        let data = JSON.parse(localStorage.getItem('smart_budget_data_dark')) || {
             categories: {
                 Uscita: [
                     { name: "Casa / Affitto", limit: 600 },
@@ -388,11 +433,10 @@
         };
 
         function saveData() {
-            localStorage.setItem('smart_budget_data_v2', JSON.stringify(data));
+            localStorage.setItem('smart_budget_data_dark', JSON.stringify(data));
             initApp();
         }
 
-        // Navigazione Tab
         function switchTab(tabId, btnElement) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
@@ -401,7 +445,6 @@
             btnElement.classList.add('active');
         }
 
-        // Popola la select delle categorie in base al tipo scelto
         function updateCategorySelect() {
             const type = document.getElementById('t-type').value;
             const select = document.getElementById('t-category');
@@ -417,7 +460,6 @@
             }
         }
 
-        // Gestione Aggiunta Transazione
         document.getElementById('transaction-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const type = document.getElementById('t-type').value;
@@ -439,14 +481,12 @@
             updateCategorySelect();
         });
 
-        // Aggiunta Nuova Categoria personalizzata
         document.getElementById('category-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const type = document.getElementById('c-type').value;
             const name = document.getElementById('c-name').value.trim();
             const limit = parseFloat(document.getElementById('c-limit').value) || 0;
 
-            // Verifica se esiste già
             let exists = data.categories[type].some(c => c.name.toLowerCase() === name.toLowerCase());
             if(exists) {
                 alert('Questa categoria esiste già!');
@@ -459,7 +499,6 @@
             alert('Categoria aggiunta con successo!');
         });
 
-        // Eliminazione Categoria
         function deleteCategory(type, name) {
             if(data.categories[type].length <= 1) {
                 alert('Devi mantenere almeno una categoria.');
@@ -469,7 +508,6 @@
             saveData();
         }
 
-        // Gestione Conti
         document.getElementById('account-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const name = document.getElementById('acc-name').value.trim();
@@ -496,22 +534,10 @@
             saveData();
         }
 
-        // Aggiorna limiti di budget rapidi
-        function updateLimit(categoryName, newLimit) {
-            let cat = data.categories["Uscita"].find(c => c.name === categoryName);
-            if(cat) {
-                cat.limit = parseFloat(newLimit) || 0;
-                saveData();
-            }
-        }
-
-        // Funzione centrale di calcolo e aggiornamento interfaccia
         function initApp() {
-            // 1. Patrimonio Netto
             let totalNetWorth = data.accounts.reduce((sum, acc) => sum + acc.balance, 0);
             document.getElementById('net-worth').textContent = `€ ${totalNetWorth.toFixed(2)}`;
 
-            // 2. Calcoli Mese Corrente
             const now = new Date();
             const currentMonth = now.getMonth();
             const currentYear = now.getFullYear();
@@ -532,7 +558,7 @@
                         if (categoryExpenses[t.category] !== undefined) {
                             categoryExpenses[t.category] += t.amount;
                         } else {
-                            categoryExpenses[t.category] = t.amount; // Per categorie rimosse ma presenti in vecchie transazioni
+                            categoryExpenses[t.category] = t.amount;
                         }
                     }
                 }
@@ -546,7 +572,6 @@
             flowEl.textContent = `€ ${monthlyFlow.toFixed(2)}`;
             flowEl.className = `value ${monthlyFlow >= 0 ? 'income' : 'expense'}`;
 
-            // 3. Render Budget & Alert Dinamici
             let budgetContainer = document.getElementById('budget-alerts-container');
             budgetContainer.innerHTML = '';
 
@@ -587,25 +612,23 @@
                 `;
             });
 
-            // 4. Gestione Manager Categorie (Tab Categorie)
             let catManager = document.getElementById('category-list-manager');
             catManager.innerHTML = '';
             
             ["Uscita", "Entrata"].forEach(type => {
-                catManager.innerHTML += `<p style="font-weight:bold; margin-top:8px; color:var(--primary);">${type}</p>`;
+                catManager.innerHTML += `<p style="font-weight:bold; margin-top:10px; color:#818cf8; font-size:0.85rem;">${type}</p>`;
                 data.categories[type].forEach(cat => {
                     catManager.innerHTML += `
                         <div class="category-row">
-                            <span>${cat.name} ${type === 'Uscita' ? `(Budget: €${cat.limit})` : ''}</span>
+                            <span style="color:var(--text);">${cat.name} ${type === 'Uscita' ? `<span style="color:var(--text-light)">(Budget: €${cat.limit})</span>` : ''}</span>
                             <button class="btn-danger" onclick="deleteCategory('${type}', '${cat.name}')">Elimina</button>
                         </div>
                     `;
                 });
             });
 
-            // 5. Storico Transazioni
             let tList = document.getElementById('transaction-list');
-            tList.innerHTML = data.transactions.length === 0 ? '<p style="color:var(--text-light); text-align:center;">Nessuna transazione.</p>' : '';
+            tList.innerHTML = data.transactions.length === 0 ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0;">Nessuna transazione registrata.</p>' : '';
             data.transactions.slice(0, 20).forEach(t => {
                 let d = new Date(t.date).toLocaleDateString();
                 tList.innerHTML += `
@@ -615,26 +638,26 @@
                             <span class="t-meta">${t.category} • ${d}</span>
                         </div>
                         <div style="text-align: right;">
-                            <span style="font-weight: bold; color: ${t.type === 'Entrata' ? 'var(--success)' : 'var(--danger)'};">
+                            <span style="font-weight: 700; color: ${t.type === 'Entrata' ? 'var(--success)' : 'var(--danger)'};">
                                 ${t.type === 'Entrata' ? '+' : '-'}€ ${t.amount.toFixed(2)}
                             </span>
-                            <button class="btn-danger" style="margin-top:4px;" onclick="deleteTransaction(${t.id})">Elimina</button>
+                            <br>
+                            <button class="btn-danger" style="margin-top:6px;" onclick="deleteTransaction(${t.id})">Elimina</button>
                         </div>
                     </div>
                 `;
             });
 
-            // 6. Conti & Asset
             let accList = document.getElementById('account-list');
-            accList.innerHTML = data.accounts.length === 0 ? '<p style="color:var(--text-light); text-align:center;">Nessun conto.</p>' : '';
+            accList.innerHTML = data.accounts.length === 0 ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0;">Nessun conto inserito.</p>' : '';
             data.accounts.forEach(acc => {
                 accList.innerHTML += `
                     <div class="transaction-item">
                         <div class="transaction-details">
-                            <span class="t-desc" style="font-size:1rem;">${acc.name}</span>
+                            <span class="t-desc" style="font-size:0.95rem;">${acc.name}</span>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            <span style="font-weight: bold; color: var(--primary);">€ ${acc.balance.toFixed(2)}</span>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-weight: 700; color: #818cf8;">€ ${acc.balance.toFixed(2)}</span>
                             <button class="btn-danger" onclick="deleteAccount('${acc.name}')">Elimina</button>
                         </div>
                     </div>
@@ -642,7 +665,6 @@
             });
         }
 
-        // Avvio
         updateCategorySelect();
         initApp();
     </script>
