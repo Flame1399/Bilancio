@@ -793,7 +793,7 @@
                     <label>Tipo</label>
                     <select id="r-type" onchange="onRecurringTypeChange()">
                         <option value="Uscita">Uscita Ricorrente / Variabile (Es. Bolletta Acqua, Affitto)</option>
-                        <option value="Entrata">Entrata Ricorrente (Stipendio)</option>
+                        <option value="Entrata">Entrata Ricorrente (Es. Stipendio, Extra)</option>
                         <option value="Giroconto">🔄 Giroconto Ricorrente (Risparmio)</option>
                     </select>
                 </div>
@@ -821,21 +821,21 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Importo (€) <span style="font-size:0.7rem; color:var(--text-light);">(Lascia 0 se il prezzo varia di mese in mese)</span></label>
+                    <label>Importo (€) <span style="font-size:0.7rem; color:var(--text-light);">(Lascia 0 se l'importo varia ogni mese)</span></label>
                     <input type="number" id="r-amount" step="0.01" value="0.00" placeholder="0.00">
                 </div>
                 <div class="form-group">
                     <label>Descrizione / Nome Tipologia</label>
-                    <input type="text" id="r-desc" placeholder="Es. Bolletta Acqua, Luce..." required>
+                    <input type="text" id="r-desc" placeholder="Es. Stipendio Mensile, Affitto..." required>
                 </div>
                 <button type="submit">Crea Tipologia Ricorrente</button>
             </form>
         </div>
 
         <div class="card">
-            <h2>I tuoi Promemoria e Spese Ricorrenti</h2>
+            <h2>I tuoi Promemoria Ricorrenti (Entrate & Uscite)</h2>
             <div class="analytics-report-banner" style="margin-bottom: 12px; font-size: 0.78rem;">
-                💡 Se una spesa è a prezzo variabile (es. bolletta), inserendo 0 l'app ti chiederà l'importo esatto ogni volta che cliccherai su **"▶️ Applica"**.
+                💡 Clicca su **"▶️ Applica"** ogni volta che ricevi un'entrata o affronti una spesa per registrarla ufficialmente nel bilancio.
             </div>
             <div id="recurring-list"></div>
         </div>
