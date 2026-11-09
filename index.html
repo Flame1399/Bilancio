@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartBudget Dark</title>
+    <title>SmartBudget Auto-Sync</title>
     <style>
         :root {
             --primary: #6366f1;
@@ -161,10 +161,6 @@
             border: 1px solid rgba(248, 113, 113, 0.3);
         }
 
-        .btn-danger:active {
-            background-color: rgba(248, 113, 113, 0.3);
-        }
-
         .budget-item {
             margin-bottom: 14px;
             padding-bottom: 12px;
@@ -236,7 +232,6 @@
             margin-top: 2px;
         }
 
-        /* Menu di navigazione inferiore in stile Glassmorphism */
         .nav-tabs {
             position: fixed;
             bottom: 0;
@@ -287,7 +282,7 @@
 
     <header>
         <h1>SmartBudget</h1>
-        <p>Dark Experience • Offline & Locale</p>
+        <p>Auto-Sync Conto & Patrimonio</p>
     </header>
 
     <!-- TAB 1: DASHBOARD -->
@@ -330,6 +325,12 @@
                     </select>
                 </div>
                 <div class="form-group">
+                    <label>Seleziona Conto di Riferimento</label>
+                    <select id="t-account" required>
+                        <!-- Popolato dinamicamente -->
+                    </select>
+                </div>
+                <div class="form-group">
                     <label>Importo (€)</label>
                     <input type="number" id="t-amount" step="0.01" placeholder="0.00" required>
                 </div>
@@ -339,9 +340,9 @@
                 </div>
                 <div class="form-group">
                     <label>Nota / Descrizione</label>
-                    <input type="text" id="t-desc" placeholder="Es. Caffè, Stipendio, ecc.">
+                    <input type="text" id="t-desc" placeholder="Es. Stipendio, Spesa, Rimborso...">
                 </div>
-                <button type="submit">Registra Operazione</button>
+                <button type="submit">Registra e Aggiorna Conto</button>
             </form>
         </div>
 
@@ -358,13 +359,13 @@
             <form id="account-form">
                 <div class="form-group">
                     <label>Nome Conto / Investimento</label>
-                    <input type="text" id="acc-name" placeholder="Es. Conto Corrente, Azioni" required>
+                    <input type="text" id="acc-name" placeholder="Es. Conto Corrente, Contanti" required>
                 </div>
                 <div class="form-group">
-                    <label>Valore Totale (€)</label>
+                    <label>Saldo Iniziale (€)</label>
                     <input type="number" id="acc-balance" step="0.01" placeholder="0.00" required>
                 </div>
-                <button type="submit">Aggiorna / Aggiungi Conto</button>
+                <button type="submit">Aggiungi / Crea Conto</button>
             </form>
         </div>
 
@@ -413,7 +414,7 @@
     </nav>
 
     <script>
-        let data = JSON.parse(localStorage.getItem('smart_budget_data_dark')) || {
+        let data = JSON.parse(localStorage.getItem('smart_budget_data_autosync')) || {
             categories: {
                 Uscita: [
                     { name: "Casa / Affitto", limit: 600 },
@@ -429,11 +430,13 @@
                 ]
             },
             transactions: [],
-            accounts: []
+            accounts: [
+                { name: "Conto Corrente", balance: 0 }
+            ]
         };
 
         function saveData() {
-            localStorage.setItem('smart_budget_data_dark', JSON.stringify(data));
+            localStorage.setItem('smart_budget_data_autosync', JSON.stringify(data));
             initApp();
         }
 
@@ -460,16 +463,53 @@
             }
         }
 
+        function updateAccountSelect() {
+            const select = document.getElementById('t-account');
+            select.innerHTML = '';
+            if(data.accounts.length === 0) {
+                let opt = document.createElement('option');
+                opt.value = "";
+                opt.textContent = "Nessun conto disponibile (Crea uno in Patrimonio)";
+                select.appendChild(opt);
+                return;
+            }
+            data.accounts.forEach(acc => {
+                let opt = document.createElement('option');
+                opt.value = acc.name;
+                opt.textContent = `${acc.name} (€ ${acc.balance.toFixed(2)})`;
+                select.appendChild(opt);
+            });
+        }
+
+        // Aggiungi Transazione con Auto-Sync sul conto
         document.getElementById('transaction-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const type = document.getElementById('t-type').value;
+            const accountName = document.getElementById('t-account').value;
             const amount = parseFloat(document.getElementById('t-amount').value);
             const category = document.getElementById('t-category').value;
             const desc = document.getElementById('t-desc').value || category;
 
+            if(!accountName) {
+                alert('Seleziona prima un conto di riferimento nella sezione Patrimonio!');
+                return;
+            }
+
+            // Trova il conto e aggiorna il saldo automaticamente
+            let account = data.accounts.find(acc => acc.name === accountName);
+            if(account) {
+                if(type === 'Entrata') {
+                    account.balance += amount;
+                } else {
+                    account.balance -= amount;
+                }
+            }
+
+            // Salva la transazione
             data.transactions.unshift({
                 id: Date.now(),
                 type,
+                accountName,
                 amount,
                 category,
                 desc,
@@ -479,6 +519,8 @@
             saveData();
             this.reset();
             updateCategorySelect();
+            updateAccountSelect();
+            alert('Operazione registrata e conto aggiornato in automatico!');
         });
 
         document.getElementById('category-form').addEventListener('submit', function(e) {
@@ -522,16 +564,32 @@
 
             saveData();
             this.reset();
+            updateAccountSelect();
+            alert('Conto salvato!');
         });
 
         function deleteAccount(name) {
             data.accounts = data.accounts.filter(acc => acc.name !== name);
             saveData();
+            updateAccountSelect();
         }
 
+        // Se elimini una transazione, ripristina il saldo sul conto
         function deleteTransaction(id) {
-            data.transactions = data.transactions.filter(t => t.id !== id);
+            let t = data.transactions.find(item => item.id === id);
+            if(t) {
+                let account = data.accounts.find(acc => acc.name === t.accountName);
+                if(account) {
+                    if(t.type === 'Entrata') {
+                        account.balance -= t.amount;
+                    } else {
+                        account.balance += t.amount;
+                    }
+                }
+            }
+            data.transactions = data.transactions.filter(item => item.id !== id);
             saveData();
+            updateAccountSelect();
         }
 
         function initApp() {
@@ -635,7 +693,7 @@
                     <div class="transaction-item">
                         <div class="transaction-details">
                             <span class="t-desc">${t.desc}</span>
-                            <span class="t-meta">${t.category} • ${d}</span>
+                            <span class="t-meta">${t.category} • Conto: ${t.accountName} • ${d}</span>
                         </div>
                         <div style="text-align: right;">
                             <span style="font-weight: 700; color: ${t.type === 'Entrata' ? 'var(--success)' : 'var(--danger)'};">
@@ -666,6 +724,7 @@
         }
 
         updateCategorySelect();
+        updateAccountSelect();
         initApp();
     </script>
 </body>
