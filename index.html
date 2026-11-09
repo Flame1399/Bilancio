@@ -154,7 +154,7 @@
         .btn-danger {
             background-color: rgba(248, 113, 113, 0.15);
             color: var(--danger);
-            padding: 6px 12px;
+            padding: 6px 10px;
             font-size: 0.75rem;
             width: auto;
             border-radius: 8px;
@@ -164,11 +164,21 @@
         .btn-edit {
             background-color: rgba(129, 140, 248, 0.15);
             color: #818cf8;
-            padding: 6px 12px;
+            padding: 6px 10px;
             font-size: 0.75rem;
             width: auto;
             border-radius: 8px;
             border: 1px solid rgba(129, 140, 248, 0.3);
+        }
+
+        .btn-primary-action {
+            background-color: rgba(52, 211, 153, 0.15);
+            color: var(--success);
+            padding: 6px 10px;
+            font-size: 0.75rem;
+            width: auto;
+            border-radius: 8px;
+            border: 1px solid rgba(52, 211, 153, 0.3);
         }
 
         .budget-item {
@@ -439,9 +449,14 @@
             },
             transactions: [],
             accounts: [
-                { name: "Conto Corrente", balance: 0 }
+                { name: "Conto Corrente", balance: 0, isMain: true }
             ]
         };
+
+        // Retrocompatibilità se isMain non è definito su vecchi dati salvati
+        if (data.accounts.length > 0 && !data.accounts.some(acc => acc.isMain)) {
+            data.accounts[0].isMain = true;
+        }
 
         function saveData() {
             localStorage.setItem('smart_budget_data_autosync', JSON.stringify(data));
@@ -481,30 +496,41 @@
                 select.appendChild(opt);
                 return;
             }
+            
+            // Trova il conto principale da preselezionare
+            let mainAccount = data.accounts.find(acc => acc.isMain) || data.accounts[0];
+
             data.accounts.forEach(acc => {
                 let opt = document.createElement('option');
                 opt.value = acc.name;
-                opt.textContent = `${acc.name} (€ ${acc.balance.toFixed(2)})`;
+                opt.textContent = `${acc.name} (€ ${acc.balance.toFixed(2)})${acc.isMain ? ' ⭐ [Principale]' : ''}`;
+                if(acc.name === mainAccount.name) {
+                    opt.selected = true;
+                }
                 select.appendChild(opt);
             });
         }
 
-        // Funzione per preparare la modifica di un conto esistente
+        function setMainAccount(name) {
+            data.accounts.forEach(acc => {
+                acc.isMain = (acc.name === name);
+            });
+            saveData();
+            updateAccountSelect();
+            alert(`"${name}" è ora il conto principale.`);
+        }
+
         function editAccount(name) {
             let account = data.accounts.find(acc => acc.name === name);
             if(account) {
                 document.getElementById('acc-name').value = account.name;
-                // Blocchiamo temporaneamente il nome per evitare duplicati in modifica, oppure lo gestiamo sotto
                 document.getElementById('acc-balance').value = account.balance;
                 document.getElementById('account-form-title').textContent = "Modifica Conto";
                 document.getElementById('account-submit-btn').textContent = "Aggiorna Conto";
-                
-                // Portiamo l'utente in cima alla sezione patrimonio se necessario
                 document.getElementById('acc-name').focus();
             }
         }
 
-        // Aggiungi o Modifica Conto
         document.getElementById('account-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const name = document.getElementById('acc-name').value.trim();
@@ -512,15 +538,16 @@
 
             let existing = data.accounts.find(acc => acc.name.toLowerCase() === name.toLowerCase());
             if (existing) {
-                existing.balance = balance; // Aggiorna il saldo se esiste già
+                existing.balance = balance;
             } else {
-                data.accounts.push({ name, balance }); // Aggiunge nuovo conto
+                // Se è il primo conto in assoluto, impostalo automaticamente come principale
+                let makeMain = data.accounts.length === 0;
+                data.accounts.push({ name, balance, isMain: makeMain });
             }
 
             saveData();
             this.reset();
             
-            // Ripristina il titolo del form
             document.getElementById('account-form-title').textContent = "Aggiungi / Crea Conto";
             document.getElementById('account-submit-btn').textContent = "Salva Conto";
             
@@ -529,12 +556,18 @@
         });
 
         function deleteAccount(name) {
+            let accToDelete = data.accounts.find(acc => acc.name === name);
             data.accounts = data.accounts.filter(acc => acc.name !== name);
+            
+            // Se abbiamo eliminato il conto principale e ne sono rimasti altri, impostiamo il primo come principale
+            if (accToDelete && accToDelete.isMain && data.accounts.length > 0) {
+                data.accounts[0].isMain = true;
+            }
+
             saveData();
             updateAccountSelect();
         }
 
-        // Aggiungi Transazione con Auto-Sync sul conto
         document.getElementById('transaction-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const type = document.getElementById('t-type').value;
@@ -738,10 +771,13 @@
                 accList.innerHTML += `
                     <div class="transaction-item">
                         <div class="transaction-details">
-                            <span class="t-desc" style="font-size:0.95rem;">${acc.name}</span>
+                            <span class="t-desc" style="font-size:0.95rem;">
+                                ${acc.name} ${acc.isMain ? '<span style="color: var(--success); font-size:0.75rem;">(Principale)</span>' : ''}
+                            </span>
                         </div>
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            <span style="font-weight: 700; color: #818cf8;">€ ${acc.balance.toFixed(2)}</span>
+                        <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: flex-end;">
+                            <span style="font-weight: 700; color: #818cf8; margin-right: 4px;">€ ${acc.balance.toFixed(2)}</span>
+                            ${!acc.isMain ? `<button class="btn-primary-action" onclick="setMainAccount('${acc.name}')">⭐ Principale</button>` : ''}
                             <button class="btn-edit" onclick="editAccount('${acc.name}')">Modifica</button>
                             <button class="btn-danger" onclick="deleteAccount('${acc.name}')">Elimina</button>
                         </div>
