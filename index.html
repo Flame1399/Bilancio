@@ -848,9 +848,30 @@
     <div id="tab-analytics" class="tab-content">
         <div class="card">
             <h2>Periodo di Riferimento</h2>
-            <div class="form-group" style="margin-bottom: 0;">
-                <label>Seleziona Mese e Anno</label>
-                <input type="month" id="analytics-month-picker" onchange="renderAnalytics()">
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px;">
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label>Mese</label>
+                    <select id="analytics-month" onchange="renderAnalytics()">
+                        <option value="0">Gennaio</option>
+                        <option value="1">Febbraio</option>
+                        <option value="2">Marzo</option>
+                        <option value="3">Aprile</option>
+                        <option value="4">Maggio</option>
+                        <option value="5">Giugno</option>
+                        <option value="6">Luglio</option>
+                        <option value="7">Agosto</option>
+                        <option value="8">Settembre</option>
+                        <option value="9">Ottobre</option>
+                        <option value="10">Novembre</option>
+                        <option value="11">Dicembre</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label>Anno</label>
+                    <select id="analytics-year" onchange="renderAnalytics()">
+                        <!-- Popolato dinamicamente via JS -->
+                    </select>
+                </div>
             </div>
         </div>
 
@@ -945,6 +966,25 @@
 
             if(tabId === 'analytics') {
                 renderAnalytics();
+            }
+        }
+
+        function initAnalyticsSelectors() {
+            const yearSelect = document.getElementById('analytics-year');
+            const monthSelect = document.getElementById('analytics-month');
+            
+            if (yearSelect.options.length === 0) {
+                const now = new Date();
+                const currentYear = now.getFullYear();
+                
+                for (let y = currentYear - 3; y <= currentYear + 2; y++) {
+                    let opt = document.createElement('option');
+                    opt.value = y;
+                    opt.textContent = y;
+                    if (y === currentYear) opt.selected = true;
+                    yearSelect.appendChild(opt);
+                }
+                monthSelect.value = now.getMonth();
             }
         }
 
@@ -1158,15 +1198,10 @@
         }
 
         function renderAnalytics() {
-            const picker = document.getElementById('analytics-month-picker');
-            if(!picker.value) {
-                const now = new Date();
-                picker.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-            }
+            initAnalyticsSelectors();
 
-            const parts = picker.value.split('-');
-            const targetYear = parseInt(parts[0]);
-            const targetMonth = parseInt(parts[1]) - 1;
+            const targetMonth = parseInt(document.getElementById('analytics-month').value);
+            const targetYear = parseInt(document.getElementById('analytics-year').value);
 
             let periodIncome = 0;
             let periodExpense = 0;
@@ -1203,13 +1238,13 @@
             netFlowEl.className = `value ${savings >= 0 ? 'income' : 'expense'}`;
 
             document.getElementById('analytics-summary-text').innerHTML = 
-                `Nel mese selezionato hai incassato <strong>€ ${periodIncome.toFixed(2)}</strong> a fronte di <strong>€ ${periodExpense.toFixed(2)}</strong> di uscite.`;
+                `Nel periodo selezionato hai incassato <strong>€ ${periodIncome.toFixed(2)}</strong> a fronte di <strong>€ ${periodExpense.toFixed(2)}</strong> di uscite.`;
 
             let advice = "Ottima gestione! Le tue finanze in questo periodo risultano stabili ed equilibrate.";
             let topCategory = Object.keys(categoryBreakdown).reduce((a, b) => categoryBreakdown[a] > categoryBreakdown[b] ? a : b, null);
 
             if (periodIncome === 0 && periodExpense === 0) {
-                advice = "Nessuna transazione registrata per questo mese. Aggiungi le tue operazioni per sbloccare l'analisi dettagliata e i consigli strategici.";
+                advice = "Nessuna transazione registrata per questo periodo. Aggiungi le tue operazioni per sbloccare l'analisi dettagliata e i consigli strategici.";
             } else if (savingsRate < 0) {
                 advice = `⚠️ <strong>Attenzione:</strong> Le uscite superano le entrate con un tasso di risparmio negativo del <strong>${savingsRate.toFixed(1)}%</strong>. Valuta di ridurre temporaneamente le spese superflue.`;
             } else if (topCategory && categoryBreakdown[topCategory] > (periodExpense * 0.4)) {
