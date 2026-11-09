@@ -805,7 +805,7 @@
                     </div>
                     <div class="form-group">
                         <label>Categoria</label>
-                        <input type="text" id="r-category" placeholder="Es. Utenze, Abbonamento">
+                        <select id="r-category"></select>
                     </div>
                 </div>
 
@@ -1208,6 +1208,7 @@
             } else {
                 stdFields.style.display = 'block';
                 trFields.style.display = 'none';
+                updateRecurringCategorySelect();
             }
         }
 
@@ -1221,6 +1222,23 @@
                 data.categories[type].forEach(cat => {
                     let opt = document.createElement('option');
                     opt.value = cat.name; opt.textContent = cat.name;
+                    select.appendChild(opt);
+                });
+            }
+        }
+
+        function updateRecurringCategorySelect() {
+            const type = document.getElementById('r-type').value;
+            if (type === 'Giroconto') return;
+            const select = document.getElementById('r-category');
+            if (!select) return;
+            select.innerHTML = '';
+
+            if (data.categories[type]) {
+                data.categories[type].forEach(cat => {
+                    let opt = document.createElement('option');
+                    opt.value = cat.name;
+                    opt.textContent = cat.name;
                     select.appendChild(opt);
                 });
             }
@@ -1395,7 +1413,7 @@
                 if(item.fromAccount === item.toAccount) { alert("Scegli due conti differenti per il giroconto ricorrente!"); return; }
             } else {
                 item.accountName = document.getElementById('r-account').value;
-                item.category = document.getElementById('r-category').value || 'Generale';
+                item.category = document.getElementById('r-category').value;
             }
 
             if(!data.recurring) data.recurring = [];
@@ -1743,10 +1761,13 @@
             updateAccountSelect();
             if (document.getElementById('t-type').value === 'Giroconto') updateTransferSelects('t-transfer-from', 't-transfer-to');
             if (document.getElementById('r-type').value === 'Giroconto') updateTransferSelects('r-from-account', 'r-to-account');
+            else updateRecurringCategorySelect();
+            
             renderAnalytics();
         }
 
         updateCategorySelect();
+        updateRecurringCategorySelect();
         renderApp();
         checkAppSecurityLock();
     </script>
