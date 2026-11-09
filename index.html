@@ -247,14 +247,23 @@
             gap: 6px;
         }
 
+        /* Stile uniforme per tutti i bottoni occhio privacy */
         .eye-toggle-btn {
             background: none;
             border: none;
             cursor: pointer;
             font-size: 0.85rem;
+            padding: 0;
             color: var(--text-light);
+            box-shadow: none;
+            width: auto;
             display: inline-flex;
             align-items: center;
+            transition: color 0.2s;
+        }
+
+        .eye-toggle-btn:hover {
+            color: var(--text);
         }
 
         .stat-box .value {
@@ -328,6 +337,7 @@
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--card-border);
             color: var(--text);
+            box-shadow: none;
         }
         .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); }
 
@@ -339,6 +349,7 @@
             width: auto;
             border-radius: var(--radius-sm);
             border: 1px solid rgba(239, 68, 68, 0.25);
+            box-shadow: none;
         }
 
         .btn-edit {
@@ -349,6 +360,7 @@
             width: auto;
             border-radius: var(--radius-sm);
             border: 1px solid rgba(99, 102, 241, 0.25);
+            box-shadow: none;
         }
 
         .btn-move {
@@ -359,6 +371,7 @@
             padding: 4px 6px;
             border-radius: var(--radius-sm);
             width: auto;
+            box-shadow: none;
         }
 
         .account-card-item {
@@ -690,11 +703,11 @@
 
                 <div id="transfer-transaction-fields" style="display: none;">
                     <div class="form-group">
-                        <label>Conto Origine</label>
+                        <label>Conto Origine (Da dove prelevi)</label>
                         <select id="t-transfer-from"></select>
                     </div>
                     <div class="form-group">
-                        <label>Conto Destinazione</label>
+                        <label>Conto Destinazione (Dove accrediti)</label>
                         <select id="t-transfer-to"></select>
                     </div>
                 </div>
@@ -788,7 +801,7 @@
     <div id="tab-savings" class="tab-content">
         <div class="card">
             <h2>
-                <span>⚙️ Configurazione Piano</span>
+                <span>Configurazione Piano</span>
                 <button class="btn-edit" onclick="toggleEditSavingsPlan()" id="btn-toggle-edit-plan" style="padding: 5px 10px;">✏️ Modifica Piano</button>
             </h2>
             
@@ -832,7 +845,7 @@
                         <strong class="value" id="plan-wants" style="color:#f59e0b;">€ 0.00</strong>
                     </div>
                     <div class="analytics-mini-box">
-                        <span>Risparmio/Mese</span>
+                        <span>Risparmio/M</span>
                         <strong class="value income" id="plan-savings">€ 0.00</strong>
                     </div>
                 </div>
@@ -884,11 +897,11 @@
 
                 <div id="r-transfer-fields" style="display:none;">
                     <div class="form-group">
-                        <label>Conto Origine</label>
+                        <label>Conto Origine (Da dove prelevi)</label>
                         <select id="r-from-account"></select>
                     </div>
                     <div class="form-group">
-                        <label>Conto Destinazione</label>
+                        <label>Conto Destinazione (Dove accrediti)</label>
                         <select id="r-to-account"></select>
                     </div>
                 </div>
