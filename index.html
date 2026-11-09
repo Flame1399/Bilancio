@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartBudget Ultimate Pro</title>
+    <title>SmartBudget PWA Ultimate Pro</title>
     <!-- Libreria Chart.js per i grafici visivi -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -453,7 +453,7 @@
             <button class="nav-item" onclick="switchTab('patrimony', this)">💰 Patrimonio</button>
             <button class="nav-item" onclick="switchTab('categories', this)">🏷️ Categorie</button>
             <button class="nav-item" onclick="switchTab('savings', this)">🎯 Piano Risparmio</button>
-            <button class="nav-item" onclick="switchTab('recurring', this)">🔄 Ricorrenti</button>
+            <button class="nav-item" onclick="switchTab('recurring', this)">🔄 Ricorrenti <span id="recurring-badge" style="display:none; background:var(--warning); color:#000; font-size:0.6rem; padding:1px 5px; border-radius:6px; font-weight:800; margin-left:auto;">PROMEMORIA</span></button>
             <button class="nav-item" onclick="switchTab('analytics', this)">📈 Analisi & Report</button>
         </div>
 
@@ -645,7 +645,7 @@
     <div id="tab-savings" class="tab-content">
         <div class="card">
             <h2>
-                <span>Configurazione Piano</span>
+                <span></span>Configurazione Piano</span>
                 <button class="btn-edit" onclick="toggleEditSavingsPlan()" id="btn-toggle-edit-plan" style="padding: 5px 10px; width:auto;">✏️ Modifica Piano</button>
             </h2>
             
@@ -689,7 +689,7 @@
                         <strong class="value" id="plan-wants" style="color:#f59e0b;">€ 0.00</strong>
                     </div>
                     <div class="analytics-mini-box">
-                        <span>Risparmio/Mese</span>
+                        <span>Risparmio/M</span>
                         <strong class="value income" id="plan-savings">€ 0.00</strong>
                     </div>
                 </div>
@@ -764,6 +764,9 @@
 
         <div class="card">
             <h2>I tuoi Movimenti Ricorrenti</h2>
+            <div class="analytics-report-banner" style="margin-bottom: 12px; font-size: 0.78rem;">
+                🔔 Ricordati di applicare i movimenti fissi se non l'hai ancora fatto questo mese.
+            </div>
             <div id="recurring-list"></div>
         </div>
     </div>
@@ -884,7 +887,7 @@
             document.body.setAttribute('data-theme', currentTheme);
             document.getElementById('theme-toggle-icon').textContent = currentTheme === 'dark' ? '☀️' : '🌙';
             localStorage.setItem('smart_budget_theme', currentTheme);
-            renderAnalytics(); // Rigenera i grafici per adattare i colori al tema
+            renderAnalytics();
         }
 
         function exportBackupJSON() {
@@ -1270,7 +1273,6 @@
             else if (savingsRate >= 20) advice = `🌟 Tasso risparmio del <strong>${savingsRate.toFixed(1)}%</strong>! Valuta di investire l'eccedenza.`;
             document.getElementById('ana-financial-advice').innerHTML = advice;
 
-            // RENDER GRAFICI CHART.JS
             renderCharts(categoryBreakdown, targetYear, targetMonth);
         }
 
@@ -1279,7 +1281,6 @@
             const textColor = isDark ? '#f8fafc' : '#0f172a';
             const gridColor = isDark ? '#1e293b' : '#e2e8f0';
 
-            // 1. Grafico a Torta Categorie
             const pieCtx = document.getElementById('categoryPieChart').getContext('2d');
             const catLabels = Object.keys(categoryBreakdown);
             const catValues = Object.values(categoryBreakdown);
@@ -1305,7 +1306,6 @@
                 }
             });
 
-            // 2. Grafico a Barre Ultimi 6 Mesi
             const barCtx = document.getElementById('trendBarChart').getContext('2d');
             let monthsLabels = [];
             let incomeData = [];
@@ -1406,7 +1406,6 @@
                     </div>`;
             });
 
-            // FILTRI TRANSAZIONI (Tipo, Conto, Ricerca Testuale e Date)
             let tList = document.getElementById('transaction-list');
             tList.innerHTML = '';
             let filterType = document.getElementById('filter-type').value;
@@ -1475,6 +1474,15 @@
 
             let rList = document.getElementById('recurring-list');
             rList.innerHTML = (!data.recurring || data.recurring.length === 0) ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0;">Nessun movimento ricorrente impostato.</p>' : '';
+            
+            // Gestione promemoria visivo badge ricorrenti
+            const recurringBadge = document.getElementById('recurring-badge');
+            if (data.recurring && data.recurring.length > 0) {
+                recurringBadge.style.display = 'inline-block';
+            } else {
+                recurringBadge.style.display = 'none';
+            }
+
             if(data.recurring) {
                 data.recurring.forEach(r => {
                     let infoText = r.type === 'Giroconto' ? `${r.fromAccount} ➡️ ${r.toAccount}` : `${r.accountName} (${r.category})`;
