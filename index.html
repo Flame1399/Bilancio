@@ -453,6 +453,19 @@
 
         .filter-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
 
+        /* FIX MOBILE PER FILTRI DATA SENZA SOVRAPPOSIZIONI */
+        .date-filter-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        @media (min-width: 480px) {
+            .date-filter-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.25s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
@@ -627,14 +640,15 @@
                 <input type="text" id="search-transaction" placeholder="🔍 Cerca transazione per testo..." oninput="renderApp()">
             </div>
 
-            <div class="filter-bar" style="grid-template-columns: 1fr 1fr; margin-bottom: 12px; font-size: 0.75rem;">
+            <!-- GRIGLIA FILTRI DATA OTTIMIZZATA PER MOBILE (NIENTE SOVRAPPOSIZIONI) -->
+            <div class="date-filter-grid">
                 <div>
                     <label style="font-size:0.7rem;">Dal giorno</label>
-                    <input type="date" id="filter-date-from" onchange="renderApp()" style="padding: 6px; font-size: 0.8rem;">
+                    <input type="date" id="filter-date-from" onchange="renderApp()" style="padding: 8px; font-size: 0.85rem;">
                 </div>
                 <div>
                     <label style="font-size:0.7rem;">Al giorno</label>
-                    <input type="date" id="filter-date-to" onchange="renderApp()" style="padding: 6px; font-size: 0.8rem;">
+                    <input type="date" id="filter-date-to" onchange="renderApp()" style="padding: 8px; font-size: 0.85rem;">
                 </div>
             </div>
 
@@ -808,12 +822,12 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Importo (€) <span style="font-size:0.7rem; color:var(--text-light);">(Lascia 0 se variabile o da definire)</span></label>
+                    <label>Importo (€) <span style="font-size:0.7rem; color:var(--text-light);">(Lascia 0 se il prezzo varia di mese in mese)</span></label>
                     <input type="number" id="r-amount" step="0.01" value="0.00" placeholder="0.00">
                 </div>
                 <div class="form-group">
                     <label>Descrizione / Nome Tipologia</label>
-                    <input type="text" id="r-desc" placeholder="Es. Bolletta Acqua, Netflix..." required>
+                    <input type="text" id="r-desc" placeholder="Es. Bolletta Acqua, Luce..." required>
                 </div>
                 <button type="submit">Crea Tipologia Ricorrente</button>
             </form>
@@ -822,7 +836,7 @@
         <div class="card">
             <h2>I tuoi Promemoria e Spese Ricorrenti</h2>
             <div class="analytics-report-banner" style="margin-bottom: 12px; font-size: 0.78rem;">
-                💡 Se una spesa è variabile (es. bolletta), puoi inserire l'importo esatto al momento di applicarla o modificarla.
+                💡 Se una spesa è a prezzo variabile (es. bolletta), inserendo 0 l'app ti chiederà l'importo esatto ogni volta che cliccherai su **"▶️ Applica"**.
             </div>
             <div id="recurring-list"></div>
         </div>
