@@ -212,6 +212,7 @@
             margin-bottom: 20px;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
             border: 1px solid var(--card-border);
+            width: 100%;
             overflow: hidden;
         }
 
@@ -277,6 +278,7 @@
         input, select {
             width: 100%;
             max-width: 100%;
+            box-sizing: border-box;
             padding: 14px;
             border: 1px solid var(--card-border);
             border-radius: var(--radius-md);
@@ -939,7 +941,6 @@
             document.getElementById('tab-' + tabId).classList.add('active');
             btnElement.classList.add('active');
 
-            // Chiude il menu laterale automaticamente dopo la selezione su mobile
             toggleSidebar();
 
             if(tabId === 'analytics') {
