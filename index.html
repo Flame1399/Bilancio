@@ -665,7 +665,7 @@
         .analytics-card-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
+            gap: 8px;
             margin-bottom: 14px;
         }
 
@@ -673,23 +673,29 @@
             background: var(--input-bg);
             border: 1px solid var(--card-border);
             border-radius: var(--radius-md);
-            padding: 12px;
+            padding: 10px 6px;
             text-align: center;
+            overflow: hidden;
         }
 
         .analytics-mini-box span {
             display: block;
-            font-size: 0.68rem;
+            font-size: 0.65rem;
             color: var(--text-light);
             text-transform: uppercase;
             font-weight: 600;
             margin-bottom: 4px;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+            overflow: hidden;
         }
 
         .analytics-mini-box strong {
-            font-size: 0.95rem;
+            font-size: 0.82rem;
             font-weight: 800;
+            white-space: nowrap;
+            display: block;
         }
 
         .analytics-report-banner {
@@ -881,15 +887,15 @@
         </div>
     </div>
 
-    <!-- TAB 5: PIANO DI RISPARMIO DEDICATO E FORMATTATO -->
+    <!-- TAB 5: PIANO DI RISPARMIO FORMATTATO E PERFETTAMENTE ALLINEATO -->
     <div id="tab-savings" class="tab-content">
         <div class="card">
             <h2>
-                <span>⚙️ Configurazione Piano</span>
+                <span>Configurazione piano</span>
                 <button class="btn-edit" onclick="toggleEditSavingsPlan()" id="btn-toggle-edit-plan" style="width: auto; padding: 6px 12px;">✏️ Modifica Piano</button>
             </h2>
             
-            <!-- FORM DI MODIFICA DEL PIANO (INIZIALMENTE NASCOSTO) -->
+            <!-- FORM DI MODIFICA DEL PIANO -->
             <div id="savings-plan-edit-form" style="display: none; border-top: 1px solid var(--card-border); padding-top: 16px; margin-top: 12px; margin-bottom: 16px;">
                 <div class="form-group">
                     <label>Stipendio Mensile Fisso (€)</label>
@@ -918,21 +924,21 @@
                 <button class="btn-secondary" onclick="toggleEditSavingsPlan()" style="margin-top: 4px;">Chiudi Modifica</button>
             </div>
 
-            <!-- ANTEPRIMA RIPARTIZIONE STIPENDIO -->
+            <!-- ANTEPRIMA RIPARTIZIONE STIPENDIO CORRETTA -->
             <div style="margin-top: 4px;">
-                <p style="font-size: 0.8rem; color: var(--text-light); margin-bottom: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Ripartizione Stipendio Attuale</p>
+                <p style="font-size: 0.75rem; color: var(--text-light); margin-bottom: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Ripartizione Stipendio Attuale</p>
                 <div class="analytics-card-grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 0;">
                     <div class="analytics-mini-box">
                         <span>Necessità</span>
-                        <strong class="value expense" id="plan-needs" style="font-size:0.82rem;">€ 0.00</strong>
+                        <strong class="value expense" id="plan-needs">€ 0.00</strong>
                     </div>
                     <div class="analytics-mini-box">
                         <span>Svago</span>
-                        <strong class="value" id="plan-wants" style="font-size:0.82rem; color:#f59e0b;">€ 0.00</strong>
+                        <strong class="value" id="plan-wants" style="color:#f59e0b;">€ 0.00</strong>
                     </div>
                     <div class="analytics-mini-box">
                         <span>Risparmio/Mese</span>
-                        <strong class="value income" id="plan-savings" style="font-size:0.82rem;">€ 0.00</strong>
+                        <strong class="value income" id="plan-savings">€ 0.00</strong>
                     </div>
                 </div>
             </div>
@@ -995,15 +1001,15 @@
             <div class="analytics-card-grid">
                 <div class="analytics-mini-box">
                     <span>Entrate</span>
-                    <strong class="value income" id="ana-income" style="font-size:0.9rem;">€ 0.00</strong>
+                    <strong class="value income" id="ana-income">€ 0.00</strong>
                 </div>
                 <div class="analytics-mini-box">
                     <span>Uscite</span>
-                    <strong class="value expense" id="ana-expense" style="font-size:0.9rem;">€ 0.00</strong>
+                    <strong class="value expense" id="ana-expense">€ 0.00</strong>
                 </div>
                 <div class="analytics-mini-box">
                     <span>Risparmio</span>
-                    <strong class="value" id="ana-savings" style="font-size:0.9rem;">€ 0.00</strong>
+                    <strong class="value" id="ana-savings">€ 0.00</strong>
                 </div>
             </div>
 
