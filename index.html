@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartBudget PWA Stabile</title>
+    <title>SmartBudget PWA Ultimate Pro</title>
     <!-- Libreria Chart.js per i grafici visivi -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -52,44 +52,7 @@
             transition: background 0.3s, color 0.3s;
         }
 
-        #toast-container {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 20000;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            width: 90%;
-            max-width: 400px;
-            pointer-events: none;
-        }
-
-        .toast-msg {
-            background: var(--card-bg);
-            color: var(--text);
-            border: 1px solid var(--card-border);
-            padding: 12px 16px;
-            border-radius: var(--radius-md);
-            font-size: 0.85rem;
-            font-weight: 600;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            animation: toastIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            pointer-events: auto;
-        }
-        .toast-msg.success { border-left: 4px solid var(--success); }
-        .toast-msg.error { border-left: 4px solid var(--danger); }
-        .toast-msg.info { border-left: 4px solid var(--info); }
-
-        @keyframes toastIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
+        /* OVERLAY SCHERMATA DI BLOCCO */
         #app-lock-screen {
             position: fixed;
             top: 0;
@@ -482,29 +445,7 @@
         .transaction-amount.uscita { color: var(--danger); }
         .transaction-amount.giroconto { color: var(--info); }
 
-        .quick-date-row {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-            margin-bottom: 8px;
-        }
-        .quick-date-btn {
-            background: var(--input-bg);
-            border: 1px solid var(--card-border);
-            color: var(--text-light);
-            font-size: 0.7rem;
-            padding: 6px 2px;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            text-align: center;
-            font-weight: 600;
-        }
-        .quick-date-btn.active {
-            background: rgba(99, 102, 241, 0.15);
-            color: #818cf8;
-            border-color: rgba(99, 102, 241, 0.4);
-        }
-
+        /* NUOVA STRUTTURA FLUIDA PER I PROMEMORIA RICORRENTI SU MOBILE */
         .recurring-item-card {
             background: var(--input-bg);
             border: 1px solid var(--card-border);
@@ -615,8 +556,6 @@
 </head>
 <body data-theme="dark">
 
-    <div id="toast-container"></div>
-
     <!-- SCHERMATA DI BLOCCO APPLICAZIONE -->
     <div id="app-lock-screen" style="display: none;">
         <div class="lock-card">
@@ -656,7 +595,7 @@
             <button class="nav-item" onclick="switchTab('transactions', this)">💳 Transazioni</button>
             <button class="nav-item" onclick="switchTab('patrimony', this)">💰 Patrimonio</button>
             <button class="nav-item" onclick="switchTab('categories', this)">🏷️ Categorie</button>
-            <button class="nav-item" onclick="switchTab('savings', this)">🎯 Obiettivi & Risparmio</button>
+            <button class="nav-item" onclick="switchTab('savings', this)">🎯 Piano Risparmio</button>
             <button class="nav-item" onclick="switchTab('recurring', this)">🔄 Ricorrenti <span id="recurring-badge" style="display:none; background:var(--warning); color:#000; font-size:0.58rem; padding:1px 4px; border-radius:6px; font-weight:800; margin-left:auto;">PROMEMORIA</span></button>
             <button class="nav-item" onclick="switchTab('analytics', this)">📈 Analisi & Report</button>
         </div>
@@ -665,11 +604,6 @@
         <div style="display: flex; flex-direction: column; gap: 8px; padding: 0 4px;">
             <button class="btn-secondary" onclick="configureSecurityPIN()" style="font-size: 0.8rem; padding: 10px;">🔑 Imposta / Modifica PIN</button>
             <button class="btn-secondary" onclick="lockAppNow()" style="font-size: 0.8rem; padding: 10px;">🔒 Blocca App Ora</button>
-        </div>
-
-        <div class="sidebar-section-title">Notifiche & Extra</div>
-        <div style="display: flex; flex-direction: column; gap: 8px; padding: 0 4px;">
-            <button class="btn-secondary" onclick="requestNotificationPermission()" style="font-size: 0.8rem; padding: 10px;">🔔 Abilita Notifiche Push</button>
         </div>
 
         <div class="sidebar-section-title">Gestione Dati & Backup</div>
@@ -692,7 +626,7 @@
                 <div class="value patrimony" id="net-worth">€ 0.00</div>
             </div>
             <div class="stat-box">
-                <h3>Flusso Netto Mese</h3>
+                <h3>Flusso Mensile</h3>
                 <div class="value" id="monthly-flow">€ 0.00</div>
             </div>
             <div class="stat-box">
@@ -781,12 +715,6 @@
                 </select>
             </div>
             
-            <div class="quick-date-row">
-                <button type="button" class="quick-date-btn active" onclick="setQuickDateFilter('all', this)">Tutti</button>
-                <button type="button" class="quick-date-btn" onclick="setQuickDateFilter('month', this)">Questo Mese</button>
-                <button type="button" class="quick-date-btn" onclick="setQuickDateFilter('30days', this)">Ultimi 30 gg</button>
-            </div>
-
             <div class="form-group" style="margin-bottom: 8px;">
                 <input type="text" id="search-transaction" placeholder="🔍 Cerca transazione per testo..." oninput="renderApp()">
             </div>
@@ -825,13 +753,6 @@
 
         <div class="card">
             <h2>
-                <span>Andamento Patrimonio Netto</span>
-            </h2>
-            <div style="position: relative; height: 180px; width: 100%; margin-bottom: 16px;">
-                <canvas id="netWorthChart"></canvas>
-            </div>
-            
-            <h2>
                 <span>I tuoi Asset</span>
                 <button class="eye-toggle-btn" onclick="toggleAccountsVisibility()" id="eye-accounts-btn" title="Mostra/Nascondi Conti">👁️</button>
             </h2>
@@ -869,30 +790,76 @@
         </div>
     </div>
 
-    <!-- TAB 5: OBIETTIVO RISPARMIO -->
+    <!-- TAB 5: PIANO RISPARMIO -->
     <div id="tab-savings" class="tab-content">
         <div class="card">
-            <h2>🎯 Obiettivo di Risparmio Globale</h2>
-            <form id="savings-form">
+            <h2>
+                <span>⚙️ Configurazione Piano</span>
+                <button class="btn-edit" onclick="toggleEditSavingsPlan()" id="btn-toggle-edit-plan" style="padding: 5px 8px; width:auto;">✏️ Modifica</button>
+            </h2>
+            
+            <div id="savings-plan-edit-form" style="display: none; border-top: 1px solid var(--card-border); padding-top: 12px; margin-top: 10px; margin-bottom: 12px;">
                 <div class="form-group">
-                    <label>Nome Obiettivo</label>
-                    <input type="text" id="s-name" placeholder="Es. Fondo Emergenza, Vacanze" required>
+                    <label>Stipendio Mensile Fisso (€)</label>
+                    <input type="number" id="savings-salary" placeholder="Es. 1800" oninput="saveSavingsPlanSettings()">
                 </div>
+                
                 <div class="form-group">
-                    <label>Cifra Target (€)</label>
-                    <input type="number" id="s-target" step="0.01" placeholder="3000" required>
+                    <label>Regola di Ripartizione</label>
+                    <select id="savings-rule" onchange="saveSavingsPlanSettings()">
+                        <option value="50-30-20">Regola 50 / 30 / 20 (Consigliata)</option>
+                        <option value="60-20-10-10">Regola 60 / 20 / 10 / 10</option>
+                        <option value="custom-20">Risparmio Fisso 20%</option>
+                        <option value="custom-30">Risparmio Aggressivo 30%</option>
+                    </select>
                 </div>
+
                 <div class="form-group">
-                    <label>Già Accantonato (€)</label>
-                    <input type="number" id="s-saved" step="0.01" placeholder="0.00" required>
+                    <label>Cifra Target Risparmio (€)</label>
+                    <input type="number" id="goal-target" placeholder="Es. 6000" oninput="saveSavingsPlanSettings()">
                 </div>
-                <button type="submit">Salva Obiettivo</button>
-            </form>
+
+                <div class="form-group">
+                    <label>Tempo Target (Mesi)</label>
+                    <input type="number" id="goal-months" placeholder="Es. 12" oninput="saveSavingsPlanSettings()">
+                </div>
+                <button class="btn-secondary" onclick="toggleEditSavingsPlan()">Chiudi Modifica</button>
+            </div>
+
+            <div style="margin-top: 4px;">
+                <p style="font-size: 0.72rem; color: var(--text-light); margin-bottom: 8px; font-weight: 600; text-transform: uppercase;">Ripartizione Stipendio Attuale</p>
+                <div class="analytics-card-grid" style="margin-bottom: 0;">
+                    <div class="analytics-mini-box">
+                        <span>Necessità</span>
+                        <strong class="value expense" id="plan-needs">€ 0.00</strong>
+                    </div>
+                    <div class="analytics-mini-box">
+                        <span>Svago</span>
+                        <strong class="value" id="plan-wants" style="color:#f59e0b;">€ 0.00</strong>
+                    </div>
+                    <div class="analytics-mini-box">
+                        <span>Risparmio</span>
+                        <strong class="value income" id="plan-savings">€ 0.00</strong>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="card">
-            <h2>Stato Avanzamento</h2>
-            <div id="savings-card-view"></div>
+            <h2>🏆 Avanzamento Obiettivo</h2>
+            <div>
+                <div class="budget-info">
+                    <span>Risparmio Effettivo: <strong id="goal-current-saved" style="color:var(--success);">€ 0.00</strong></span>
+                    <span>Target: <strong id="goal-target-label">€ 0.00</strong></span>
+                </div>
+                <div class="progress-bar-container" style="height: 9px; margin-bottom: 10px;">
+                    <div class="progress-bar" id="goal-progress-bar" style="width: 0%; background-color: var(--success);"></div>
+                </div>
+                <div class="analytics-report-banner">
+                    <div>🎯</div>
+                    <div id="goal-status-text" style="font-size: 0.78rem;">In attesa di dati...</div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -937,12 +904,6 @@
                     <label>Importo (€) <span style="font-size:0.65rem; color:var(--text-light);">(Vuoto = variabile)</span></label>
                     <input type="number" id="r-amount" step="0.01" placeholder="0.00">
                 </div>
-
-                <div class="form-group">
-                    <label>Giorno di Scadenza Mensile (1-31)</label>
-                    <input type="number" id="r-day" min="1" max="31" placeholder="Es. 15">
-                </div>
-
                 <div class="form-group">
                     <label>Descrizione / Nome Tipologia</label>
                     <input type="text" id="r-desc" placeholder="Es. Stipendio, Affitto..." required>
@@ -1030,7 +991,6 @@
     </div>
 
     <script>
-        // CARICAMENTO SICURO DAL BROWSER
         let data = JSON.parse(localStorage.getItem('smart_budget_data_autosync')) || {
             categories: {
                 Uscita: [
@@ -1050,8 +1010,14 @@
             accounts: [
                 { name: "Conto Corrente", balance: 0, isMain: true }
             ],
-            recurring: [],
-            savingsGoal: { name: "Fondo d'Emergenza", target: 3000, saved: 1000 }
+            recurring: []
+        };
+
+        let savingsSettings = JSON.parse(localStorage.getItem('smart_budget_savings_settings')) || {
+            salary: 1800,
+            rule: '50-30-20',
+            target: 6000,
+            months: 12
         };
 
         let userSecurityPin = localStorage.getItem('smart_budget_security_pin') || null;
@@ -1062,38 +1028,6 @@
 
         let pieChartInstance = null;
         let barChartInstance = null;
-        let netWorthChartInstance = null;
-
-        function showToast(message, type = 'success') {
-            if ('vibrate' in navigator) navigator.vibrate(40);
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast-msg ${type}`;
-            let icon = type === 'success' ? '✅' : (type === 'error' ? '❌' : 'ℹ️');
-            toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
-            container.appendChild(toast);
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateY(20px)';
-                toast.style.transition = 'all 0.3s ease';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
-
-        function requestNotificationPermission() {
-            if (!("Notification" in window)) {
-                showToast("Il tuo browser non supporta le notifiche", "error");
-                return;
-            }
-            Notification.requestPermission().then(permission => {
-                if (permission === "granted") {
-                    showToast("Notifiche abilitate con successo!", "success");
-                    new Notification("SmartBudget", { body: "Ti avviseremo quando ci sono scadenze imminenti." });
-                } else {
-                    showToast("Permesso notifiche negato", "info");
-                }
-            });
-        }
 
         function checkAppSecurityLock() {
             if (userSecurityPin) {
@@ -1107,7 +1041,7 @@
 
         function lockAppNow() {
             if (!userSecurityPin) {
-                showToast("Imposta prima un PIN dal menu laterale!", "info");
+                alert("Imposta prima un PIN dal menu laterale per attivare il blocco!");
                 return;
             }
             toggleSidebar();
@@ -1117,23 +1051,25 @@
         }
 
         function configureSecurityPIN() {
-            let pin = prompt("Imposta un PIN di 4 cifre (lascia vuoto per disattivare):");
+            let pin = prompt("Imposta un PIN di 4 cifre (lascia vuoto per disattivare la protezione):");
             if (pin === null) return;
             if (pin === "") {
                 localStorage.removeItem('smart_budget_security_pin');
                 userSecurityPin = null;
-                showToast("Protezione PIN disattivata", "info");
+                alert("Protezione disattivata.");
             } else if (pin.length === 4 && !isNaN(pin)) {
                 localStorage.setItem('smart_budget_security_pin', pin);
                 userSecurityPin = pin;
-                showToast("PIN salvato con successo!", "success");
+                alert("PIN salvato con successo!");
             } else {
-                showToast("Inserisci esattamente 4 cifre numeriche!", "error");
+                alert("Inserisci esattamente 4 cifre numeriche!");
             }
         }
 
         function focusNextPin(elem, nextId) {
-            if (elem.value.length === 1 && nextId) document.getElementById(nextId).focus();
+            if (elem.value.length === 1 && nextId) {
+                document.getElementById(nextId).focus();
+            }
         }
 
         function clearPinFields() {
@@ -1144,12 +1080,17 @@
         }
 
         function checkEnteredPin() {
-            let entered = ['p1', 'p2', 'p3', 'p4'].map(id => document.getElementById(id).value).join('');
+            let p1 = document.getElementById('p1').value;
+            let p2 = document.getElementById('p2').value;
+            let p3 = document.getElementById('p3').value;
+            let p4 = document.getElementById('p4').value;
+            let entered = p1 + p2 + p3 + p4;
+
             if (entered === userSecurityPin) {
                 document.getElementById('app-lock-screen').style.display = 'none';
                 clearPinFields();
             } else {
-                showToast("PIN non corretto!", "error");
+                alert("PIN non corretto!");
                 clearPinFields();
                 document.getElementById('p1').focus();
             }
@@ -1170,7 +1111,6 @@
             document.getElementById('theme-toggle-icon').textContent = currentTheme === 'dark' ? '☀️' : '🌙';
             localStorage.setItem('smart_budget_theme', currentTheme);
             renderAnalytics();
-            renderNetWorthChart();
         }
 
         function exportBackupJSON() {
@@ -1181,7 +1121,6 @@
             document.body.appendChild(dlAnchor);
             dlAnchor.click();
             dlAnchor.remove();
-            showToast("Backup esportato con successo!", "success");
         }
 
         function exportTransactionsCSV() {
@@ -1199,7 +1138,6 @@
             document.body.appendChild(link);
             link.click();
             link.remove();
-            showToast("Report CSV esportato!", "success");
         }
 
         function importBackupJSON(event) {
@@ -1210,27 +1148,75 @@
                     if(parsed.accounts && parsed.transactions) {
                         data = parsed;
                         saveData();
-                        showToast("Backup ripristinato con successo!", "success");
+                        alert("Backup ripristinato con successo!");
                     } else {
-                        showToast("File di backup non valido", "error");
+                        alert("File di backup non valido!");
                     }
                 } catch(err) {
-                    showToast("Errore nella lettura del file", "error");
+                    alert("Errore nella lettura del file!");
                 }
             };
             fileReader.readAsText(event.target.files[0]);
         }
 
-        document.getElementById('savings-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const name = document.getElementById('s-name').value;
-            const target = parseFloat(document.getElementById('s-target').value);
-            const saved = parseFloat(document.getElementById('s-saved').value);
+        function toggleEditSavingsPlan() {
+            const form = document.getElementById('savings-plan-edit-form');
+            const btn = document.getElementById('btn-toggle-edit-plan');
+            if (form.style.display === 'none') {
+                form.style.display = 'block';
+                btn.textContent = '✕ Chiudi';
+            } else {
+                form.style.display = 'none';
+                btn.textContent = '✏️ Modifica';
+            }
+        }
 
-            data.savingsGoal = { name, target, saved };
-            saveData();
-            showToast("Obiettivo di risparmio aggiornato!", "success");
-        });
+        function saveSavingsPlanSettings() {
+            savingsSettings.salary = parseFloat(document.getElementById('savings-salary').value) || 0;
+            savingsSettings.rule = document.getElementById('savings-rule').value;
+            savingsSettings.target = parseFloat(document.getElementById('goal-target').value) || 0;
+            savingsSettings.months = parseFloat(document.getElementById('goal-months').value) || 1;
+            
+            localStorage.setItem('smart_budget_savings_settings', JSON.stringify(savingsSettings));
+            updateSavingsPlanUI();
+        }
+
+        function updateSavingsPlanUI() {
+            const salary = savingsSettings.salary;
+            const rule = savingsSettings.rule;
+
+            let needs = 0, wants = 0, savingsPerMonth = 0;
+            if (rule === '50-30-20') { needs = salary * 0.50; wants = salary * 0.30; savingsPerMonth = salary * 0.20; }
+            else if (rule === '60-20-10-10') { needs = salary * 0.60; wants = salary * 0.20; savingsPerMonth = salary * 0.20; }
+            else if (rule === 'custom-20') { savingsPerMonth = salary * 0.20; needs = salary * 0.55; wants = salary * 0.25; }
+            else if (rule === 'custom-30') { savingsPerMonth = salary * 0.30; needs = salary * 0.50; wants = salary * 0.20; }
+
+            document.getElementById('plan-needs').textContent = `€ ${needs.toFixed(2)}`;
+            document.getElementById('plan-wants').textContent = `€ ${wants.toFixed(2)}`;
+            document.getElementById('plan-savings').textContent = `€ ${savingsPerMonth.toFixed(2)}`;
+
+            let totalSavedActual = 0;
+            data.transactions.forEach(t => {
+                if (t.type === 'Entrata') totalSavedActual += t.amount;
+                else if (t.type === 'Uscita') totalSavedActual -= t.amount;
+            });
+            if(totalSavedActual < 0) totalSavedActual = 0;
+
+            const target = savingsSettings.target;
+            const months = savingsSettings.months;
+            const percentage = target > 0 ? (totalSavedActual / target) * 100 : 0;
+
+            document.getElementById('goal-current-saved').textContent = `€ ${totalSavedActual.toFixed(2)}`;
+            document.getElementById('goal-target-label').textContent = `€ ${target.toFixed(2)}`;
+            document.getElementById('goal-progress-bar').style.width = `${Math.min(percentage, 100)}%`;
+
+            let statusMsg = `Sei al <strong>${percentage.toFixed(1)}%</strong> dell'obiettivo di <strong>€ ${target.toFixed(2)}</strong>.`;
+            if (months > 0 && target > 0) {
+                let requiredMonthly = target / months;
+                statusMsg += `<br>Stima: <strong>€ ${requiredMonthly.toFixed(2)}/mese</strong>.`;
+            }
+            document.getElementById('goal-status-text').innerHTML = statusMsg;
+        }
 
         function toggleAccountsVisibility() {
             hideAccounts = !hideAccounts;
@@ -1252,7 +1238,7 @@
             toggleSidebar();
 
             if(tabId === 'analytics') renderAnalytics();
-            else if(tabId === 'patrimony') renderNetWorthChart();
+            else if(tabId === 'savings') updateSavingsPlanUI();
         }
 
         function initAnalyticsSelectors() {
@@ -1270,31 +1256,6 @@
                 }
                 monthSelect.value = now.getMonth();
             }
-        }
-
-        function setQuickDateFilter(mode, btn) {
-            document.querySelectorAll('.quick-date-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            let fromInput = document.getElementById('filter-date-from');
-            let toInput = document.getElementById('filter-date-to');
-            let now = new Date();
-
-            if (mode === 'all') {
-                fromInput.value = '';
-                toInput.value = '';
-            } else if (mode === 'month') {
-                let firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-                let lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-                fromInput.value = firstDay.toISOString().slice(0, 10);
-                toInput.value = lastDay.toISOString().slice(0, 10);
-            } else if (mode === '30days') {
-                let past = new Date();
-                past.setDate(now.getDate() - 30);
-                fromInput.value = past.toISOString().slice(0, 10);
-                toInput.value = now.toISOString().slice(0, 10);
-            }
-            renderApp();
         }
 
         function onTransactionTypeChange() {
@@ -1371,13 +1332,15 @@
             if(!data.categories[type]) data.categories[type] = [];
 
             let existing = data.categories[type].find(c => c.name.toLowerCase() === name.toLowerCase());
-            if (existing) existing.limit = limit;
-            else data.categories[type].push({ name, limit });
+            if (existing) {
+                existing.limit = limit;
+            } else {
+                data.categories[type].push({ name, limit });
+            }
 
             saveData();
             this.reset();
             document.getElementById('c-limit').value = "150";
-            showToast("Categoria salvata!", "success");
         });
 
         function editCategory(type, name) {
@@ -1387,19 +1350,17 @@
             if (promptVal === null) return;
             let newLimit = parseFloat(promptVal);
             if (isNaN(newLimit) || newLimit < 0) {
-                showToast("Importo non valido", "error");
+                alert("Importo non valido!");
                 return;
             }
             cat.limit = newLimit;
             saveData();
-            showToast("Categoria aggiornata", "success");
         }
 
         function deleteCategory(type, name) {
             if(data.categories[type]) {
                 data.categories[type] = data.categories[type].filter(c => c.name !== name);
                 saveData();
-                showToast("Categoria eliminata", "info");
             }
         }
 
@@ -1439,7 +1400,6 @@
         function setMainAccount(name) {
             data.accounts.forEach(acc => acc.isMain = (acc.name === name));
             saveData();
-            showToast(`Conto principale impostato: ${name}`, "success");
         }
 
         function moveAccount(index, direction) {
@@ -1456,7 +1416,6 @@
                 document.getElementById('acc-balance').value = account.balance;
                 document.getElementById('account-form-title').textContent = "Modifica Conto";
                 document.getElementById('account-submit-btn').textContent = "Aggiorna Conto";
-                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
         }
 
@@ -1470,18 +1429,12 @@
             saveData(); this.reset();
             document.getElementById('account-form-title').textContent = "Aggiungi / Crea Conto";
             document.getElementById('account-submit-btn').textContent = "Salva Conto";
-            showToast("Conto salvato con successo!", "success");
         });
 
         function deleteAccount(name) {
-            if(data.accounts.length <= 1) {
-                showToast("Devi mantenere almeno un conto attivo!", "error");
-                return;
-            }
             data.accounts = data.accounts.filter(acc => acc.name !== name);
             if (data.accounts.length > 0 && !data.accounts.some(a => a.isMain)) data.accounts[0].isMain = true;
             saveData();
-            showToast("Conto eliminato", "info");
         }
 
         document.getElementById('transaction-form').addEventListener('submit', function(e) {
@@ -1493,10 +1446,7 @@
             if (type === 'Giroconto') {
                 const fromAccName = document.getElementById('t-transfer-from').value;
                 const toAccName = document.getElementById('t-transfer-to').value;
-                if (fromAccName === toAccName) {
-                    showToast("Scegli due conti differenti per il giroconto!", "error");
-                    return;
-                }
+                if (fromAccName === toAccName) { alert("Scegli due conti differenti!"); return; }
                 let accFrom = data.accounts.find(acc => acc.name === fromAccName);
                 let accTo = data.accounts.find(acc => acc.name === toAccName);
                 if (accFrom && accTo) { accFrom.balance -= amount; accTo.balance += amount; }
@@ -1509,7 +1459,6 @@
                 data.transactions.unshift({ id: Date.now(), type, accountName, amount, category, desc: desc || category, date: new Date().toISOString() });
             }
             saveData(); this.reset(); document.getElementById('t-type').value = 'Uscita'; onTransactionTypeChange();
-            showToast("Operazione registrata!", "success");
         });
 
         function deleteTransaction(id) {
@@ -1527,7 +1476,6 @@
             }
             data.transactions = data.transactions.filter(item => item.id !== id);
             saveData();
-            showToast("Transazione eliminata", "info");
         }
 
         document.getElementById('recurring-form').addEventListener('submit', function(e) {
@@ -1535,7 +1483,6 @@
             const editId = document.getElementById('r-edit-id').value;
             const type = document.getElementById('r-type').value;
             const amount = parseFloat(document.getElementById('r-amount').value) || 0;
-            const day = parseInt(document.getElementById('r-day').value) || 1;
             const desc = document.getElementById('r-desc').value;
 
             if(!data.recurring) data.recurring = [];
@@ -1545,7 +1492,6 @@
                 if (item) {
                     item.type = type;
                     item.amount = amount;
-                    item.day = day;
                     item.desc = desc;
                     if (type === 'Giroconto') {
                         item.fromAccount = document.getElementById('r-from-account').value;
@@ -1560,14 +1506,11 @@
                     }
                 }
             } else {
-                let item = { id: Date.now(), type, amount, day, desc };
+                let item = { id: Date.now(), type, amount, desc };
                 if(type === 'Giroconto') {
                     item.fromAccount = document.getElementById('r-from-account').value;
                     item.toAccount = document.getElementById('r-to-account').value;
-                    if(item.fromAccount === item.toAccount) {
-                        showToast("Scegli due conti differenti!", "error");
-                        return;
-                    }
+                    if(item.fromAccount === item.toAccount) { alert("Scegli due conti differenti!"); return; }
                 } else {
                     item.accountName = document.getElementById('r-account').value;
                     item.category = document.getElementById('r-category').value;
@@ -1577,14 +1520,12 @@
 
             saveData();
             resetRecurringForm();
-            showToast("Promemoria ricorrente salvato!", "success");
         });
 
         function resetRecurringForm() {
             document.getElementById('recurring-form').reset();
             document.getElementById('r-edit-id').value = '';
             document.getElementById('r-amount').value = '';
-            document.getElementById('r-day').value = '';
             document.getElementById('recurring-form-title').textContent = "Nuovo Promemoria Ricorrente";
             document.getElementById('recurring-submit-btn').textContent = "Crea Tipologia Ricorrente";
             onRecurringTypeChange();
@@ -1607,7 +1548,6 @@
             }
 
             document.getElementById('r-amount').value = (r.amount && r.amount > 0) ? r.amount : '';
-            document.getElementById('r-day').value = r.day || '';
             document.getElementById('r-desc').value = r.desc;
 
             document.getElementById('recurring-form-title').textContent = "Modifica Promemoria Ricorrente";
@@ -1619,7 +1559,6 @@
         function deleteRecurring(id) {
             data.recurring = data.recurring.filter(r => r.id !== id);
             saveData();
-            showToast("Promemoria eliminato", "info");
         }
 
         function executeRecurring(id) {
@@ -1632,7 +1571,7 @@
                 if (promptVal === null) return;
                 finalAmount = parseFloat(promptVal);
                 if (isNaN(finalAmount) || finalAmount <= 0) {
-                    showToast("Importo non valido", "error");
+                    alert("Importo non valido!");
                     return;
                 }
             }
@@ -1648,61 +1587,7 @@
                 data.transactions.unshift({ id: Date.now(), type: r.type, accountName: r.accountName, amount: finalAmount, category: r.category, desc: r.desc, date: new Date().toISOString() });
             }
             saveData();
-            showToast(`Applicato: "${r.desc}" per € ${finalAmount.toFixed(2)}`, "success");
-        }
-
-        function renderNetWorthChart() {
-            const ctx = document.getElementById('netWorthChart').getContext('2d');
-            const isDark = currentTheme === 'dark';
-            const textColor = isDark ? '#f8fafc' : '#0f172a';
-            const gridColor = isDark ? '#1e293b' : '#e2e8f0';
-
-            let monthsLabels = [];
-            let netWorthData = [];
-            let currentNetWorth = data.accounts.reduce((sum, acc) => sum + acc.balance, 0);
-
-            const now = new Date();
-            for (let i = 5; i >= 0; i--) {
-                let d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-                monthsLabels.push(d.toLocaleString('it-IT', { month: 'short', year: '2-digit' }));
-                
-                let pastValue = currentNetWorth;
-                data.transactions.forEach(t => {
-                    let td = new Date(t.date);
-                    if (td >= d && td > new Date(now.getFullYear(), now.getMonth() - i + 1, 1)) {
-                        if (t.type === 'Entrata') pastValue -= t.amount;
-                        else if (t.type === 'Uscita') pastValue += t.amount;
-                    }
-                });
-                netWorthData.push(Math.max(0, pastValue));
-            }
-
-            if (netWorthChartInstance) netWorthChartInstance.destroy();
-
-            netWorthChartInstance = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: monthsLabels,
-                    datasets: [{
-                        label: 'Patrimonio Netto',
-                        data: netWorthData,
-                        borderColor: '#818cf8',
-                        backgroundColor: 'rgba(129, 140, 248, 0.15)',
-                        borderWidth: 3,
-                        fill: true,
-                        tension: 0.3
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        x: { ticks: { color: textColor, font: { size: 9 } }, grid: { display: false } },
-                        y: { ticks: { color: textColor, font: { size: 9 } }, grid: { color: gridColor } }
-                    },
-                    plugins: { legend: { display: false } }
-                }
-            });
+            alert(`Operazione "${r.desc}" registrata per € ${finalAmount.toFixed(2)}!`);
         }
 
         function renderAnalytics() {
@@ -1835,27 +1720,15 @@
                 if(eyeBtn) eyeBtn.textContent = "👁️"; if(eyeAccBtn) eyeAccBtn.textContent = "👁️"; if(eyeTransBtn) eyeTransBtn.textContent = "👁️";
             }
 
-            if(data.savingsGoal) {
-                document.getElementById('s-name').value = data.savingsGoal.name;
-                document.getElementById('s-target').value = data.savingsGoal.target;
-                document.getElementById('s-saved').value = data.savingsGoal.saved;
-
-                let sPct = data.savingsGoal.target > 0 ? (data.savingsGoal.saved / data.savingsGoal.target) * 100 : 0;
-                document.getElementById('savings-card-view').innerHTML = `
-                    <div style="background:var(--input-bg); border:1px solid var(--card-border); border-radius:var(--radius-md); padding:12px;">
-                        <div style="display:flex; justify-content:space-between; font-size:0.82rem; margin-bottom:6px;">
-                            <span><strong>${data.savingsGoal.name}</strong></span>
-                            <span style="font-weight:800; color:var(--success);">€ ${data.savingsGoal.saved.toFixed(2)} / € ${data.savingsGoal.target.toFixed(2)}</span>
-                        </div>
-                        <div class="progress-bar-container"><div class="progress-bar" style="width: ${Math.min(sPct, 100)}%; background-color: var(--success);"></div></div>
-                    </div>`;
-            }
+            document.getElementById('savings-salary').value = savingsSettings.salary;
+            document.getElementById('savings-rule').value = savingsSettings.rule;
+            document.getElementById('goal-target').value = savingsSettings.target;
+            document.getElementById('goal-months').value = savingsSettings.months;
+            updateSavingsPlanUI();
 
             const now = new Date();
             let monthlyIncome = 0, monthlyExpense = 0, categoryExpenses = {};
-            if(data.categories && data.categories["Uscita"]) {
-                data.categories["Uscita"].forEach(c => categoryExpenses[c.name] = 0);
-            }
+            data.categories["Uscita"].forEach(c => categoryExpenses[c.name] = 0);
 
             data.transactions.forEach(t => {
                 let tDate = new Date(t.date);
@@ -1868,9 +1741,7 @@
             let monthlyFlow = monthlyIncome - monthlyExpense;
             document.getElementById('monthly-income').textContent = `€ ${monthlyIncome.toFixed(2)}`;
             document.getElementById('monthly-expense').textContent = `€ ${monthlyExpense.toFixed(2)}`;
-            let flowEl = document.getElementById('monthly-flow');
-            flowEl.textContent = `€ ${monthlyFlow.toFixed(2)}`;
-            flowEl.className = `value ${monthlyFlow >= 0 ? 'income' : 'expense'}`;
+            document.getElementById('monthly-flow').textContent = `€ ${monthlyFlow.toFixed(2)}`;
 
             let adviceText = "Gestione stabile.";
             let savingsRateMonth = monthlyIncome > 0 ? ((monthlyIncome - monthlyExpense) / monthlyIncome) * 100 : 0;
@@ -1885,19 +1756,17 @@
 
             let budgetContainer = document.getElementById('budget-alerts-container');
             budgetContainer.innerHTML = '';
-            if(data.categories && data.categories["Uscita"]) {
-                data.categories["Uscita"].forEach(cat => {
-                    let spent = categoryExpenses[cat.name] || 0;
-                    let limit = cat.limit;
-                    let percentage = limit > 0 ? (spent / limit) * 100 : 0;
-                    let barColor = percentage >= 100 ? 'var(--danger)' : (percentage >= 80 ? 'var(--warning)' : 'var(--success)');
-                    budgetContainer.innerHTML += `
-                        <div class="budget-item">
-                            <div class="budget-info"><span><strong>${cat.name}</strong></span><span>€ ${spent.toFixed(2)} / € ${limit.toFixed(2)}</span></div>
-                            <div class="progress-bar-container"><div class="progress-bar" style="width: ${Math.min(percentage, 100)}%; background-color: ${barColor};"></div></div>
-                        </div>`;
-                });
-            }
+            data.categories["Uscita"].forEach(cat => {
+                let spent = categoryExpenses[cat.name] || 0;
+                let limit = cat.limit;
+                let percentage = limit > 0 ? (spent / limit) * 100 : 0;
+                let barColor = percentage >= 100 ? 'var(--danger)' : (percentage >= 80 ? 'var(--warning)' : 'var(--success)');
+                budgetContainer.innerHTML += `
+                    <div class="budget-item">
+                        <div class="budget-info"><span><strong>${cat.name}</strong></span><span>€ ${spent.toFixed(2)} / € ${limit.toFixed(2)}</span></div>
+                        <div class="progress-bar-container"><div class="progress-bar" style="width: ${Math.min(percentage, 100)}%; background-color: ${barColor};"></div></div>
+                    </div>`;
+            });
 
             let catManagerList = document.getElementById('category-list-manager');
             if (catManagerList) {
@@ -1940,34 +1809,26 @@
                 return matchType && matchAcc && matchSearch && matchDateFrom && matchDateTo;
             });
 
-            if(filtered.length === 0) {
-                tList.innerHTML = `
-                    <div style="text-align:center; padding: 25px 0; color:var(--text-light);">
-                        <div style="font-size: 2rem; margin-bottom: 6px;">📂</div>
-                        <p style="font-size:0.82rem; font-weight:600;">Nessun movimento trovato</p>
-                        <p style="font-size:0.72rem; margin-top:4px;">Usa il modulo sopra per registrare la tua prima spesa o entrata.</p>
-                    </div>`;
-            } else {
-                filtered.slice(0, 40).forEach(t => {
-                    let d = new Date(t.date).toLocaleDateString();
-                    let isGiroconto = t.type === 'Giroconto', isEntrata = t.type === 'Entrata';
-                    let badgeClass = isGiroconto ? 'giroconto' : (isEntrata ? 'entrata' : 'uscita');
-                    let badgeSymbol = isGiroconto ? '🔄' : (isEntrata ? '+' : '-');
-                    let metaText = isGiroconto ? `Da <strong>${t.fromAccount}</strong> a <strong>${t.toAccount}</strong>` : `<span class="t-tag">${t.category}</span> • ${t.accountName}`;
+            if(filtered.length === 0) tList.innerHTML = '<p style="color:var(--text-light); text-align:center; padding: 10px 0; font-size:0.8rem;">Nessun movimento.</p>';
+            filtered.slice(0, 40).forEach(t => {
+                let d = new Date(t.date).toLocaleDateString();
+                let isGiroconto = t.type === 'Giroconto', isEntrata = t.type === 'Entrata';
+                let badgeClass = isGiroconto ? 'giroconto' : (isEntrata ? 'entrata' : 'uscita');
+                let badgeSymbol = isGiroconto ? '🔄' : (isEntrata ? '+' : '-');
+                let metaText = isGiroconto ? `Da <strong>${t.fromAccount}</strong> a <strong>${t.toAccount}</strong>` : `<span class="t-tag">${t.category}</span> • ${t.accountName}`;
 
-                    tList.innerHTML += `
-                        <div class="transaction-card">
-                            <div class="transaction-left">
-                                <div class="transaction-badge ${badgeClass}">${badgeSymbol}</div>
-                                <div class="transaction-details"><span class="t-desc">${t.desc}</span><span class="t-meta">${metaText} • ${d}</span></div>
-                            </div>
-                            <div class="transaction-right">
-                                <span class="transaction-amount ${badgeClass}">${isGiroconto?'🔄 ':(isEntrata?'+':'-')}€ ${t.amount.toFixed(2)}</span>
-                                <button class="btn-danger" onclick="deleteTransaction(${t.id})" style="padding:3px 6px!important; font-size:0.68rem!important;">Elimina</button>
-                            </div>
-                        </div>`;
-                });
-            }
+                tList.innerHTML += `
+                    <div class="transaction-card">
+                        <div class="transaction-left">
+                            <div class="transaction-badge ${badgeClass}">${badgeSymbol}</div>
+                            <div class="transaction-details"><span class="t-desc">${t.desc}</span><span class="t-meta">${metaText} • ${d}</span></div>
+                        </div>
+                        <div class="transaction-right">
+                            <span class="transaction-amount ${badgeClass}">${isGiroconto?'🔄 ':(isEntrata?'+':'-')}€ ${t.amount.toFixed(2)}</span>
+                            <button class="btn-danger" onclick="deleteTransaction(${t.id})" style="padding:3px 6px!important; font-size:0.68rem!important;">Elimina</button>
+                        </div>
+                    </div>`;
+            });
 
             let accList = document.getElementById('account-list');
             accList.innerHTML = '';
@@ -1994,6 +1855,7 @@
                     </div>`;
             });
 
+            // RENDERING LISTA RICORRENTI MOBILE CON TITOLO A CAPO E IMPORTO A DESTRA
             let rList = document.getElementById('recurring-list');
             rList.innerHTML = (!data.recurring || data.recurring.length === 0) ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0; font-size:0.8rem;">Nessun promemoria ricorrente.</p>' : '';
             
@@ -2009,14 +1871,13 @@
                     let infoText = r.type === 'Giroconto' ? `${r.fromAccount} ➡️ ${r.toAccount}` : `${r.accountName} • ${r.category}`;
                     let displayAmt = r.amount > 0 ? `€ ${r.amount.toFixed(2)}` : `Variabile`;
                     let amtClass = r.amount > 0 ? 'recurring-amount-badge' : 'recurring-amount-badge variable';
-                    let dayText = r.day ? `📅 Scade il ${r.day}° del mese` : '';
                     
                     rList.innerHTML += `
                         <div class="recurring-item-card">
                             <div class="recurring-top-row">
                                 <div class="recurring-info-box">
                                     <span class="recurring-title">${r.desc}</span>
-                                    <span class="recurring-meta">${r.type} • ${infoText} ${dayText ? '• ' + dayText : ''}</span>
+                                    <span class="recurring-meta">${r.type} • ${infoText}</span>
                                 </div>
                                 <div class="${amtClass}">${displayAmt}</div>
                             </div>
@@ -2035,7 +1896,6 @@
             else updateRecurringCategorySelect();
             
             renderAnalytics();
-            renderNetWorthChart();
         }
 
         updateCategorySelect();
