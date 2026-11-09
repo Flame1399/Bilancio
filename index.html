@@ -45,7 +45,7 @@
         body {
             background-color: var(--bg);
             color: var(--text);
-            padding: 20px;
+            padding: 12px;
             max-width: 600px;
             margin: 0 auto;
             padding-bottom: 50px;
@@ -104,15 +104,15 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 28px;
-            padding-top: 12px;
+            margin-bottom: 20px;
+            padding-top: 8px;
             position: relative;
         }
 
         .header-title-area { text-align: center; flex-grow: 1; }
 
         header h1 {
-            font-size: 1.85rem;
+            font-size: 1.6rem;
             background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -120,7 +120,7 @@
             letter-spacing: -0.5px;
         }
 
-        header p { font-size: 0.85rem; color: var(--text-light); margin-top: 6px; font-weight: 400; }
+        header p { font-size: 0.78rem; color: var(--text-light); margin-top: 4px; font-weight: 400; }
 
         .header-actions { display: flex; gap: 8px; position: absolute; right: 0; }
 
@@ -128,13 +128,13 @@
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             color: var(--text);
-            width: 42px;
-            height: 42px;
+            width: 38px;
+            height: 38px;
             border-radius: var(--radius-md);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             cursor: pointer;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             transition: all 0.2s ease;
@@ -242,8 +242,8 @@
         .card {
             background: var(--card-bg);
             border-radius: var(--radius-lg);
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 16px;
+            margin-bottom: 16px;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
             border: 1px solid var(--card-border);
             width: 100%;
@@ -253,13 +253,13 @@
         .dashboard-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 14px;
-            margin-bottom: 20px;
+            gap: 10px;
+            margin-bottom: 16px;
         }
 
         .stat-box {
             background: var(--card-bg);
-            padding: 18px;
+            padding: 14px 10px;
             border-radius: var(--radius-md);
             border: 1px solid var(--card-border);
             text-align: center;
@@ -267,16 +267,16 @@
         }
 
         .stat-box h3 {
-            font-size: 0.7rem;
+            font-size: 0.65rem;
             color: var(--text-light);
             text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
             font-weight: 600;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
+            gap: 4px;
         }
 
         button.eye-toggle-btn {
@@ -285,8 +285,8 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 0.95rem;
-            padding: 2px 6px;
+            font-size: 0.85rem;
+            padding: 2px 5px;
             border-radius: var(--radius-sm);
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid var(--card-border);
@@ -295,14 +295,14 @@
         }
         button.eye-toggle-btn:hover { background: rgba(255, 255, 255, 0.1); }
 
-        .stat-box .value { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.3px; }
+        .stat-box .value { font-size: 1.15rem; font-weight: 800; letter-spacing: -0.3px; }
         .value.income { color: var(--success); }
         .value.expense { color: var(--danger); }
         .value.patrimony { color: #818cf8; }
 
         h2 {
-            font-size: 1.05rem;
-            margin-bottom: 16px;
+            font-size: 0.98rem;
+            margin-bottom: 12px;
             color: var(--text);
             display: flex;
             justify-content: space-between;
@@ -310,24 +310,24 @@
             font-weight: 700;
         }
 
-        .form-group { margin-bottom: 14px; width: 100%; }
+        .form-group { margin-bottom: 12px; width: 100%; }
 
         label {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.8rem;
+            font-size: 0.78rem;
             color: var(--text-light);
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             font-weight: 500;
         }
 
         input, select {
             width: 100%;
-            padding: 12px;
+            padding: 10px 12px;
             border: 1px solid var(--card-border);
             border-radius: var(--radius-md);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             background: var(--input-bg);
             color: var(--text);
             outline: none;
@@ -336,12 +336,12 @@
 
         button:not(.eye-toggle-btn):not(.menu-btn):not(.sidebar-close):not(.theme-btn) {
             width: 100%;
-            padding: 12px;
+            padding: 11px;
             background-color: var(--primary);
             color: white;
             border: none;
             border-radius: var(--radius-md);
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -354,21 +354,23 @@
         .btn-danger {
             background-color: rgba(239, 68, 68, 0.12) !important;
             color: var(--danger) !important;
-            padding: 5px 8px !important;
-            font-size: 0.75rem !important;
+            padding: 6px 8px !important;
+            font-size: 0.72rem !important;
             width: auto !important;
             border-radius: var(--radius-sm) !important;
             border: 1px solid rgba(239, 68, 68, 0.25) !important;
+            font-weight: 600;
         }
 
         .btn-edit {
             background-color: rgba(99, 102, 241, 0.12) !important;
             color: #818cf8 !important;
-            padding: 5px 8px !important;
-            font-size: 0.75rem !important;
+            padding: 6px 8px !important;
+            font-size: 0.72rem !important;
             width: auto !important;
             border-radius: var(--radius-sm) !important;
             border: 1px solid rgba(99, 102, 241, 0.25) !important;
+            font-weight: 600;
         }
 
         .btn-move {
@@ -385,16 +387,16 @@
             background: var(--input-bg);
             border: 1px solid var(--card-border);
             border-radius: var(--radius-md);
-            padding: 14px;
-            margin-bottom: 10px;
+            padding: 12px;
+            margin-bottom: 8px;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 6px;
         }
 
         .account-header-row { display: flex; justify-content: space-between; align-items: center; }
-        .account-name-area { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.95rem; }
-        .account-balance-area { font-weight: 800; color: #818cf8; font-size: 1.05rem; }
+        .account-name-area { display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 0.9rem; }
+        .account-balance-area { font-weight: 800; color: #818cf8; font-size: 0.98rem; }
         .account-actions-row { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--card-border); padding-top: 6px; }
         .account-move-group, .account-mgmt-group { display: flex; gap: 4px; }
 
@@ -402,62 +404,140 @@
             background: var(--input-bg);
             border: 1px solid var(--card-border);
             border-radius: var(--radius-md);
-            padding: 12px;
+            padding: 10px 12px;
             margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .category-name-area { font-weight: 700; font-size: 0.88rem; display: flex; flex-direction: column; gap: 2px; }
+        .category-name-area { font-weight: 700; font-size: 0.85rem; display: flex; flex-direction: column; gap: 2px; }
         .category-actions { display: flex; gap: 6px; align-items: center; }
 
-        .main-badge { font-size: 0.68rem; background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 5px; border-radius: 4px; }
-        .normal-badge { font-size: 0.68rem; background: rgba(255, 255, 255, 0.05); color: var(--text-light); border: 1px solid var(--card-border); padding: 2px 5px; border-radius: 4px; cursor: pointer; }
+        .main-badge { font-size: 0.65rem; background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 4px; border-radius: 4px; }
+        .normal-badge { font-size: 0.65rem; background: rgba(255, 255, 255, 0.05); color: var(--text-light); border: 1px solid var(--card-border); padding: 2px 4px; border-radius: 4px; cursor: pointer; }
 
-        .budget-item { margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--card-border); }
+        .budget-item { margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--card-border); }
         .budget-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .budget-info { display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 6px; }
-        .progress-bar-container { width: 100%; background: var(--input-bg); border-radius: 6px; height: 8px; overflow: hidden; border: 1px solid var(--card-border); }
+        .budget-info { display: flex; justify-content: space-between; font-size: 0.78rem; margin-bottom: 4px; }
+        .progress-bar-container { width: 100%; background: var(--input-bg); border-radius: 6px; height: 7px; overflow: hidden; border: 1px solid var(--card-border); }
         .progress-bar { height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 6px; }
 
-        .advice-box { background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: var(--radius-md); padding: 14px; margin-top: 12px; }
-        .advice-box h3 { font-size: 0.88rem; color: #818cf8; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; font-weight: 700; }
-        .advice-box p { font-size: 0.82rem; color: var(--text-light); line-height: 1.4; }
+        .advice-box { background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: var(--radius-md); padding: 12px; margin-top: 10px; }
+        .advice-box h3 { font-size: 0.82rem; color: #818cf8; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; font-weight: 700; }
+        .advice-box p { font-size: 0.78rem; color: var(--text-light); line-height: 1.4; }
 
-        .transaction-list { max-height: 380px; overflow-y: auto; padding-right: 4px; }
-        .transaction-card { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        .transaction-left { display: flex; align-items: flex-start; gap: 10px; overflow: hidden; }
-        .transaction-badge { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.95rem; flex-shrink: 0; }
+        .transaction-list { max-height: 380px; overflow-y: auto; padding-right: 2px; }
+        .transaction-card { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .transaction-left { display: flex; align-items: flex-start; gap: 8px; overflow: hidden; }
+        .transaction-badge { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; flex-shrink: 0; }
         .transaction-badge.entrata { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
         .transaction-badge.uscita { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
         .transaction-badge.giroconto { background: rgba(59, 130, 246, 0.15); color: var(--info); border: 1px solid rgba(59, 130, 246, 0.3); }
 
         .transaction-details { display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
-        .transaction-details .t-desc { font-weight: 700; color: var(--text); font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .transaction-details .t-meta { font-size: 0.72rem; color: var(--text-light); display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
-        .t-tag { background: rgba(255, 255, 255, 0.05); padding: 1px 5px; border-radius: 4px; border: 1px solid var(--card-border); font-size: 0.68rem; }
+        .transaction-details .t-desc { font-weight: 700; color: var(--text); font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .transaction-details .t-meta { font-size: 0.68rem; color: var(--text-light); display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+        .t-tag { background: rgba(255, 255, 255, 0.05); padding: 1px 4px; border-radius: 4px; border: 1px solid var(--card-border); font-size: 0.65rem; }
 
-        .transaction-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; margin-left: 8px; }
-        .transaction-amount { font-weight: 800; font-size: 0.9rem; }
+        .transaction-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; margin-left: 6px; }
+        .transaction-amount { font-weight: 800; font-size: 0.85rem; }
         .transaction-amount.entrata { color: var(--success); }
         .transaction-amount.uscita { color: var(--danger); }
         .transaction-amount.giroconto { color: var(--info); }
 
-        .analytics-card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
-        .analytics-mini-box { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 10px 4px; text-align: center; overflow: hidden; }
-        .analytics-mini-box span { display: block; font-size: 0.65rem; color: var(--text-light); text-transform: uppercase; font-weight: 600; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .analytics-mini-box strong { font-size: 0.82rem; font-weight: 800; white-space: nowrap; display: block; }
+        /* NUOVA STRUTTURA FLUIDA PER I PROMEMORIA RICORRENTI SU MOBILE */
+        .recurring-item-card {
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-        .analytics-report-banner { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 12px; font-size: 0.82rem; color: var(--text-light); line-height: 1.4; display: flex; align-items: center; gap: 10px; }
+        .recurring-top-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+        }
 
-        .filter-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+        .recurring-info-box {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            min-width: 0;
+            flex-grow: 1;
+        }
 
-        /* FIX MOBILE PER FILTRI DATA SENZA SOVRAPPOSIZIONI */
+        .recurring-title {
+            font-weight: 700;
+            color: var(--text);
+            font-size: 0.92rem;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .recurring-meta {
+            font-size: 0.72rem;
+            color: var(--text-light);
+            line-height: 1.35;
+            word-break: break-word;
+        }
+
+        .recurring-amount-badge {
+            font-weight: 800;
+            font-size: 0.88rem;
+            white-space: nowrap;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+            padding: 3px 8px;
+            border-radius: var(--radius-sm);
+            color: #818cf8;
+            flex-shrink: 0;
+        }
+
+        .recurring-amount-badge.variable {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.25);
+            color: var(--warning);
+            font-size: 0.75rem;
+        }
+
+        .recurring-buttons-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 6px;
+            border-top: 1px solid var(--card-border);
+            padding-top: 8px;
+        }
+
+        .recurring-buttons-grid button {
+            width: 100% !important;
+            padding: 8px 2px !important;
+            font-size: 0.72rem !important;
+            text-align: center;
+            justify-content: center;
+            border-radius: var(--radius-sm) !important;
+            white-space: nowrap;
+        }
+
+        .analytics-card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; }
+        .analytics-mini-box { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 8px 2px; text-align: center; overflow: hidden; }
+        .analytics-mini-box span { display: block; font-size: 0.6rem; color: var(--text-light); text-transform: uppercase; font-weight: 600; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .analytics-mini-box strong { font-size: 0.78rem; font-weight: 800; white-space: nowrap; display: block; }
+
+        .analytics-report-banner { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 10px; font-size: 0.78rem; color: var(--text-light); line-height: 1.4; display: flex; align-items: center; gap: 8px; }
+
+        .filter-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; }
+
         .date-filter-grid {
             display: grid;
             grid-template-columns: 1fr;
             gap: 8px;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
         @media (min-width: 480px) {
             .date-filter-grid {
@@ -480,8 +560,8 @@
     <div id="app-lock-screen" style="display: none;">
         <div class="lock-card">
             <div class="lock-icon">🔐</div>
-            <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 6px;">SmartBudget Protezione</h3>
-            <p style="font-size: 0.82rem; color: var(--text-light);">Digita il PIN di 4 cifre per accedere</p>
+            <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 6px;">SmartBudget Protezione</h3>
+            <p style="font-size: 0.78rem; color: var(--text-light);">Digita il PIN di 4 cifre per accedere</p>
             
             <div class="pin-inputs">
                 <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-digit" id="p1" oninput="focusNextPin(this, 'p2')">
@@ -516,7 +596,7 @@
             <button class="nav-item" onclick="switchTab('patrimony', this)">💰 Patrimonio</button>
             <button class="nav-item" onclick="switchTab('categories', this)">🏷️ Categorie</button>
             <button class="nav-item" onclick="switchTab('savings', this)">🎯 Piano Risparmio</button>
-            <button class="nav-item" onclick="switchTab('recurring', this)">🔄 Ricorrenti <span id="recurring-badge" style="display:none; background:var(--warning); color:#000; font-size:0.6rem; padding:1px 5px; border-radius:6px; font-weight:800; margin-left:auto;">PROMEMORIA</span></button>
+            <button class="nav-item" onclick="switchTab('recurring', this)">🔄 Ricorrenti <span id="recurring-badge" style="display:none; background:var(--warning); color:#000; font-size:0.58rem; padding:1px 4px; border-radius:6px; font-weight:800; margin-left:auto;">PROMEMORIA</span></button>
             <button class="nav-item" onclick="switchTab('analytics', this)">📈 Analisi & Report</button>
         </div>
 
@@ -639,15 +719,14 @@
                 <input type="text" id="search-transaction" placeholder="🔍 Cerca transazione per testo..." oninput="renderApp()">
             </div>
 
-            <!-- GRIGLIA FILTRI DATA OTTIMIZZATA PER MOBILE (NIENTE SOVRAPPOSIZIONI) -->
             <div class="date-filter-grid">
                 <div>
-                    <label style="font-size:0.7rem;">Dal giorno</label>
-                    <input type="date" id="filter-date-from" onchange="renderApp()" style="padding: 8px; font-size: 0.85rem;">
+                    <label style="font-size:0.68rem;">Dal giorno</label>
+                    <input type="date" id="filter-date-from" onchange="renderApp()" style="padding: 7px; font-size: 0.82rem;">
                 </div>
                 <div>
-                    <label style="font-size:0.7rem;">Al giorno</label>
-                    <input type="date" id="filter-date-to" onchange="renderApp()" style="padding: 8px; font-size: 0.85rem;">
+                    <label style="font-size:0.68rem;">Al giorno</label>
+                    <input type="date" id="filter-date-to" onchange="renderApp()" style="padding: 7px; font-size: 0.82rem;">
                 </div>
             </div>
 
@@ -716,10 +795,10 @@
         <div class="card">
             <h2>
                 <span>⚙️ Configurazione Piano</span>
-                <button class="btn-edit" onclick="toggleEditSavingsPlan()" id="btn-toggle-edit-plan" style="padding: 5px 10px; width:auto;">✏️ Modifica Piano</button>
+                <button class="btn-edit" onclick="toggleEditSavingsPlan()" id="btn-toggle-edit-plan" style="padding: 5px 8px; width:auto;">✏️ Modifica</button>
             </h2>
             
-            <div id="savings-plan-edit-form" style="display: none; border-top: 1px solid var(--card-border); padding-top: 14px; margin-top: 12px; margin-bottom: 14px;">
+            <div id="savings-plan-edit-form" style="display: none; border-top: 1px solid var(--card-border); padding-top: 12px; margin-top: 10px; margin-bottom: 12px;">
                 <div class="form-group">
                     <label>Stipendio Mensile Fisso (€)</label>
                     <input type="number" id="savings-salary" placeholder="Es. 1800" oninput="saveSavingsPlanSettings()">
@@ -748,7 +827,7 @@
             </div>
 
             <div style="margin-top: 4px;">
-                <p style="font-size: 0.75rem; color: var(--text-light); margin-bottom: 10px; font-weight: 600; text-transform: uppercase;">Ripartizione Stipendio Attuale</p>
+                <p style="font-size: 0.72rem; color: var(--text-light); margin-bottom: 8px; font-weight: 600; text-transform: uppercase;">Ripartizione Stipendio Attuale</p>
                 <div class="analytics-card-grid" style="margin-bottom: 0;">
                     <div class="analytics-mini-box">
                         <span>Necessità</span>
@@ -759,7 +838,7 @@
                         <strong class="value" id="plan-wants" style="color:#f59e0b;">€ 0.00</strong>
                     </div>
                     <div class="analytics-mini-box">
-                        <span>Risparmio/Mese</span>
+                        <span>Risparmio</span>
                         <strong class="value income" id="plan-savings">€ 0.00</strong>
                     </div>
                 </div>
@@ -773,12 +852,12 @@
                     <span>Risparmio Effettivo: <strong id="goal-current-saved" style="color:var(--success);">€ 0.00</strong></span>
                     <span>Target: <strong id="goal-target-label">€ 0.00</strong></span>
                 </div>
-                <div class="progress-bar-container" style="height: 10px; margin-bottom: 12px;">
+                <div class="progress-bar-container" style="height: 9px; margin-bottom: 10px;">
                     <div class="progress-bar" id="goal-progress-bar" style="width: 0%; background-color: var(--success);"></div>
                 </div>
                 <div class="analytics-report-banner">
                     <div>🎯</div>
-                    <div id="goal-status-text" style="font-size: 0.8rem;">In attesa di dati...</div>
+                    <div id="goal-status-text" style="font-size: 0.78rem;">In attesa di dati...</div>
                 </div>
             </div>
         </div>
@@ -793,9 +872,9 @@
                 <div class="form-group">
                     <label>Tipo</label>
                     <select id="r-type" onchange="onRecurringTypeChange()">
-                        <option value="Uscita">Uscita Ricorrente / Variabile (Es. Bolletta Acqua, Affitto)</option>
-                        <option value="Entrata">Entrata Ricorrente (Es. Stipendio, Extra)</option>
-                        <option value="Giroconto">🔄 Giroconto Ricorrente (Risparmio)</option>
+                        <option value="Uscita">Uscita Ricorrente / Variabile</option>
+                        <option value="Entrata">Entrata Ricorrente</option>
+                        <option value="Giroconto">🔄 Giroconto Ricorrente</option>
                     </select>
                 </div>
                 
@@ -812,31 +891,31 @@
 
                 <div id="r-transfer-fields" style="display:none;">
                     <div class="form-group">
-                        <label>Conto Origine (Da dove prelevi)</label>
+                        <label>Conto Origine</label>
                         <select id="r-from-account"></select>
                     </div>
                     <div class="form-group">
-                        <label>Conto Destinazione (Dove accrediti)</label>
+                        <label>Conto Destinazione</label>
                         <select id="r-to-account"></select>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label>Importo (€) <span style="font-size:0.7rem; color:var(--text-light);">(Lascia vuoto o 0 se l'importo varia ogni mese)</span></label>
+                    <label>Importo (€) <span style="font-size:0.65rem; color:var(--text-light);">(Vuoto = variabile)</span></label>
                     <input type="number" id="r-amount" step="0.01" placeholder="0.00">
                 </div>
                 <div class="form-group">
                     <label>Descrizione / Nome Tipologia</label>
-                    <input type="text" id="r-desc" placeholder="Es. Stipendio Mensile, Affitto..." required>
+                    <input type="text" id="r-desc" placeholder="Es. Stipendio, Affitto..." required>
                 </div>
                 <button type="submit" id="recurring-submit-btn">Crea Tipologia Ricorrente</button>
             </form>
         </div>
 
         <div class="card">
-            <h2>I tuoi Promemoria Ricorrenti (Entrate & Uscite)</h2>
-            <div class="analytics-report-banner" style="margin-bottom: 12px; font-size: 0.78rem;">
-                💡 Clicca su **"▶️ Applica"** ogni volta che ricevi un'entrata o affronti una spesa per registrarla ufficialmente nel bilancio.
+            <h2>I tuoi Promemoria Ricorrenti</h2>
+            <div class="analytics-report-banner" style="margin-bottom: 12px; font-size: 0.75rem;">
+                💡 Clicca su **"▶️ Applica"** per registrare ufficialmente l'operazione nel bilancio.
             </div>
             <div id="recurring-list"></div>
         </div>
@@ -846,7 +925,7 @@
     <div id="tab-analytics" class="tab-content">
         <div class="card">
             <h2>Periodo di Riferimento</h2>
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 10px;">
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px;">
                 <div class="form-group" style="margin-bottom: 0;">
                     <label>Mese</label>
                     <select id="analytics-month" onchange="renderAnalytics()">
@@ -871,33 +950,32 @@
                 <div class="analytics-mini-box"><span>Risparmio</span><strong class="value" id="ana-savings">€ 0.00</strong></div>
             </div>
 
-            <div class="dashboard-grid" style="margin-bottom: 12px;">
+            <div class="dashboard-grid" style="margin-bottom: 10px;">
                 <div class="stat-box"><h3>Tasso Risparmio</h3><div class="value patrimony" id="ana-savings-rate">0%</div></div>
                 <div class="stat-box"><h3>Flusso Netto</h3><div class="value" id="ana-net-flow">€ 0.00</div></div>
             </div>
 
-            <div style="margin-top: 16px; margin-bottom: 16px;">
-                <p style="font-size: 0.75rem; color: var(--text-light); margin-bottom: 8px; font-weight: 600; text-transform: uppercase;">Ripartizione Spese per Categoria</p>
-                <div style="position: relative; height: 220px; width: 100%;">
+            <div style="margin-top: 14px; margin-bottom: 14px;">
+                <p style="font-size: 0.72rem; color: var(--text-light); margin-bottom: 6px; font-weight: 600; text-transform: uppercase;">Ripartizione Spese per Categoria</p>
+                <div style="position: relative; height: 200px; width: 100%;">
                     <canvas id="categoryPieChart"></canvas>
                 </div>
             </div>
 
-            <!-- SELETTORE ORIZZONTE TEMPORALE PERSONALIZZABILE -->
-            <div style="margin-top: 20px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
-                <p style="font-size: 0.75rem; color: var(--text-light); font-weight: 600; text-transform: uppercase;">Andamento Storico (Mesi)</p>
-                <select id="trend-months-select" onchange="renderAnalytics()" style="width: 120px; padding: 6px; font-size: 0.8rem;">
+            <div style="margin-top: 16px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                <p style="font-size: 0.72rem; color: var(--text-light); font-weight: 600; text-transform: uppercase;">Andamento Storico (Mesi)</p>
+                <select id="trend-months-select" onchange="renderAnalytics()" style="width: 110px; padding: 5px; font-size: 0.78rem;">
                     <option value="3">Ultimi 3 mesi</option>
                     <option value="6" selected>Ultimi 6 mesi</option>
                     <option value="12">Ultimi 12 mesi</option>
                 </select>
             </div>
             
-            <div style="position: relative; height: 200px; width: 100%;">
+            <div style="position: relative; height: 180px; width: 100%;">
                 <canvas id="trendBarChart"></canvas>
             </div>
 
-            <div class="analytics-report-banner" style="margin-top: 16px;">
+            <div class="analytics-report-banner" style="margin-top: 14px;">
                 <div>📊</div>
                 <div id="analytics-summary-text">Estratto conto in caricamento...</div>
             </div>
@@ -951,7 +1029,6 @@
         let pieChartInstance = null;
         let barChartInstance = null;
 
-        // VERIFICA BLOCCO APPLICAZIONE
         function checkAppSecurityLock() {
             if (userSecurityPin) {
                 document.getElementById('app-lock-screen').style.display = 'flex';
@@ -983,7 +1060,7 @@
             } else if (pin.length === 4 && !isNaN(pin)) {
                 localStorage.setItem('smart_budget_security_pin', pin);
                 userSecurityPin = pin;
-                alert("PIN salvato con successo! Verrà richiesto all'apertura dell'app.");
+                alert("PIN salvato con successo!");
             } else {
                 alert("Inserisci esattamente 4 cifre numeriche!");
             }
@@ -1136,7 +1213,7 @@
             let statusMsg = `Sei al <strong>${percentage.toFixed(1)}%</strong> dell'obiettivo di <strong>€ ${target.toFixed(2)}</strong>.`;
             if (months > 0 && target > 0) {
                 let requiredMonthly = target / months;
-                statusMsg += `<br>Per centrarlo in <strong>${months} mesi</strong>, la stima è di <strong>€ ${requiredMonthly.toFixed(2)}/mese</strong>.`;
+                statusMsg += `<br>Stima: <strong>€ ${requiredMonthly.toFixed(2)}/mese</strong>.`;
             }
             document.getElementById('goal-status-text').innerHTML = statusMsg;
         }
@@ -1246,7 +1323,6 @@
             }
         }
 
-        // GESTIONE DELLE CATEGORIE NELLA SCHEDA DEDICATA (CREAZIONE, EDIT E ELIMINAZIONE)
         document.getElementById('category-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const type = document.getElementById('c-type').value;
@@ -1270,11 +1346,11 @@
         function editCategory(type, name) {
             let cat = data.categories[type].find(c => c.name === name);
             if (!cat) return;
-            let promptVal = prompt(`Modifica limite mensile per la categoria "${name}" (€):`, cat.limit);
+            let promptVal = prompt(`Modifica limite mensile per "${name}" (€):`, cat.limit);
             if (promptVal === null) return;
             let newLimit = parseFloat(promptVal);
             if (isNaN(newLimit) || newLimit < 0) {
-                alert("Inserisci un importo valido!");
+                alert("Importo non valido!");
                 return;
             }
             cat.limit = newLimit;
@@ -1370,7 +1446,7 @@
             if (type === 'Giroconto') {
                 const fromAccName = document.getElementById('t-transfer-from').value;
                 const toAccName = document.getElementById('t-transfer-to').value;
-                if (fromAccName === toAccName) { alert("Scegli due conti differenti per il giroconto!"); return; }
+                if (fromAccName === toAccName) { alert("Scegli due conti differenti!"); return; }
                 let accFrom = data.accounts.find(acc => acc.name === fromAccName);
                 let accTo = data.accounts.find(acc => acc.name === toAccName);
                 if (accFrom && accTo) { accFrom.balance -= amount; accTo.balance += amount; }
@@ -1412,7 +1488,6 @@
             if(!data.recurring) data.recurring = [];
 
             if (editId) {
-                // MODIFICA ELEMENTO ESISTENTE
                 let item = data.recurring.find(r => r.id == editId);
                 if (item) {
                     item.type = type;
@@ -1431,12 +1506,11 @@
                     }
                 }
             } else {
-                // NUOVO ELEMENTO
                 let item = { id: Date.now(), type, amount, desc };
                 if(type === 'Giroconto') {
                     item.fromAccount = document.getElementById('r-from-account').value;
                     item.toAccount = document.getElementById('r-to-account').value;
-                    if(item.fromAccount === item.toAccount) { alert("Scegli due conti differenti per il giroconto ricorrente!"); return; }
+                    if(item.fromAccount === item.toAccount) { alert("Scegli due conti differenti!"); return; }
                 } else {
                     item.accountName = document.getElementById('r-account').value;
                     item.category = document.getElementById('r-category').value;
@@ -1473,14 +1547,12 @@
                 updateRecurringCategorySelect(r.category);
             }
 
-            // Se l'importo è 0 o vuoto, lo lascia vuoto nel form così puoi digitare subito
             document.getElementById('r-amount').value = (r.amount && r.amount > 0) ? r.amount : '';
             document.getElementById('r-desc').value = r.desc;
 
             document.getElementById('recurring-form-title').textContent = "Modifica Promemoria Ricorrente";
             document.getElementById('recurring-submit-btn').textContent = "Salva Modifiche";
 
-            // Scorri dolcemente verso il modulo in alto della scheda ricorrenti
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -1495,7 +1567,7 @@
 
             let finalAmount = r.amount;
             if (!finalAmount || finalAmount <= 0) {
-                let promptVal = prompt(`Inserisci l'importo per "${r.desc}" per questo mese (€):`, "");
+                let promptVal = prompt(`Inserisci l'importo per "${r.desc}" (€):`, "");
                 if (promptVal === null) return;
                 finalAmount = parseFloat(promptVal);
                 if (isNaN(finalAmount) || finalAmount <= 0) {
@@ -1515,7 +1587,7 @@
                 data.transactions.unshift({ id: Date.now(), type: r.type, accountName: r.accountName, amount: finalAmount, category: r.category, desc: r.desc, date: new Date().toISOString() });
             }
             saveData();
-            alert(`Operazione "${r.desc}" registrata con successo per € ${finalAmount.toFixed(2)}!`);
+            alert(`Operazione "${r.desc}" registrata per € ${finalAmount.toFixed(2)}!`);
         }
 
         function renderAnalytics() {
@@ -1544,11 +1616,11 @@
             document.getElementById('ana-savings-rate').textContent = `${savingsRate.toFixed(1)}%`;
             document.getElementById('ana-net-flow').textContent = `€ ${savings.toFixed(2)}`;
 
-            document.getElementById('analytics-summary-text').innerHTML = `Incassati <strong>€ ${periodIncome.toFixed(2)}</strong> a fronte di <strong>€ ${periodExpense.toFixed(2)}</strong> di uscite.`;
+            document.getElementById('analytics-summary-text').innerHTML = `Entrate <strong>€ ${periodIncome.toFixed(2)}</strong> | Uscite <strong>€ ${periodExpense.toFixed(2)}</strong>.`;
 
-            let advice = "Ottima gestione finanziaria! Bilancio stabile.";
-            if (savingsRate < 0) advice = `⚠️ Attenzione: Risparmio negativo del <strong>${savingsRate.toFixed(1)}%</strong>. Riduci le spese.`;
-            else if (savingsRate >= 20) advice = `🌟 Tasso risparmio del <strong>${savingsRate.toFixed(1)}%</strong>! Valuta di investire l'eccedenza.`;
+            let advice = "Ottima gestione finanziaria!";
+            if (savingsRate < 0) advice = "⚠️ Attenzione: Risparmio negativo questo mese.";
+            else if (savingsRate >= 20) advice = `🌟 Ottimo tasso di risparmio (${savingsRate.toFixed(1)}%)!`;
             document.getElementById('ana-financial-advice').innerHTML = advice;
 
             renderCharts(categoryBreakdown, targetYear, targetMonth);
@@ -1579,12 +1651,11 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { position: 'bottom', labels: { color: textColor, boxWidth: 12, font: { size: 11 } } }
+                        legend: { position: 'bottom', labels: { color: textColor, boxWidth: 10, font: { size: 10 } } }
                     }
                 }
             });
 
-            // GESTIONE NUMERO DI MESI PERSONALIZZABILE
             const monthsCount = parseInt(document.getElementById('trend-months-select').value) || 6;
             const barCtx = document.getElementById('trendBarChart').getContext('2d');
             let monthsLabels = [];
@@ -1623,11 +1694,11 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     scales: {
-                        x: { ticks: { color: textColor, font: { size: 10 } }, grid: { display: false } },
-                        y: { ticks: { color: textColor, font: { size: 10 } }, grid: { color: gridColor } }
+                        x: { ticks: { color: textColor, font: { size: 9 } }, grid: { display: false } },
+                        y: { ticks: { color: textColor, font: { size: 9 } }, grid: { color: gridColor } }
                     },
                     plugins: {
-                        legend: { position: 'top', labels: { color: textColor, boxWidth: 10, font: { size: 11 } } }
+                        legend: { position: 'top', labels: { color: textColor, boxWidth: 8, font: { size: 10 } } }
                     }
                 }
             });
@@ -1672,15 +1743,14 @@
             document.getElementById('monthly-expense').textContent = `€ ${monthlyExpense.toFixed(2)}`;
             document.getElementById('monthly-flow').textContent = `€ ${monthlyFlow.toFixed(2)}`;
 
-            // SMART ADVISOR DINAMICO
-            let adviceText = "Hai registrato le prime entrate. Controlla le uscite per mantenere il bilancio in positivo.";
+            let adviceText = "Gestione stabile.";
             let savingsRateMonth = monthlyIncome > 0 ? ((monthlyIncome - monthlyExpense) / monthlyIncome) * 100 : 0;
             if (monthlyIncome === 0 && monthlyExpense === 0) {
-                adviceText = "Nessuna transazione registrata questo mese. Inserisci le tue spese o entrate per avviare l'analisi.";
+                adviceText = "Nessuna transazione questo mese.";
             } else if (savingsRateMonth < 0) {
-                adviceText = "⚠️ Attenzione: Le uscite superano le entrate in questo mese. Riduci le spese non essenziali.";
+                adviceText = "⚠️ Uscite superiori alle entrate!";
             } else if (savingsRateMonth >= 20) {
-                adviceText = `🌟 Ottimo lavoro! Stai risparmiando il ${savingsRateMonth.toFixed(1)}% delle entrate mensili.`;
+                adviceText = `🌟 Risparmiato il ${savingsRateMonth.toFixed(1)}% questo mese.`;
             }
             document.getElementById('advice-text').innerHTML = adviceText;
 
@@ -1698,7 +1768,6 @@
                     </div>`;
             });
 
-            // RENDER LISTA CATEGORIE NELLA SCHEDA CATEGORIE (CON PULSANTE MODIFICA IMPORTO)
             let catManagerList = document.getElementById('category-list-manager');
             if (catManagerList) {
                 catManagerList.innerHTML = '';
@@ -1710,11 +1779,11 @@
                                 <div class="category-card-item">
                                     <div class="category-name-area">
                                         <span>${type === 'Uscita' ? '🔴' : '🟢'} ${c.name}</span>
-                                        <span style="font-size:0.75rem; color:var(--text-light); font-weight:normal;">${limitText}</span>
+                                        <span style="font-size:0.68rem; color:var(--text-light); font-weight:normal;">${limitText}</span>
                                     </div>
                                     <div class="category-actions">
-                                        ${type === 'Uscita' ? `<button class="btn-edit" onclick="editCategory('${type}', '${c.name}')">Modifica</button>` : ''}
-                                        <button class="btn-danger" onclick="deleteCategory('${type}', '${c.name}')">Elimina</button>
+                                        ${type === 'Uscita' ? `<button class="btn-edit" onclick="editCategory('${type}', '${c.name}')" style="padding:4px 8px!important;">Modifica</button>` : ''}
+                                        <button class="btn-danger" onclick="deleteCategory('${type}', '${c.name}')" style="padding:4px 8px!important;">Elimina</button>
                                     </div>
                                 </div>`;
                         });
@@ -1734,15 +1803,13 @@
                 let matchType = filterType === 'ALL' || t.type === filterType;
                 let matchAcc = filterAcc === 'ALL' || t.accountName === filterAcc || t.fromAccount === filterAcc || t.toAccount === filterAcc;
                 let matchSearch = !searchText || t.desc.toLowerCase().includes(searchText) || (t.category && t.category.toLowerCase().includes(searchText));
-                
                 let tDateOnly = t.date.slice(0, 10);
                 let matchDateFrom = !dateFrom || tDateOnly >= dateFrom;
                 let matchDateTo = !dateTo || tDateOnly <= dateTo;
-
                 return matchType && matchAcc && matchSearch && matchDateFrom && matchDateTo;
             });
 
-            if(filtered.length === 0) tList.innerHTML = '<p style="color:var(--text-light); text-align:center; padding: 10px 0;">Nessun movimento trovato.</p>';
+            if(filtered.length === 0) tList.innerHTML = '<p style="color:var(--text-light); text-align:center; padding: 10px 0; font-size:0.8rem;">Nessun movimento.</p>';
             filtered.slice(0, 40).forEach(t => {
                 let d = new Date(t.date).toLocaleDateString();
                 let isGiroconto = t.type === 'Giroconto', isEntrata = t.type === 'Entrata';
@@ -1758,7 +1825,7 @@
                         </div>
                         <div class="transaction-right">
                             <span class="transaction-amount ${badgeClass}">${isGiroconto?'🔄 ':(isEntrata?'+':'-')}€ ${t.amount.toFixed(2)}</span>
-                            <button class="btn-danger" onclick="deleteTransaction(${t.id})">Elimina</button>
+                            <button class="btn-danger" onclick="deleteTransaction(${t.id})" style="padding:3px 6px!important; font-size:0.68rem!important;">Elimina</button>
                         </div>
                     </div>`;
             });
@@ -1771,7 +1838,7 @@
                     <div class="account-card-item">
                         <div class="account-header-row">
                             <div class="account-name-area" onclick="setMainAccount('${acc.name}')" style="cursor:pointer;">
-                                <span>${acc.name}</span>${acc.isMain ? '<span class="main-badge">Principale ⭐</span>' : '<span class="normal-badge">Imposta ⭐</span>'}
+                                <span>${acc.name}</span>${acc.isMain ? '<span class="main-badge">⭐</span>' : '<span class="normal-badge">⭐</span>'}
                             </div>
                             <div class="account-balance-area">${displayBalance}</div>
                         </div>
@@ -1781,15 +1848,16 @@
                                 <button class="btn-move" onclick="moveAccount(${index}, 1)" ${index === data.accounts.length - 1 ? 'disabled style="opacity:0.3;"' : ''}>▼</button>
                             </div>
                             <div class="account-mgmt-group">
-                                <button class="btn-edit" onclick="editAccount('${acc.name}')">Modifica</button>
-                                <button class="btn-danger" onclick="deleteAccount('${acc.name}')">Elimina</button>
+                                <button class="btn-edit" onclick="editAccount('${acc.name}')" style="padding:4px 8px!important;">Modifica</button>
+                                <button class="btn-danger" onclick="deleteAccount('${acc.name}')" style="padding:4px 8px!important;">Elimina</button>
                             </div>
                         </div>
                     </div>`;
             });
 
+            // RENDERING LISTA RICORRENTI MOBILE CON TITOLO A CAPO E IMPORTO A DESTRA
             let rList = document.getElementById('recurring-list');
-            rList.innerHTML = (!data.recurring || data.recurring.length === 0) ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0;">Nessun promemoria ricorrente impostato.</p>' : '';
+            rList.innerHTML = (!data.recurring || data.recurring.length === 0) ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0; font-size:0.8rem;">Nessun promemoria ricorrente.</p>' : '';
             
             const recurringBadge = document.getElementById('recurring-badge');
             if (data.recurring && data.recurring.length > 0) {
@@ -1800,20 +1868,23 @@
 
             if(data.recurring) {
                 data.recurring.forEach(r => {
-                    let infoText = r.type === 'Giroconto' ? `${r.fromAccount} ➡️ ${r.toAccount}` : `${r.accountName} (${r.category})`;
-                    let displayAmt = r.amount > 0 ? `€ ${r.amount.toFixed(2)}` : `Variabile (Da definire)`;
+                    let infoText = r.type === 'Giroconto' ? `${r.fromAccount} ➡️ ${r.toAccount}` : `${r.accountName} • ${r.category}`;
+                    let displayAmt = r.amount > 0 ? `€ ${r.amount.toFixed(2)}` : `Variabile`;
+                    let amtClass = r.amount > 0 ? 'recurring-amount-badge' : 'recurring-amount-badge variable';
+                    
                     rList.innerHTML += `
-                        <div class="transaction-card">
-                            <div class="transaction-left">
-                                <div class="transaction-details">
-                                    <span class="t-desc">${r.desc} (${displayAmt})</span>
-                                    <span class="t-meta">${r.type} • ${infoText}</span>
+                        <div class="recurring-item-card">
+                            <div class="recurring-top-row">
+                                <div class="recurring-info-box">
+                                    <span class="recurring-title">${r.desc}</span>
+                                    <span class="recurring-meta">${r.type} • ${infoText}</span>
                                 </div>
+                                <div class="${amtClass}">${displayAmt}</div>
                             </div>
-                            <div class="transaction-right" style="flex-direction:row; gap:4px;">
+                            <div class="recurring-buttons-grid">
                                 <button class="btn-edit" onclick="editRecurring(${r.id})">✏️ Modifica</button>
-                                <button class="btn-edit" onclick="executeRecurring(${r.id})">▶️ Applica</button>
-                                <button class="btn-danger" onclick="deleteRecurring(${r.id})">Elimina</button>
+                                <button class="btn-secondary" onclick="executeRecurring(${r.id})" style="background:rgba(16,185,129,0.15)!important; color:var(--success)!important; border:1px solid rgba(16,185,129,0.3)!important; font-weight:700;">▶️ Applica</button>
+                                <button class="btn-danger" onclick="deleteRecurring(${r.id})">🗑️ Elimina</button>
                             </div>
                         </div>`;
                 });
