@@ -787,8 +787,9 @@
     <!-- TAB 6: MOVIMENTI RICORRENTI -->
     <div id="tab-recurring" class="tab-content">
         <div class="card">
-            <h2>Nuovo Promemoria Ricorrente</h2>
+            <h2 id="recurring-form-title">Nuovo Promemoria Ricorrente</h2>
             <form id="recurring-form">
+                <input type="hidden" id="r-edit-id" value="">
                 <div class="form-group">
                     <label>Tipo</label>
                     <select id="r-type" onchange="onRecurringTypeChange()">
@@ -821,14 +822,14 @@
                 </div>
 
                 <div class="form-group">
-                    <label>Importo (€) <span style="font-size:0.7rem; color:var(--text-light);">(Lascia 0 se l'importo varia ogni mese)</span></label>
-                    <input type="number" id="r-amount" step="0.01" value="0.00" placeholder="0.00">
+                    <label>Importo (€) <span style="font-size:0.7rem; color:var(--text-light);">(Lascia vuoto o 0 se l'importo varia ogni mese)</span></label>
+                    <input type="number" id="r-amount" step="0.01" placeholder="0.00">
                 </div>
                 <div class="form-group">
                     <label>Descrizione / Nome Tipologia</label>
                     <input type="text" id="r-desc" placeholder="Es. Stipendio Mensile, Affitto..." required>
                 </div>
-                <button type="submit">Crea Tipologia Ricorrente</button>
+                <button type="submit" id="recurring-submit-btn">Crea Tipologia Ricorrente</button>
             </form>
         </div>
 
@@ -1227,7 +1228,7 @@
             }
         }
 
-        function updateRecurringCategorySelect() {
+        function updateRecurringCategorySelect(selectedCat = '') {
             const type = document.getElementById('r-type').value;
             if (type === 'Giroconto') return;
             const select = document.getElementById('r-category');
@@ -1239,6 +1240,7 @@
                     let opt = document.createElement('option');
                     opt.value = cat.name;
                     opt.textContent = cat.name;
+                    if (cat.name === selectedCat) opt.selected = true;
                     select.appendChild(opt);
                 });
             }
@@ -1402,27 +1404,85 @@
 
         document.getElementById('recurring-form').addEventListener('submit', function(e) {
             e.preventDefault();
+            const editId = document.getElementById('r-edit-id').value;
             const type = document.getElementById('r-type').value;
             const amount = parseFloat(document.getElementById('r-amount').value) || 0;
             const desc = document.getElementById('r-desc').value;
 
-            let item = { id: Date.now(), type, amount, desc };
-            if(type === 'Giroconto') {
-                item.fromAccount = document.getElementById('r-from-account').value;
-                item.toAccount = document.getElementById('r-to-account').value;
-                if(item.fromAccount === item.toAccount) { alert("Scegli due conti differenti per il giroconto ricorrente!"); return; }
+            if(!data.recurring) data.recurring = [];
+
+            if (editId) {
+                // MODIFICA ELEMENTO ESISTENTE
+                let item = data.recurring.find(r => r.id == editId);
+                if (item) {
+                    item.type = type;
+                    item.amount = amount;
+                    item.desc = desc;
+                    if (type === 'Giroconto') {
+                        item.fromAccount = document.getElementById('r-from-account').value;
+                        item.toAccount = document.getElementById('r-to-account').value;
+                        delete item.accountName;
+                        delete item.category;
+                    } else {
+                        item.accountName = document.getElementById('r-account').value;
+                        item.category = document.getElementById('r-category').value;
+                        delete item.fromAccount;
+                        delete item.toAccount;
+                    }
+                }
             } else {
-                item.accountName = document.getElementById('r-account').value;
-                item.category = document.getElementById('r-category').value;
+                // NUOVO ELEMENTO
+                let item = { id: Date.now(), type, amount, desc };
+                if(type === 'Giroconto') {
+                    item.fromAccount = document.getElementById('r-from-account').value;
+                    item.toAccount = document.getElementById('r-to-account').value;
+                    if(item.fromAccount === item.toAccount) { alert("Scegli due conti differenti per il giroconto ricorrente!"); return; }
+                } else {
+                    item.accountName = document.getElementById('r-account').value;
+                    item.category = document.getElementById('r-category').value;
+                }
+                data.recurring.push(item);
             }
 
-            if(!data.recurring) data.recurring = [];
-            data.recurring.push(item);
             saveData();
-            this.reset();
-            document.getElementById('r-amount').value = "0.00";
-            onRecurringTypeChange();
+            resetRecurringForm();
         });
+
+        function resetRecurringForm() {
+            document.getElementById('recurring-form').reset();
+            document.getElementById('r-edit-id').value = '';
+            document.getElementById('r-amount').value = '';
+            document.getElementById('recurring-form-title').textContent = "Nuovo Promemoria Ricorrente";
+            document.getElementById('recurring-submit-btn').textContent = "Crea Tipologia Ricorrente";
+            onRecurringTypeChange();
+        }
+
+        function editRecurring(id) {
+            let r = data.recurring.find(item => item.id == id);
+            if (!r) return;
+
+            document.getElementById('r-edit-id').value = r.id;
+            document.getElementById('r-type').value = r.type;
+            onRecurringTypeChange();
+
+            if (r.type === 'Giroconto') {
+                document.getElementById('r-from-account').value = r.fromAccount;
+                document.getElementById('r-to-account').value = r.toAccount;
+            } else {
+                document.getElementById('r-account').value = r.accountName;
+                updateRecurringCategorySelect(r.category);
+            }
+
+            // Se l'importo è 0 o vuoto, lo lascia vuoto nel form così puoi digitare subito
+            document.getElementById('r-amount').value = (r.amount && r.amount > 0) ? r.amount : '';
+            document.getElementById('r-desc').value = r.desc;
+
+            document.getElementById('recurring-form-title').textContent = "Modifica Promemoria Ricorrente";
+            document.getElementById('recurring-submit-btn').textContent = "Salva Modifiche";
+
+            // Scorri dolcemente verso il modulo in alto della scheda ricorrenti
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
 
         function deleteRecurring(id) {
             data.recurring = data.recurring.filter(r => r.id !== id);
@@ -1434,8 +1494,8 @@
             if(!r) return;
 
             let finalAmount = r.amount;
-            if (finalAmount <= 0) {
-                let promptVal = prompt(`Inserisci l'importo per "${r.desc}" per questo mese (€):`, "0.00");
+            if (!finalAmount || finalAmount <= 0) {
+                let promptVal = prompt(`Inserisci l'importo per "${r.desc}" per questo mese (€):`, "");
                 if (promptVal === null) return;
                 finalAmount = parseFloat(promptVal);
                 if (isNaN(finalAmount) || finalAmount <= 0) {
@@ -1751,6 +1811,7 @@
                                 </div>
                             </div>
                             <div class="transaction-right" style="flex-direction:row; gap:4px;">
+                                <button class="btn-edit" onclick="editRecurring(${r.id})">✏️ Modifica</button>
                                 <button class="btn-edit" onclick="executeRecurring(${r.id})">▶️ Applica</button>
                                 <button class="btn-danger" onclick="deleteRecurring(${r.id})">Elimina</button>
                             </div>
