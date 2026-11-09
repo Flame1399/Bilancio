@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartBudget Auto-Sync Pro</title>
+    <title>SmartBudget Ultimate Pro</title>
+    <!-- Libreria Chart.js per i grafici visivi -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
             --primary: #6366f1;
@@ -23,6 +25,15 @@
             --radius-sm: 8px;
         }
 
+        [data-theme="light"] {
+            --bg: #f1f5f9;
+            --card-bg: #ffffff;
+            --card-border: #e2e8f0;
+            --text: #0f172a;
+            --text-light: #64748b;
+            --input-bg: #f8fafc;
+        }
+
         * {
             box-sizing: border-box;
             margin: 0;
@@ -38,6 +49,7 @@
             max-width: 600px;
             margin: 0 auto;
             padding-bottom: 50px;
+            transition: background 0.3s, color 0.3s;
         }
 
         header {
@@ -70,7 +82,14 @@
             font-weight: 400;
         }
 
-        .menu-btn {
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            position: absolute;
+            right: 0;
+        }
+
+        .menu-btn, .theme-btn {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             color: var(--text);
@@ -82,15 +101,12 @@
             justify-content: center;
             font-size: 1.2rem;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
             transition: all 0.2s ease;
-            position: absolute;
-            left: 0;
         }
 
-        .menu-btn:hover {
-            border-color: var(--primary);
-        }
+        .menu-btn { position: absolute; left: 0; right: auto; }
+        .menu-btn:hover, .theme-btn:hover { border-color: var(--primary); }
 
         .sidebar-overlay {
             position: fixed;
@@ -100,17 +116,13 @@
             height: 100%;
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
             z-index: 998;
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
         }
 
-        .sidebar-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; }
 
         .sidebar {
             position: fixed;
@@ -125,13 +137,11 @@
             flex-direction: column;
             padding: 24px 16px;
             transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+            box-shadow: 10px 0 30px rgba(0,0,0,0.3);
             overflow-y: auto;
         }
 
-        .sidebar.active {
-            left: 0;
-        }
+        .sidebar.active { left: 0; }
 
         .sidebar-header {
             display: flex;
@@ -164,11 +174,7 @@
             justify-content: center;
         }
 
-        .sidebar-nav {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
+        .sidebar-nav { display: flex; flex-direction: column; gap: 6px; }
 
         .nav-item {
             background: none;
@@ -186,17 +192,8 @@
             gap: 12px;
         }
 
-        .nav-item:hover {
-            background: rgba(255, 255, 255, 0.04);
-            color: var(--text);
-        }
-
-        .nav-item.active {
-            color: #818cf8;
-            font-weight: 700;
-            background: rgba(99, 102, 241, 0.12);
-            border: 1px solid rgba(99, 102, 241, 0.25);
-        }
+        .nav-item:hover { background: rgba(255, 255, 255, 0.04); color: var(--text); }
+        .nav-item.active { color: #818cf8; font-weight: 700; background: rgba(99, 102, 241, 0.12); border: 1px solid rgba(99, 102, 241, 0.25); }
 
         .sidebar-section-title {
             font-size: 0.7rem;
@@ -212,7 +209,7 @@
             border-radius: var(--radius-lg);
             padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
             border: 1px solid var(--card-border);
             width: 100%;
             overflow: hidden;
@@ -247,7 +244,6 @@
             gap: 6px;
         }
 
-        /* Pulsante Occhio Privacy isolato e compatto */
         button.eye-toggle-btn {
             all: unset;
             display: inline-flex;
@@ -262,17 +258,9 @@
             transition: background 0.2s;
             width: auto !important;
         }
+        button.eye-toggle-btn:hover { background: rgba(255, 255, 255, 0.1); }
 
-        button.eye-toggle-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .stat-box .value {
-            font-size: 1.3rem;
-            font-weight: 800;
-            letter-spacing: -0.3px;
-        }
-
+        .stat-box .value { font-size: 1.3rem; font-weight: 800; letter-spacing: -0.3px; }
         .value.income { color: var(--success); }
         .value.expense { color: var(--danger); }
         .value.patrimony { color: #818cf8; }
@@ -287,10 +275,7 @@
             font-weight: 700;
         }
 
-        .form-group {
-            margin-bottom: 14px;
-            width: 100%;
-        }
+        .form-group { margin-bottom: 14px; width: 100%; }
 
         label {
             display: flex;
@@ -312,13 +297,9 @@
             color: var(--text);
             outline: none;
         }
+        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
 
-        input:focus, select:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
-        }
-
-        button:not(.eye-toggle-btn):not(.menu-btn):not(.sidebar-close) {
+        button:not(.eye-toggle-btn):not(.menu-btn):not(.sidebar-close):not(.theme-btn) {
             width: 100%;
             padding: 12px;
             background-color: var(--primary);
@@ -330,15 +311,9 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
+        button:not(.eye-toggle-btn):not(.menu-btn):not(.sidebar-close):not(.theme-btn):hover { background-color: var(--primary-hover); }
 
-        button:not(.eye-toggle-btn):not(.menu-btn):not(.sidebar-close):hover { background-color: var(--primary-hover); }
-        button:not(.eye-toggle-btn):not(.menu-btn):not(.sidebar-close):active { transform: scale(0.98); }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.05) !important;
-            border: 1px solid var(--card-border) !important;
-            color: var(--text) !important;
-        }
+        .btn-secondary { background: rgba(255, 255, 255, 0.05) !important; border: 1px solid var(--card-border) !important; color: var(--text) !important; }
         .btn-secondary:hover { background: rgba(255, 255, 255, 0.1) !important; }
 
         .btn-danger {
@@ -382,34 +357,10 @@
             gap: 8px;
         }
 
-        .account-header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .account-name-area {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 700;
-            font-size: 0.95rem;
-        }
-
-        .account-balance-area {
-            font-weight: 800;
-            color: #818cf8;
-            font-size: 1.05rem;
-        }
-
-        .account-actions-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-top: 1px solid var(--card-border);
-            padding-top: 6px;
-        }
-
+        .account-header-row { display: flex; justify-content: space-between; align-items: center; }
+        .account-name-area { display: flex; align-items: center; gap: 8px; font-weight: 700; font-size: 0.95rem; }
+        .account-balance-area { font-weight: 800; color: #818cf8; font-size: 1.05rem; }
+        .account-actions-row { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--card-border); padding-top: 6px; }
         .account-move-group, .account-mgmt-group { display: flex; gap: 4px; }
 
         .category-card-item {
@@ -422,114 +373,28 @@
             flex-direction: column;
             gap: 6px;
         }
-
-        .category-header-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
+        .category-header-row { display: flex; justify-content: space-between; align-items: center; }
         .category-name-area { font-weight: 700; font-size: 0.88rem; }
         .category-limit-area { font-weight: 700; color: var(--text-light); font-size: 0.8rem; }
         .category-actions-row { display: flex; justify-content: space-between; border-top: 1px solid var(--card-border); padding-top: 6px; }
 
-        .main-badge {
-            font-size: 0.68rem;
-            background: rgba(16, 185, 129, 0.15);
-            color: var(--success);
-            border: 1px solid rgba(16, 185, 129, 0.3);
-            padding: 2px 5px;
-            border-radius: 4px;
-        }
+        .main-badge { font-size: 0.68rem; background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 5px; border-radius: 4px; }
+        .normal-badge { font-size: 0.68rem; background: rgba(255, 255, 255, 0.05); color: var(--text-light); border: 1px solid var(--card-border); padding: 2px 5px; border-radius: 4px; cursor: pointer; }
 
-        .normal-badge {
-            font-size: 0.68rem;
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-light);
-            border: 1px solid var(--card-border);
-            padding: 2px 5px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .budget-item {
-            margin-bottom: 14px;
-            padding-bottom: 12px;
-            border-bottom: 1px solid var(--card-border);
-        }
-
+        .budget-item { margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--card-border); }
         .budget-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .budget-info { display: flex; justify-content: space-between; font-size: 0.82rem; margin-bottom: 6px; }
+        .progress-bar-container { width: 100%; background: var(--input-bg); border-radius: 6px; height: 8px; overflow: hidden; border: 1px solid var(--card-border); }
+        .progress-bar { height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 6px; }
 
-        .budget-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.82rem;
-            margin-bottom: 6px;
-        }
-
-        .progress-bar-container {
-            width: 100%;
-            background: var(--input-bg);
-            border-radius: 6px;
-            height: 8px;
-            overflow: hidden;
-            border: 1px solid var(--card-border);
-        }
-
-        .progress-bar {
-            height: 100%;
-            width: 0%;
-            transition: width 0.5s ease;
-            border-radius: 6px;
-        }
-
-        .advice-box {
-            background: rgba(99, 102, 241, 0.08);
-            border: 1px solid rgba(99, 102, 241, 0.2);
-            border-radius: var(--radius-md);
-            padding: 14px;
-            margin-top: 12px;
-        }
-
-        .advice-box h3 {
-            font-size: 0.88rem;
-            color: #818cf8;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-weight: 700;
-        }
-
+        .advice-box { background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: var(--radius-md); padding: 14px; margin-top: 12px; }
+        .advice-box h3 { font-size: 0.88rem; color: #818cf8; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; font-weight: 700; }
         .advice-box p { font-size: 0.82rem; color: var(--text-light); line-height: 1.4; }
 
         .transaction-list { max-height: 380px; overflow-y: auto; padding-right: 4px; }
-
-        .transaction-card {
-            background: var(--input-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius-md);
-            padding: 12px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
+        .transaction-card { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         .transaction-left { display: flex; align-items: flex-start; gap: 10px; overflow: hidden; }
-
-        .transaction-badge {
-            width: 34px;
-            height: 34px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            font-size: 0.95rem;
-            flex-shrink: 0;
-        }
-
+        .transaction-badge { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.95rem; flex-shrink: 0; }
         .transaction-badge.entrata { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
         .transaction-badge.uscita { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
         .transaction-badge.giroconto { background: rgba(59, 130, 246, 0.15); color: var(--info); border: 1px solid rgba(59, 130, 246, 0.3); }
@@ -546,53 +411,16 @@
         .transaction-amount.giroconto { color: var(--info); }
 
         .analytics-card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
-
-        .analytics-mini-box {
-            background: var(--input-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius-md);
-            padding: 10px 4px;
-            text-align: center;
-            overflow: hidden;
-        }
-
-        .analytics-mini-box span {
-            display: block;
-            font-size: 0.65rem;
-            color: var(--text-light);
-            text-transform: uppercase;
-            font-weight: 600;
-            margin-bottom: 3px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
+        .analytics-mini-box { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 10px 4px; text-align: center; overflow: hidden; }
+        .analytics-mini-box span { display: block; font-size: 0.65rem; color: var(--text-light); text-transform: uppercase; font-weight: 600; margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .analytics-mini-box strong { font-size: 0.82rem; font-weight: 800; white-space: nowrap; display: block; }
 
-        .analytics-report-banner {
-            background: var(--input-bg);
-            border: 1px solid var(--card-border);
-            border-radius: var(--radius-md);
-            padding: 12px;
-            font-size: 0.82rem;
-            color: var(--text-light);
-            line-height: 1.4;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
+        .analytics-report-banner { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 12px; font-size: 0.82rem; color: var(--text-light); line-height: 1.4; display: flex; align-items: center; gap: 10px; }
 
-        .filter-bar {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
+        .filter-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
 
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.25s ease; }
-
         @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
         ::-webkit-scrollbar { width: 4px; }
@@ -600,16 +428,19 @@
         ::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 4px; }
     </style>
 </head>
-<body>
+<body data-theme="dark">
 
     <header>
         <button class="menu-btn" onclick="toggleSidebar()">☰</button>
         <div class="header-title-area">
             <h1>SmartBudget</h1>
         </div>
+        <div class="header-actions">
+            <button class="theme-btn" onclick="toggleTheme()" id="theme-toggle-icon" title="Cambia Tema">☀️</button>
+        </div>
     </header>
 
-    <!-- SIDEBAR MENU A SCOMPARSA CON BACKUP -->
+    <!-- SIDEBAR MENU A SCOMPARSA -->
     <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -734,6 +565,22 @@
                     <option value="ALL">Tutti i Conti</option>
                 </select>
             </div>
+            
+            <div class="form-group" style="margin-bottom: 8px;">
+                <input type="text" id="search-transaction" placeholder="🔍 Cerca transazione per testo..." oninput="renderApp()">
+            </div>
+
+            <div class="filter-bar" style="grid-template-columns: 1fr 1fr; margin-bottom: 12px; font-size: 0.75rem;">
+                <div>
+                    <label style="font-size:0.7rem;">Dal giorno</label>
+                    <input type="date" id="filter-date-from" onchange="renderApp()" style="padding: 6px; font-size: 0.8rem;">
+                </div>
+                <div>
+                    <label style="font-size:0.7rem;">Al giorno</label>
+                    <input type="date" id="filter-date-to" onchange="renderApp()" style="padding: 6px; font-size: 0.8rem;">
+                </div>
+            </div>
+
             <div class="transaction-list" id="transaction-list"></div>
         </div>
     </div>
@@ -842,7 +689,7 @@
                         <strong class="value" id="plan-wants" style="color:#f59e0b;">€ 0.00</strong>
                     </div>
                     <div class="analytics-mini-box">
-                        <span>Risparmio/M</span>
+                        <span>Risparmio/Mese</span>
                         <strong class="value income" id="plan-savings">€ 0.00</strong>
                     </div>
                 </div>
@@ -955,7 +802,22 @@
                 <div class="stat-box"><h3>Flusso Netto</h3><div class="value" id="ana-net-flow">€ 0.00</div></div>
             </div>
 
-            <div class="analytics-report-banner">
+            <!-- GRAFICI VISIVI INTERATTIVI -->
+            <div style="margin-top: 16px; margin-bottom: 16px;">
+                <p style="font-size: 0.75rem; color: var(--text-light); margin-bottom: 8px; font-weight: 600; text-transform: uppercase;">Ripartizione Spese per Categoria</p>
+                <div style="position: relative; height: 220px; width: 100%;">
+                    <canvas id="categoryPieChart"></canvas>
+                </div>
+            </div>
+
+            <div style="margin-top: 20px; margin-bottom: 12px;">
+                <p style="font-size: 0.75rem; color: var(--text-light); margin-bottom: 8px; font-weight: 600; text-transform: uppercase;">Andamento Ultimi 6 Mesi</p>
+                <div style="position: relative; height: 200px; width: 100%;">
+                    <canvas id="trendBarChart"></canvas>
+                </div>
+            </div>
+
+            <div class="analytics-report-banner" style="margin-top: 16px;">
                 <div>📊</div>
                 <div id="analytics-summary-text">Estratto conto in caricamento...</div>
             </div>
@@ -1001,6 +863,12 @@
         };
 
         let hideAccounts = JSON.parse(localStorage.getItem('smart_budget_hide_acc')) || false;
+        let currentTheme = localStorage.getItem('smart_budget_theme') || 'dark';
+        document.body.setAttribute('data-theme', currentTheme);
+        document.getElementById('theme-toggle-icon').textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+
+        let pieChartInstance = null;
+        let barChartInstance = null;
 
         if (data.accounts.length > 0 && !data.accounts.some(acc => acc.isMain)) {
             data.accounts[0].isMain = true;
@@ -1009,6 +877,14 @@
         function saveData() {
             localStorage.setItem('smart_budget_data_autosync', JSON.stringify(data));
             renderApp();
+        }
+
+        function toggleTheme() {
+            currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', currentTheme);
+            document.getElementById('theme-toggle-icon').textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+            localStorage.setItem('smart_budget_theme', currentTheme);
+            renderAnalytics(); // Rigenera i grafici per adattare i colori al tema
         }
 
         function exportBackupJSON() {
@@ -1216,7 +1092,6 @@
 
                 let opt = document.createElement('option'); opt.value = acc.name; opt.textContent = label; select.appendChild(opt);
                 let optR = document.createElement('option'); optR.value = acc.name; optR.textContent = label; rSelect.appendChild(optR);
-
                 let optFilter = document.createElement('option'); optFilter.value = acc.name; optFilter.textContent = acc.name; filterAcc.appendChild(optFilter);
             });
         }
@@ -1394,6 +1269,88 @@
             if (savingsRate < 0) advice = `⚠️ Attenzione: Risparmio negativo del <strong>${savingsRate.toFixed(1)}%</strong>. Riduci le spese.`;
             else if (savingsRate >= 20) advice = `🌟 Tasso risparmio del <strong>${savingsRate.toFixed(1)}%</strong>! Valuta di investire l'eccedenza.`;
             document.getElementById('ana-financial-advice').innerHTML = advice;
+
+            // RENDER GRAFICI CHART.JS
+            renderCharts(categoryBreakdown, targetYear, targetMonth);
+        }
+
+        function renderCharts(categoryBreakdown, targetYear, targetMonth) {
+            const isDark = currentTheme === 'dark';
+            const textColor = isDark ? '#f8fafc' : '#0f172a';
+            const gridColor = isDark ? '#1e293b' : '#e2e8f0';
+
+            // 1. Grafico a Torta Categorie
+            const pieCtx = document.getElementById('categoryPieChart').getContext('2d');
+            const catLabels = Object.keys(categoryBreakdown);
+            const catValues = Object.values(categoryBreakdown);
+
+            if (pieChartInstance) pieChartInstance.destroy();
+
+            pieChartInstance = new Chart(pieCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: catLabels.length > 0 ? catLabels : ['Nessuna spesa'],
+                    datasets: [{
+                        data: catValues.length > 0 ? catValues : [1],
+                        backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#3b82f6', '#c084fc', '#94a3b8'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: textColor, boxWidth: 12, font: { size: 11 } } }
+                    }
+                }
+            });
+
+            // 2. Grafico a Barre Ultimi 6 Mesi
+            const barCtx = document.getElementById('trendBarChart').getContext('2d');
+            let monthsLabels = [];
+            let incomeData = [];
+            let expenseData = [];
+
+            for (let i = 5; i >= 0; i--) {
+                let d = new Date(targetYear, targetMonth - i, 1);
+                let mName = d.toLocaleString('it-IT', { month: 'short', year: '2-digit' });
+                monthsLabels.push(mName);
+
+                let mInc = 0, mExp = 0;
+                data.transactions.forEach(t => {
+                    let td = new Date(t.date);
+                    if (td.getFullYear() === d.getFullYear() && td.getMonth() === d.getMonth()) {
+                        if (t.type === 'Entrata') mInc += t.amount;
+                        if (t.type === 'Uscita') mExp += t.amount;
+                    }
+                });
+                incomeData.push(mInc);
+                expenseData.push(mExp);
+            }
+
+            if (barChartInstance) barChartInstance.destroy();
+
+            barChartInstance = new Chart(barCtx, {
+                type: 'bar',
+                data: {
+                    labels: monthsLabels,
+                    datasets: [
+                        { label: 'Entrate', data: incomeData, backgroundColor: '#10b981', borderRadius: 4 },
+                        { label: 'Uscite', data: expenseData, backgroundColor: '#ef4444', borderRadius: 4 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { ticks: { color: textColor, font: { size: 10 } }, grid: { display: false } },
+                        y: { ticks: { color: textColor, font: { size: 10 } }, grid: { color: gridColor } }
+                    },
+                    plugins: {
+                        legend: { position: 'top', labels: { color: textColor, boxWidth: 10, font: { size: 11 } } }
+                    }
+                }
+            });
         }
 
         function renderApp() {
@@ -1449,19 +1406,29 @@
                     </div>`;
             });
 
+            // FILTRI TRANSAZIONI (Tipo, Conto, Ricerca Testuale e Date)
             let tList = document.getElementById('transaction-list');
             tList.innerHTML = '';
-            let filterType = document.getElementById('filter-type') ? document.getElementById('filter-type').value : 'ALL';
-            let filterAcc = document.getElementById('filter-account') ? document.getElementById('filter-account').value : 'ALL';
+            let filterType = document.getElementById('filter-type').value;
+            let filterAcc = document.getElementById('filter-account').value;
+            let searchText = document.getElementById('search-transaction').value.toLowerCase();
+            let dateFrom = document.getElementById('filter-date-from').value;
+            let dateTo = document.getElementById('filter-date-to').value;
 
             let filtered = data.transactions.filter(t => {
                 let matchType = filterType === 'ALL' || t.type === filterType;
                 let matchAcc = filterAcc === 'ALL' || t.accountName === filterAcc || t.fromAccount === filterAcc || t.toAccount === filterAcc;
-                return matchType && matchAcc;
+                let matchSearch = !searchText || t.desc.toLowerCase().includes(searchText) || (t.category && t.category.toLowerCase().includes(searchText));
+                
+                let tDateOnly = t.date.slice(0, 10);
+                let matchDateFrom = !dateFrom || tDateOnly >= dateFrom;
+                let matchDateTo = !dateTo || tDateOnly <= dateTo;
+
+                return matchType && matchAcc && matchSearch && matchDateFrom && matchDateTo;
             });
 
             if(filtered.length === 0) tList.innerHTML = '<p style="color:var(--text-light); text-align:center; padding: 10px 0;">Nessun movimento trovato.</p>';
-            filtered.slice(0, 30).forEach(t => {
+            filtered.slice(0, 40).forEach(t => {
                 let d = new Date(t.date).toLocaleDateString();
                 let isGiroconto = t.type === 'Giroconto', isEntrata = t.type === 'Entrata';
                 let badgeClass = isGiroconto ? 'giroconto' : (isEntrata ? 'entrata' : 'uscita');
