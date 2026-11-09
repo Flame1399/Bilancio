@@ -230,6 +230,7 @@
             border: 1px solid var(--card-border);
             text-align: center;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            position: relative;
         }
 
         .stat-box h3 {
@@ -239,6 +240,28 @@
             letter-spacing: 0.8px;
             margin-bottom: 8px;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .eye-toggle-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+            padding: 0;
+            color: var(--text-light);
+            box-shadow: none;
+            width: auto;
+            display: inline-flex;
+            align-items: center;
+            transition: color 0.2s;
+        }
+
+        .eye-toggle-btn:hover {
+            color: var(--text);
         }
 
         .stat-box .value {
@@ -724,7 +747,10 @@
     <div id="tab-dashboard" class="tab-content active">
         <div class="dashboard-grid">
             <div class="stat-box">
-                <h3>Patrimonio Netto</h3>
+                <h3>
+                    Patrimonio Netto
+                    <button class="eye-toggle-btn" onclick="toggleNetWorthVisibility()" id="eye-btn" title="Mostra/Nascondi">👁️</button>
+                </h3>
                 <div class="value patrimony" id="net-worth">€ 0.00</div>
             </div>
             <div class="stat-box">
@@ -940,12 +966,20 @@
             ]
         };
 
+        let hideNetWorth = JSON.parse(localStorage.getItem('smart_budget_hide_nw')) || false;
+
         if (data.accounts.length > 0 && !data.accounts.some(acc => acc.isMain)) {
             data.accounts[0].isMain = true;
         }
 
         function saveData() {
             localStorage.setItem('smart_budget_data_autosync', JSON.stringify(data));
+            initApp();
+        }
+
+        function toggleNetWorthVisibility() {
+            hideNetWorth = !hideNetWorth;
+            localStorage.setItem('smart_budget_hide_nw', JSON.stringify(hideNetWorth));
             initApp();
         }
 
@@ -1257,7 +1291,17 @@
 
         function initApp() {
             let totalNetWorth = data.accounts.reduce((sum, acc) => sum + acc.balance, 0);
-            document.getElementById('net-worth').textContent = `€ ${totalNetWorth.toFixed(2)}`;
+            
+            const netWorthEl = document.getElementById('net-worth');
+            const eyeBtn = document.getElementById('eye-btn');
+
+            if (hideNetWorth) {
+                netWorthEl.textContent = "€ ••••••";
+                eyeBtn.textContent = "🙈";
+            } else {
+                netWorthEl.textContent = `€ ${totalNetWorth.toFixed(2)}`;
+                eyeBtn.textContent = "👁️";
+            }
 
             const now = new Date();
             const currentMonth = now.getMonth();
