@@ -739,6 +739,7 @@
             <button class="nav-item" onclick="switchTab('transactions', this)">💳 Transazioni</button>
             <button class="nav-item" onclick="switchTab('patrimony', this)">💰 Patrimonio</button>
             <button class="nav-item" onclick="switchTab('categories', this)">🏷️ Categorie</button>
+            <button class="nav-item" onclick="switchTab('savings', this)">🎯 Piano di Risparmio</button>
             <button class="nav-item" onclick="switchTab('analytics', this)">📈 Analisi & Report</button>
         </div>
     </div>
@@ -872,7 +873,66 @@
         </div>
     </div>
 
-    <!-- TAB 5: ANALISI & REPORT -->
+    <!-- TAB 5: PIANO DI RISPARMIO DEDICATO -->
+    <div id="tab-savings" class="tab-content">
+        <div class="card">
+            <h2>🎯 Pianificatore % & Stipendio</h2>
+            <div class="form-group">
+                <label>Stipendio Fisso Mensile (€)</label>
+                <input type="number" id="savings-salary" placeholder="Es. 1800" oninput="saveSavingsPlanSettings()">
+            </div>
+            
+            <div class="form-group">
+                <label>Regola di Ripartizione</label>
+                <select id="savings-rule" onchange="saveSavingsPlanSettings()">
+                    <option value="50-30-20">Regola 50 / 30 / 20 (Consigliata)</option>
+                    <option value="60-20-10-10">Regola 60 / 20 / 10 / 10 (A Obiettivi)</option>
+                    <option value="custom-20">Risparmio Fisso 20%</option>
+                    <option value="custom-30">Risparmio Aggressivo 30%</option>
+                </select>
+            </div>
+
+            <div class="analytics-card-grid" style="margin-top: 14px; grid-template-columns: repeat(3, 1fr);">
+                <div class="analytics-mini-box">
+                    <span>Necessità</span>
+                    <strong class="value expense" id="plan-needs" style="font-size:0.85rem;">€ 0.00</strong>
+                </div>
+                <div class="analytics-mini-box">
+                    <span>Svago</span>
+                    <strong class="value" id="plan-wants" style="font-size:0.85rem; color:#f59e0b;">€ 0.00</strong>
+                </div>
+                <div class="analytics-mini-box">
+                    <span>Risparmio / Mese</span>
+                    <strong class="value income" id="plan-savings" style="font-size:0.85rem;">€ 0.00</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🏆 Monitoraggio Obiettivo di Risparmio</h2>
+            <div class="form-group">
+                <label>Cifra Totale da Raggiungere (€)</label>
+                <input type="number" id="goal-target" placeholder="Es. 6000" oninput="saveSavingsPlanSettings()">
+            </div>
+            <div class="form-group">
+                <label>Orizzonte Temporale (Mesi)</label>
+                <input type="number" id="goal-months" placeholder="Es. 12" oninput="saveSavingsPlanSettings()">
+            </div>
+
+            <div style="margin-top: 20px;">
+                <div class="budget-info">
+                    <span>Risparmio Effettivo Registrato: <strong id="goal-current-saved" style="color:var(--success);">€ 0.00</strong></span>
+                    <span>Target: <strong id="goal-target-label">€ 0.00</strong></span>
+                </div>
+                <div class="progress-bar-container" style="height: 12px; margin-top: 6px;">
+                    <div class="progress-bar" id="goal-progress-bar" style="width: 0%; background-color: var(--success);"></div>
+                </div>
+                <div class="alert-text" id="goal-status-text" style="margin-top: 10px; font-size: 0.82rem; font-weight: 600;">In attesa di impostare l'obiettivo...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB 6: ANALISI & REPORT -->
     <div id="tab-analytics" class="tab-content">
         <div class="card">
             <h2>Periodo di Riferimento</h2>
@@ -899,40 +959,6 @@
                     <select id="analytics-year" onchange="renderAnalytics()">
                         <!-- Popolato dinamicamente via JS -->
                     </select>
-                </div>
-            </div>
-        </div>
-
-        <!-- CARD PIANO DI RISPARMIO IN PERCENTUALE -->
-        <div class="card">
-            <h2>🎯 Piano di Risparmio %</h2>
-            <div class="form-group">
-                <label>Inserisci il tuo Stipendio Fisso Mensile (€)</label>
-                <input type="number" id="savings-salary" placeholder="Es. 1800" oninput="calculatePercentPlan()">
-            </div>
-            
-            <div class="form-group">
-                <label>Seleziona Regola di Risparmio</label>
-                <select id="savings-rule" onchange="calculatePercentPlan()">
-                    <option value="50-30-20">Regola 50 / 30 / 20 (Consigliata)</option>
-                    <option value="60-20-10-10">Regola 60 / 20 / 10 / 10 (A Obiettivi)</option>
-                    <option value="custom-20">Risparmio Fisso 20%</option>
-                    <option value="custom-30">Risparmio Aggressivo 30%</option>
-                </select>
-            </div>
-
-            <div id="savings-plan-results" class="analytics-card-grid" style="margin-top: 14px; grid-template-columns: repeat(3, 1fr);">
-                <div class="analytics-mini-box">
-                    <span>Necessità</span>
-                    <strong class="value expense" id="plan-needs" style="font-size:0.85rem;">€ 0.00</strong>
-                </div>
-                <div class="analytics-mini-box">
-                    <span>Svago</span>
-                    <strong class="value" id="plan-wants" style="font-size:0.85rem; color:#f59e0b;">€ 0.00</strong>
-                </div>
-                <div class="analytics-mini-box">
-                    <span>Risparmio</span>
-                    <strong class="value income" id="plan-savings" style="font-size:0.85rem;">€ 0.00</strong>
                 </div>
             </div>
         </div>
@@ -1003,6 +1029,13 @@
             ]
         };
 
+        let savingsSettings = JSON.parse(localStorage.getItem('smart_budget_savings_settings')) || {
+            salary: 1800,
+            rule: '50-30-20',
+            target: 6000,
+            months: 12
+        };
+
         let hideNetWorth = JSON.parse(localStorage.getItem('smart_budget_hide_nw')) || false;
         let hideAccounts = JSON.parse(localStorage.getItem('smart_budget_hide_acc')) || false;
 
@@ -1013,6 +1046,73 @@
         function saveData() {
             localStorage.setItem('smart_budget_data_autosync', JSON.stringify(data));
             initApp();
+        }
+
+        function saveSavingsPlanSettings() {
+            savingsSettings.salary = parseFloat(document.getElementById('savings-salary').value) || 0;
+            savingsSettings.rule = document.getElementById('savings-rule').value;
+            savingsSettings.target = parseFloat(document.getElementById('goal-target').value) || 0;
+            savingsSettings.months = parseFloat(document.getElementById('goal-months').value) || 1;
+            
+            localStorage.setItem('smart_budget_savings_settings', JSON.stringify(savingsSettings));
+            updateSavingsPlanUI();
+        }
+
+        function updateSavingsPlanUI() {
+            const salary = savingsSettings.salary;
+            const rule = savingsSettings.rule;
+
+            let needs = 0;
+            let wants = 0;
+            let savingsPerMonth = 0;
+
+            if (rule === '50-30-20') {
+                needs = salary * 0.50;
+                wants = salary * 0.30;
+                savingsPerMonth = salary * 0.20;
+            } else if (rule === '60-20-10-10') {
+                needs = salary * 0.60;
+                wants = salary * 0.20;
+                savingsPerMonth = salary * 0.20;
+            } else if (rule === 'custom-20') {
+                savingsPerMonth = salary * 0.20;
+                needs = salary * 0.55;
+                wants = salary * 0.25;
+            } else if (rule === 'custom-30') {
+                savingsPerMonth = salary * 0.30;
+                needs = salary * 0.50;
+                wants = salary * 0.20;
+            }
+
+            document.getElementById('plan-needs').textContent = `€ ${needs.toFixed(2)}`;
+            document.getElementById('plan-wants').textContent = `€ ${wants.toFixed(2)}`;
+            document.getElementById('plan-savings').textContent = `€ ${savingsPerMonth.toFixed(2)}`;
+
+            // Calcolo effettivo del risparmio totale accumulato finora dalle transazioni registrate nell'app
+            let totalSavedActual = 0;
+            data.transactions.forEach(t => {
+                if (t.type === 'Entrata') {
+                    totalSavedActual += t.amount;
+                } else {
+                    totalSavedActual -= t.amount;
+                }
+            });
+            if(totalSavedActual < 0) totalSavedActual = 0;
+
+            const target = savingsSettings.target;
+            const months = savingsSettings.months;
+            const percentage = target > 0 ? (totalSavedActual / target) * 100 : 0;
+
+            document.getElementById('goal-current-saved').textContent = `€ ${totalSavedActual.toFixed(2)}`;
+            document.getElementById('goal-target-label').textContent = `€ ${target.toFixed(2)}`;
+            document.getElementById('goal-progress-bar').style.width = `${Math.min(percentage, 100)}%`;
+
+            let statusMsg = `Sei al ${percentage.toFixed(1)}% del tuo obiettivo di € ${target.toFixed(2)}.`;
+            if (months > 0 && target > 0) {
+                let requiredMonthly = target / months;
+                statusMsg += ` Per centrarlo in ${months} mesi, ti servono circa € ${requiredMonthly.toFixed(2)}/mese.`;
+            }
+            document.getElementById('goal-status-text').textContent = statusMsg;
         }
 
         function toggleNetWorthVisibility() {
@@ -1043,6 +1143,8 @@
 
             if(tabId === 'analytics') {
                 renderAnalytics();
+            } else if(tabId === 'savings') {
+                updateSavingsPlanUI();
             }
         }
 
@@ -1063,37 +1165,6 @@
                 }
                 monthSelect.value = now.getMonth();
             }
-        }
-
-        function calculatePercentPlan() {
-            const salary = parseFloat(document.getElementById('savings-salary').value) || 0;
-            const rule = document.getElementById('savings-rule').value;
-
-            let needs = 0;
-            let wants = 0;
-            let savings = 0;
-
-            if (rule === '50-30-20') {
-                needs = salary * 0.50;
-                wants = salary * 0.30;
-                savings = salary * 0.20;
-            } else if (rule === '60-20-10-10') {
-                needs = salary * 0.60;
-                wants = salary * 0.20;
-                savings = salary * 0.20;
-            } else if (rule === 'custom-20') {
-                savings = salary * 0.20;
-                needs = salary * 0.55;
-                wants = salary * 0.25;
-            } else if (rule === 'custom-30') {
-                savings = salary * 0.30;
-                needs = salary * 0.50;
-                wants = salary * 0.20;
-            }
-
-            document.getElementById('plan-needs').textContent = `€ ${needs.toFixed(2)}`;
-            document.getElementById('plan-wants').textContent = `€ ${wants.toFixed(2)}`;
-            document.getElementById('plan-savings').textContent = `€ ${savings.toFixed(2)}`;
         }
 
         function updateCategorySelect() {
@@ -1356,7 +1427,7 @@
             } else if (savingsRate < 0) {
                 advice = `⚠️ <strong>Attenzione:</strong> Le uscite superano le entrate con un tasso di risparmio negativo del <strong>${savingsRate.toFixed(1)}%</strong>. Valuta di ridurre temporaneamente le spese superflue.`;
             } else if (topCategory && categoryBreakdown[topCategory] > (periodExpense * 0.4)) {
-                advice = `💡 La voce <strong>"${topCategory}"</strong> assorbe il <strong>${(categoryBreakdown[topCategory]/periodExpense*100).toFixed(0)}%</strong> del budget di spesa mensile. Monitorare questa categoria potrebbe aiutarti a risparmiare di più.`;
+                advice = `💡 La voce <strong>"${topCategory}"</strong> assorbe il <strong>${(categoryBreakdown[topCategory]/periodExpense*100).toFixed(0)}%</strong> del budget di spesa mensile. Monitorare هذه categoria potrebbe aiutarti a risparmiare di più.`;
             } else if (savingsRate >= 20) {
                 advice = `🌟 Risultato eccellente! Il tuo tasso di risparmio è del <strong>${savingsRate.toFixed(1)}%</strong>. Considera la possibilità di allocare il surplus in investimenti o in un fondo d'emergenza.`;
             }
@@ -1384,6 +1455,13 @@
             } else {
                 eyeAccBtn.textContent = "👁️";
             }
+
+            // Inizializza i campi del piano di risparmio
+            document.getElementById('savings-salary').value = savingsSettings.salary;
+            document.getElementById('savings-rule').value = savingsSettings.rule;
+            document.getElementById('goal-target').value = savingsSettings.target;
+            document.getElementById('goal-months').value = savingsSettings.months;
+            updateSavingsPlanUI();
 
             const now = new Date();
             const currentMonth = now.getMonth();
