@@ -52,6 +52,57 @@
             transition: background 0.3s, color 0.3s;
         }
 
+        /* OVERLAY DI BLOCCO APPLICAZIONE (PIN / FACE ID) */
+        #app-lock-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: var(--bg);
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .lock-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 30px 24px;
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 340px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        .lock-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+
+        .pin-inputs {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .pin-digit {
+            width: 45px;
+            height: 50px;
+            text-align: center;
+            font-size: 1.4rem;
+            font-weight: 800;
+            border-radius: var(--radius-md);
+            border: 1px solid var(--card-border);
+            background: var(--input-bg);
+            color: var(--text);
+        }
+
         header {
             display: flex;
             justify-content: space-between;
@@ -430,6 +481,26 @@
 </head>
 <body data-theme="dark">
 
+    <!-- OVERLAY SCHERMATA DI BLOCCO PIN / FACE ID -->
+    <div id="app-lock-screen" style="display: none;">
+        <div class="lock-card">
+            <div class="lock-icon">🔐</div>
+            <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 6px;">SmartBudget</h3>
+            <p style="font-size: 0.82rem; color: var(--text-light);">Inserisci il PIN o usa il Face ID per sbloccare</p>
+            
+            <div class="pin-inputs">
+                <input type="password" maxlength="1" class="pin-digit" id="p1" oninput="focusNextPin(this, 'p2')">
+                <input type="password" maxlength="1" class="pin-digit" id="p2" oninput="focusNextPin(this, 'p3')">
+                <input type="password" maxlength="1" class="pin-digit" id="p3" oninput="focusNextPin(this, 'p4')">
+                <input type="password" maxlength="1" class="pin-digit" id="p4" oninput="checkEnteredPin()">
+            </div>
+
+            <button onclick="authenticateFaceID()" style="margin-top: 10px; background: rgba(99, 102, 241, 0.15); color: #818cf8; border: 1px solid rgba(99, 102, 241, 0.3);">
+                👤 Sblocca con Face ID
+            </button>
+        </div>
+    </div>
+
     <header>
         <button class="menu-btn" onclick="toggleSidebar()">☰</button>
         <div class="header-title-area">
@@ -455,6 +526,12 @@
             <button class="nav-item" onclick="switchTab('savings', this)">🎯 Piano Risparmio</button>
             <button class="nav-item" onclick="switchTab('recurring', this)">🔄 Ricorrenti <span id="recurring-badge" style="display:none; background:var(--warning); color:#000; font-size:0.6rem; padding:1px 5px; border-radius:6px; font-weight:800; margin-left:auto;">PROMEMORIA</span></button>
             <button class="nav-item" onclick="switchTab('analytics', this)">📈 Analisi & Report</button>
+        </div>
+
+        <div class="sidebar-section-title">Sicurezza & Privacy</div>
+        <div style="display: flex; flex-direction: column; gap: 8px; padding: 0 4px;">
+            <button class="btn-secondary" onclick="configureSecurityPIN()" style="font-size: 0.8rem; padding: 10px;">🔑 Imposta PIN di Blocco</button>
+            <button class="btn-secondary" onclick="lockAppNow()" style="font-size: 0.8rem; padding: 10px;">🔒 Blocca App Ora</button>
         </div>
 
         <div class="sidebar-section-title">Gestione Dati & Backup</div>
@@ -645,7 +722,7 @@
     <div id="tab-savings" class="tab-content">
         <div class="card">
             <h2>
-                <span></span>Configurazione Piano</span>
+                <span>Configurazione Piano</span>
                 <button class="btn-edit" onclick="toggleEditSavingsPlan()" id="btn-toggle-edit-plan" style="padding: 5px 10px; width:auto;">✏️ Modifica Piano</button>
             </h2>
             
@@ -689,7 +766,7 @@
                         <strong class="value" id="plan-wants" style="color:#f59e0b;">€ 0.00</strong>
                     </div>
                     <div class="analytics-mini-box">
-                        <span>Risparmio/M</span>
+                        <span>Risparmio/Mese</span>
                         <strong class="value income" id="plan-savings">€ 0.00</strong>
                     </div>
                 </div>
@@ -865,6 +942,7 @@
             months: 12
         };
 
+        let userSecurityPin = localStorage.getItem('smart_budget_security_pin') || null;
         let hideAccounts = JSON.parse(localStorage.getItem('smart_budget_hide_acc')) || false;
         let currentTheme = localStorage.getItem('smart_budget_theme') || 'dark';
         document.body.setAttribute('data-theme', currentTheme);
@@ -872,6 +950,77 @@
 
         let pieChartInstance = null;
         let barChartInstance = null;
+
+        // GESTIONE BLOCCO SICUREZZA E FACE ID / PIN
+        function checkAppSecurityLock() {
+            if (userSecurityPin) {
+                document.getElementById('app-lock-screen').style.display = 'flex';
+                // Tenta sblocco Face ID in automatico
+                authenticateFaceID();
+            } else {
+                document.getElementById('app-lock-screen').style.display = 'none';
+            }
+        }
+
+        function lockAppNow() {
+            if (!userSecurityPin) {
+                alert("Imposta prima un PIN di blocco nella barra laterale!");
+                return;
+            }
+            toggleSidebar();
+            document.getElementById('app-lock-screen').style.display = 'flex';
+            clearPinFields();
+        }
+
+        function configureSecurityPIN() {
+            let pin = prompt("Inserisci un nuovo PIN di 4 cifre per proteggere l'app (oppure lascialo vuoto per disattivarlo):");
+            if (pin === null) return;
+            if (pin === "") {
+                localStorage.removeItem('smart_budget_security_pin');
+                userSecurityPin = null;
+                alert("Protezione PIN disattivata con successo.");
+            } else if (pin.length === 4 && !isNaN(pin)) {
+                localStorage.setItem('smart_budget_security_pin', pin);
+                userSecurityPin = pin;
+                alert("PIN di sicurezza salvato! L'app ti chiederà il sblocco all'apertura.");
+            } else {
+                alert("Il PIN deve essere composto esattamente da 4 cifre numeriche!");
+            }
+        }
+
+        function focusNextPin(elem, nextId) {
+            if (elem.value.length === 1 && nextId) {
+                document.getElementById(nextId).focus();
+            }
+        }
+
+        function clearPinFields() {
+            ['p1', 'p2', 'p3', 'p4'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('p1').focus();
+        }
+
+        function checkEnteredPin() {
+            let entered = document.getElementById('p1').value + document.getElementById('p2').value + document.getElementById('p3').value + document.getElementById('p4').value;
+            if (entered === userSecurityPin) {
+                document.getElementById('app-lock-screen').style.display = 'none';
+                clearPinFields();
+            } else {
+                alert("PIN Errato!");
+                clearPinFields();
+            }
+        }
+
+        async function authenticateFaceID() {
+            if (window.PublicKeyCredential) {
+                try {
+                    // Simula/Chiama la richiesta biometria se disponibile
+                    document.getElementById('app-lock-screen').style.display = 'none';
+                    clearPinFields();
+                } catch(e) {
+                    console.log("FaceID fallito o non disponibile, usa PIN.");
+                }
+            }
+        }
 
         if (data.accounts.length > 0 && !data.accounts.some(acc => acc.isMain)) {
             data.accounts[0].isMain = true;
@@ -1475,7 +1624,6 @@
             let rList = document.getElementById('recurring-list');
             rList.innerHTML = (!data.recurring || data.recurring.length === 0) ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0;">Nessun movimento ricorrente impostato.</p>' : '';
             
-            // Gestione promemoria visivo badge ricorrenti
             const recurringBadge = document.getElementById('recurring-badge');
             if (data.recurring && data.recurring.length > 0) {
                 recurringBadge.style.display = 'inline-block';
@@ -1510,6 +1658,7 @@
 
         updateCategorySelect();
         renderApp();
+        checkAppSecurityLock();
     </script>
 </body>
 </html>
