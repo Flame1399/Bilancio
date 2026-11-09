@@ -290,7 +290,9 @@
         }
 
         label {
-            display: block;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             font-size: 0.8rem;
             color: var(--text-light);
             margin-bottom: 8px;
@@ -773,7 +775,7 @@
             <div class="stat-box">
                 <h3>
                     Patrimonio Netto
-                    <button class="eye-toggle-btn" onclick="toggleNetWorthVisibility()" id="eye-btn" title="Mostra/Nascondi">👁️</button>
+                    <button class="eye-toggle-btn" onclick="toggleAccountsVisibility()" id="eye-btn" title="Mostra/Nascondi">👁️</button>
                 </h3>
                 <div class="value patrimony" id="net-worth">€ 0.00</div>
             </div>
@@ -805,7 +807,10 @@
     <!-- TAB 2: TRANSAZIONI & GIROCONTI -->
     <div id="tab-transactions" class="tab-content">
         <div class="card">
-            <h2>Nuova Operazione</h2>
+            <h2>
+                <span>Nuova Operazione</span>
+                <button class="eye-toggle-btn" onclick="toggleAccountsVisibility()" id="eye-trans-btn" title="Mostra/Nascondi Saldi" style="font-size: 1rem;">👁️</button>
+            </h2>
             <form id="transaction-form">
                 <div class="form-group">
                     <label>Tipo di Operazione</label>
@@ -1095,7 +1100,6 @@
             months: 12
         };
 
-        let hideNetWorth = JSON.parse(localStorage.getItem('smart_budget_hide_nw')) || false;
         let hideAccounts = JSON.parse(localStorage.getItem('smart_budget_hide_acc')) || false;
 
         if (data.accounts.length > 0 && !data.accounts.some(acc => acc.isMain)) {
@@ -1166,7 +1170,6 @@
                 } else if (t.type === 'Uscita') {
                     totalSavedActual -= t.amount;
                 }
-                // I giroconti non alterano il risparmio complessivo netto del patrimonio totale, lo spostano solo di conto.
             });
             if(totalSavedActual < 0) totalSavedActual = 0;
 
@@ -1184,12 +1187,6 @@
                 statusMsg += `<br>Per centrarlo in <strong>${months} mesi</strong>, il target stimato è di <strong>€ ${requiredMonthly.toFixed(2)}/mese</strong>.`;
             }
             document.getElementById('goal-status-text').innerHTML = statusMsg;
-        }
-
-        function toggleNetWorthVisibility() {
-            hideNetWorth = !hideNetWorth;
-            localStorage.setItem('smart_budget_hide_nw', JSON.stringify(hideNetWorth));
-            initApp();
         }
 
         function toggleAccountsVisibility() {
@@ -1286,7 +1283,8 @@
             data.accounts.forEach(acc => {
                 let opt = document.createElement('option');
                 opt.value = acc.name;
-                opt.textContent = `${acc.name} (€ ${acc.balance.toFixed(2)})${acc.isMain ? ' ⭐' : ''}`;
+                let balanceText = hideAccounts ? "€ ••••••" : `€ ${acc.balance.toFixed(2)}`;
+                opt.textContent = `${acc.name} (${balanceText})${acc.isMain ? ' ⭐' : ''}`;
                 if(acc.name === mainAccount.name) {
                     opt.selected = true;
                 }
@@ -1300,19 +1298,20 @@
             fromSelect.innerHTML = '';
             toSelect.innerHTML = '';
 
-            data.accounts.forEach((acc, idx) => {
+            data.accounts.forEach((acc) => {
+                let balanceText = hideAccounts ? "€ ••••••" : `€ ${acc.balance.toFixed(2)}`;
+                
                 let opt1 = document.createElement('option');
                 opt1.value = acc.name;
-                opt1.textContent = `${acc.name} (€ ${acc.balance.toFixed(2)})`;
+                opt1.textContent = `${acc.name} (${balanceText})`;
                 fromSelect.appendChild(opt1);
 
                 let opt2 = document.createElement('option');
                 opt2.value = acc.name;
-                opt2.textContent = `${acc.name} (€ ${acc.balance.toFixed(2)})`;
+                opt2.textContent = `${acc.name} (${balanceText})`;
                 toSelect.appendChild(opt2);
             });
 
-            // Seleziona di default il secondo conto come destinazione se esiste
             if (data.accounts.length > 1) {
                 toSelect.selectedIndex = 1;
             }
@@ -1547,7 +1546,6 @@
                         periodExpense += t.amount;
                         categoryBreakdown[t.category] = (categoryBreakdown[t.category] || 0) + t.amount;
                     }
-                    // I giroconti non influiscono su entrate/uscite del budget mensile in quanto meri spostamenti patrimoniali interni.
                 }
             });
 
@@ -1594,19 +1592,18 @@
             const netWorthEl = document.getElementById('net-worth');
             const eyeBtn = document.getElementById('eye-btn');
             const eyeAccBtn = document.getElementById('eye-accounts-btn');
-
-            if (hideNetWorth) {
-                netWorthEl.textContent = "€ ••••••";
-                eyeBtn.textContent = "🙈";
-            } else {
-                netWorthEl.textContent = `€ ${totalNetWorth.toFixed(2)}`;
-                eyeBtn.textContent = "👁️";
-            }
+            const eyeTransBtn = document.getElementById('eye-trans-btn');
 
             if (hideAccounts) {
-                eyeAccBtn.textContent = "🙈";
+                netWorthEl.textContent = "€ ••••••";
+                if(eyeBtn) eyeBtn.textContent = "🙈";
+                if(eyeAccBtn) eyeAccBtn.textContent = "🙈";
+                if(eyeTransBtn) eyeTransBtn.textContent = "🙈";
             } else {
-                eyeAccBtn.textContent = "👁️";
+                netWorthEl.textContent = `€ ${totalNetWorth.toFixed(2)}`;
+                if(eyeBtn) eyeBtn.textContent = "👁️";
+                if(eyeAccBtn) eyeAccBtn.textContent = "👁️";
+                if(eyeTransBtn) eyeTransBtn.textContent = "👁️";
             }
 
             document.getElementById('savings-salary').value = savingsSettings.salary;
@@ -1798,6 +1795,11 @@
                     </div>
                 `;
             });
+
+            updateAccountSelect();
+            if (document.getElementById('t-type').value === 'Giroconto') {
+                updateTransferSelects();
+            }
 
             renderAnalytics();
         }
