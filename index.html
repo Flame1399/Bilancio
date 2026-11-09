@@ -473,8 +473,6 @@
             border-radius: 6px;
         }
 
-        .alert-text { font-size: 0.72rem; margin-top: 5px; font-weight: 500; }
-
         .advice-box {
             background: rgba(99, 102, 241, 0.08);
             border: 1px solid rgba(99, 102, 241, 0.2);
@@ -692,11 +690,11 @@
 
                 <div id="transfer-transaction-fields" style="display: none;">
                     <div class="form-group">
-                        <label>Conto Origine (Da dove prelevi)</label>
+                        <label>Conto Origine</label>
                         <select id="t-transfer-from"></select>
                     </div>
                     <div class="form-group">
-                        <label>Conto Destinazione (Dove accrediti)</label>
+                        <label>Conto Destinazione</label>
                         <select id="t-transfer-to"></select>
                     </div>
                 </div>
@@ -790,7 +788,7 @@
     <div id="tab-savings" class="tab-content">
         <div class="card">
             <h2>
-                <span>Configurazione Piano</span>
+                <span>⚙️ Configurazione Piano</span>
                 <button class="btn-edit" onclick="toggleEditSavingsPlan()" id="btn-toggle-edit-plan" style="padding: 5px 10px;">✏️ Modifica Piano</button>
             </h2>
             
@@ -834,7 +832,7 @@
                         <strong class="value" id="plan-wants" style="color:#f59e0b;">€ 0.00</strong>
                     </div>
                     <div class="analytics-mini-box">
-                        <span>Risparmio/M</span>
+                        <span>Risparmio/Mese</span>
                         <strong class="value income" id="plan-savings">€ 0.00</strong>
                     </div>
                 </div>
@@ -869,14 +867,22 @@
                     <select id="r-type" onchange="onRecurringTypeChange()">
                         <option value="Uscita">Uscita Ricorrente (Abbonamento/Affitto)</option>
                         <option value="Entrata">Entrata Ricorrente (Stipendio)</option>
-                        <option value="Giroconto">Giroconto Automatico (Risparmio)</option>
+                        <option value="Giroconto">🔄 Giroconto Ricorrente (Risparmio)</option>
                     </select>
                 </div>
-                <div class="form-group" id="r-acc-single-group">
-                    <label>Conto</label>
-                    <select id="r-account"></select>
+                
+                <div id="r-standard-fields">
+                    <div class="form-group">
+                        <label>Conto</label>
+                        <select id="r-account"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Categoria</label>
+                        <input type="text" id="r-category" placeholder="Es. Abbonamento, Affitto">
+                    </div>
                 </div>
-                <div id="r-acc-double-group" style="display:none;">
+
+                <div id="r-transfer-fields" style="display:none;">
                     <div class="form-group">
                         <label>Conto Origine</label>
                         <select id="r-from-account"></select>
@@ -886,10 +892,7 @@
                         <select id="r-to-account"></select>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label>Categoria (Per Entrate/Uscite)</label>
-                    <input type="text" id="r-category" placeholder="Es. Abbonamento, Affitto">
-                </div>
+
                 <div class="form-group">
                     <label>Importo (€)</label>
                     <input type="number" id="r-amount" step="0.01" required>
@@ -1151,7 +1154,7 @@
             if (type === 'Giroconto') {
                 standardFields.style.display = 'none';
                 transferFields.style.display = 'block';
-                updateTransferSelects();
+                updateTransferSelects('t-transfer-from', 't-transfer-to');
             } else {
                 standardFields.style.display = 'block';
                 transferFields.style.display = 'none';
@@ -1161,12 +1164,16 @@
 
         function onRecurringTypeChange() {
             const type = document.getElementById('r-type').value;
+            const stdFields = document.getElementById('r-standard-fields');
+            const trFields = document.getElementById('r-transfer-fields');
+
             if(type === 'Giroconto') {
-                document.getElementById('r-acc-single-group').style.display = 'none';
-                document.getElementById('r-acc-double-group').style.display = 'block';
+                stdFields.style.display = 'none';
+                trFields.style.display = 'block';
+                updateTransferSelects('r-from-account', 'r-to-account');
             } else {
-                document.getElementById('r-acc-single-group').style.display = 'block';
-                document.getElementById('r-acc-double-group').style.display = 'none';
+                stdFields.style.display = 'block';
+                trFields.style.display = 'none';
             }
         }
 
@@ -1188,12 +1195,9 @@
         function updateAccountSelect() {
             const select = document.getElementById('t-account');
             const rSelect = document.getElementById('r-account');
-            const rFrom = document.getElementById('r-from-account');
-            const rTo = document.getElementById('r-to-account');
             const filterAcc = document.getElementById('filter-account');
 
-            select.innerHTML = ''; rSelect.innerHTML = ''; rFrom.innerHTML = ''; rTo.innerHTML = '';
-            
+            select.innerHTML = ''; rSelect.innerHTML = '';
             filterAcc.innerHTML = '<option value="ALL">Tutti i Conti</option>';
 
             data.accounts.forEach(acc => {
@@ -1202,16 +1206,16 @@
 
                 let opt = document.createElement('option'); opt.value = acc.name; opt.textContent = label; select.appendChild(opt);
                 let optR = document.createElement('option'); optR.value = acc.name; optR.textContent = label; rSelect.appendChild(optR);
-                let optF = document.createElement('option'); optF.value = acc.name; optF.textContent = label; rFrom.appendChild(optF);
-                let optT = document.createElement('option'); optT.value = acc.name; optT.textContent = label; rTo.appendChild(optT);
 
                 let optFilter = document.createElement('option'); optFilter.value = acc.name; optFilter.textContent = acc.name; filterAcc.appendChild(optFilter);
             });
         }
 
-        function updateTransferSelects() {
-            const fromSelect = document.getElementById('t-transfer-from');
-            const toSelect = document.getElementById('t-transfer-to');
+        function updateTransferSelects(fromId, toId) {
+            const fromSelect = document.getElementById(fromId);
+            const toSelect = document.getElementById(toId);
+            if(!fromSelect || !toSelect) return;
+
             fromSelect.innerHTML = ''; toSelect.innerHTML = '';
 
             data.accounts.forEach((acc) => {
@@ -1308,20 +1312,22 @@
             const type = document.getElementById('r-type').value;
             const amount = parseFloat(document.getElementById('r-amount').value);
             const desc = document.getElementById('r-desc').value;
-            const category = document.getElementById('r-category').value || 'Generale';
 
-            let item = { id: Date.now(), type, amount, desc, category };
+            let item = { id: Date.now(), type, amount, desc };
             if(type === 'Giroconto') {
                 item.fromAccount = document.getElementById('r-from-account').value;
                 item.toAccount = document.getElementById('r-to-account').value;
+                if(item.fromAccount === item.toAccount) { alert("Scegli due conti differenti per il giroconto ricorrente!"); return; }
             } else {
                 item.accountName = document.getElementById('r-account').value;
+                item.category = document.getElementById('r-category').value || 'Generale';
             }
 
             if(!data.recurring) data.recurring = [];
             data.recurring.push(item);
             saveData();
             this.reset();
+            onRecurringTypeChange();
         });
 
         function deleteRecurring(id) {
@@ -1343,7 +1349,7 @@
                 data.transactions.unshift({ id: Date.now(), type: r.type, accountName: r.accountName, amount: r.amount, category: r.category, desc: r.desc, date: new Date().toISOString() });
             }
             saveData();
-            alert(`Operazione "${r.desc}" applicata con successo!`);
+            alert(`Operazione ricorrente "${r.desc}" applicata con successo!`);
         }
 
         function renderAnalytics() {
@@ -1494,7 +1500,7 @@
             rList.innerHTML = (!data.recurring || data.recurring.length === 0) ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0;">Nessun movimento ricorrente impostato.</p>' : '';
             if(data.recurring) {
                 data.recurring.forEach(r => {
-                    let infoText = r.type === 'Giroconto' ? `${r.fromAccount} -> ${r.toAccount}` : `${r.accountName} (${r.category})`;
+                    let infoText = r.type === 'Giroconto' ? `${r.fromAccount} ➡️ ${r.toAccount}` : `${r.accountName} (${r.category})`;
                     rList.innerHTML += `
                         <div class="transaction-card">
                             <div class="transaction-left">
@@ -1512,7 +1518,8 @@
             }
 
             updateAccountSelect();
-            if (document.getElementById('t-type').value === 'Giroconto') updateTransferSelects();
+            if (document.getElementById('t-type').value === 'Giroconto') updateTransferSelects('t-transfer-from', 't-transfer-to');
+            if (document.getElementById('r-type').value === 'Giroconto') updateTransferSelects('r-from-account', 'r-to-account');
             renderAnalytics();
         }
 
