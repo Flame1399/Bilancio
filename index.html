@@ -247,23 +247,24 @@
             gap: 6px;
         }
 
-        /* Stile uniforme per tutti i bottoni occhio privacy */
-        .eye-toggle-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 0.85rem;
-            padding: 0;
-            color: var(--text-light);
-            box-shadow: none;
-            width: auto;
+        /* Pulsante Occhio Privacy isolato e compatto */
+        button.eye-toggle-btn {
+            all: unset;
             display: inline-flex;
             align-items: center;
-            transition: color 0.2s;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.95rem;
+            padding: 2px 6px;
+            border-radius: var(--radius-sm);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            transition: background 0.2s;
+            width: auto !important;
         }
 
-        .eye-toggle-btn:hover {
-            color: var(--text);
+        button.eye-toggle-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .stat-box .value {
@@ -317,7 +318,7 @@
             box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15);
         }
 
-        button {
+        button:not(.eye-toggle-btn):not(.menu-btn):not(.sidebar-close) {
             width: 100%;
             padding: 12px;
             background-color: var(--primary);
@@ -330,48 +331,44 @@
             transition: all 0.2s ease;
         }
 
-        button:hover { background-color: var(--primary-hover); }
-        button:active { transform: scale(0.98); }
+        button:not(.eye-toggle-btn):not(.menu-btn):not(.sidebar-close):hover { background-color: var(--primary-hover); }
+        button:not(.eye-toggle-btn):not(.menu-btn):not(.sidebar-close):active { transform: scale(0.98); }
 
         .btn-secondary {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--card-border);
-            color: var(--text);
-            box-shadow: none;
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid var(--card-border) !important;
+            color: var(--text) !important;
         }
-        .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.1) !important; }
 
         .btn-danger {
-            background-color: rgba(239, 68, 68, 0.12);
-            color: var(--danger);
-            padding: 5px 8px;
-            font-size: 0.75rem;
-            width: auto;
-            border-radius: var(--radius-sm);
-            border: 1px solid rgba(239, 68, 68, 0.25);
-            box-shadow: none;
+            background-color: rgba(239, 68, 68, 0.12) !important;
+            color: var(--danger) !important;
+            padding: 5px 8px !important;
+            font-size: 0.75rem !important;
+            width: auto !important;
+            border-radius: var(--radius-sm) !important;
+            border: 1px solid rgba(239, 68, 68, 0.25) !important;
         }
 
         .btn-edit {
-            background-color: rgba(99, 102, 241, 0.12);
-            color: #818cf8;
-            padding: 5px 8px;
-            font-size: 0.75rem;
-            width: auto;
-            border-radius: var(--radius-sm);
-            border: 1px solid rgba(99, 102, 241, 0.25);
-            box-shadow: none;
+            background-color: rgba(99, 102, 241, 0.12) !important;
+            color: #818cf8 !important;
+            padding: 5px 8px !important;
+            font-size: 0.75rem !important;
+            width: auto !important;
+            border-radius: var(--radius-sm) !important;
+            border: 1px solid rgba(99, 102, 241, 0.25) !important;
         }
 
         .btn-move {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--card-border);
-            color: var(--text-light);
-            font-size: 0.75rem;
-            padding: 4px 6px;
-            border-radius: var(--radius-sm);
-            width: auto;
-            box-shadow: none;
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid var(--card-border) !important;
+            color: var(--text-light) !important;
+            font-size: 0.75rem !important;
+            padding: 4px 6px !important;
+            border-radius: var(--radius-sm) !important;
+            width: auto !important;
         }
 
         .account-card-item {
@@ -802,7 +799,7 @@
         <div class="card">
             <h2>
                 <span>Configurazione Piano</span>
-                <button class="btn-edit" onclick="toggleEditSavingsPlan()" id="btn-toggle-edit-plan" style="padding: 5px 10px;">✏️ Modifica Piano</button>
+                <button class="btn-edit" onclick="toggleEditSavingsPlan()" id="btn-toggle-edit-plan" style="padding: 5px 10px; width:auto;">✏️ Modifica Piano</button>
             </h2>
             
             <div id="savings-plan-edit-form" style="display: none; border-top: 1px solid var(--card-border); padding-top: 14px; margin-top: 12px; margin-bottom: 14px;">
