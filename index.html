@@ -68,6 +68,7 @@
             margin-bottom: 20px;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
             border: 1px solid var(--card-border);
+            overflow: hidden; /* Evita qualsiasi trabokko visivo */
         }
 
         .dashboard-grid {
@@ -118,6 +119,7 @@
 
         .form-group {
             margin-bottom: 16px;
+            width: 100%;
         }
 
         label {
@@ -130,6 +132,7 @@
 
         input, select {
             width: 100%;
+            max-width: 100%;
             padding: 14px;
             border: 1px solid var(--card-border);
             border-radius: var(--radius-md);
@@ -296,7 +299,6 @@
             padding-top: 6px;
         }
 
-        /* Badge principale conto */
         .main-badge {
             font-size: 0.7rem;
             background: rgba(16, 185, 129, 0.15);
@@ -391,7 +393,6 @@
             padding-right: 4px;
         }
 
-        /* Transazioni formattate a Card */
         .transaction-card {
             background: var(--input-bg);
             border: 1px solid var(--card-border);
@@ -485,7 +486,6 @@
         .transaction-amount.entrata { color: var(--success); }
         .transaction-amount.uscita { color: var(--danger); }
 
-        /* NUOVA STILIZZAZIONE ANALISI */
         .analytics-card-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -529,11 +529,9 @@
             gap: 12px;
         }
 
-        .analytics-report-banner svg {
-            width: 24px;
-            height: 24px;
+        .analytics-report-banner div:first-child {
+            font-size: 1.2rem;
             flex-shrink: 0;
-            color: var(--primary);
         }
 
         .nav-tabs {
@@ -717,7 +715,7 @@
         </div>
     </div>
 
-    <!-- TAB 5: ANALISI & REPORT (Ridisegnata) -->
+    <!-- TAB 5: ANALISI & REPORT -->
     <div id="tab-analytics" class="tab-content">
         <div class="card">
             <h2>Periodo di Riferimento</h2>
@@ -927,7 +925,6 @@
             updateAccountSelect();
         }
 
-        /* --- GESTIONE CATEGORIE --- */
         function moveCategory(type, index, direction) {
             const list = data.categories[type];
             const newIndex = index + direction;
@@ -981,7 +978,6 @@
             updateCategorySelect();
         }
 
-        /* --- GESTIONE TRANSAZIONI --- */
         document.getElementById('transaction-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const type = document.getElementById('t-type').value;
@@ -1034,7 +1030,6 @@
             updateAccountSelect();
         }
 
-        /* --- TAB ANALISI (Aggiornata e Pulita) --- */
         function renderAnalytics() {
             const picker = document.getElementById('analytics-month-picker');
             if(!picker.value) {
@@ -1065,7 +1060,6 @@
             let savings = periodIncome - periodExpense;
             let savingsRate = periodIncome > 0 ? (savings / periodIncome) * 100 : 0;
 
-            // Aggiornamento mini-box e metriche
             document.getElementById('ana-income').textContent = `€ ${periodIncome.toFixed(2)}`;
             document.getElementById('ana-expense').textContent = `€ ${periodExpense.toFixed(2)}`;
             
@@ -1100,7 +1094,6 @@
             document.getElementById('ana-financial-advice').innerHTML = advice;
         }
 
-        /* --- INIZIALIZZAZIONE GENERALE --- */
         function initApp() {
             let totalNetWorth = data.accounts.reduce((sum, acc) => sum + acc.balance, 0);
             document.getElementById('net-worth').textContent = `€ ${totalNetWorth.toFixed(2)}`;
@@ -1194,7 +1187,6 @@
                 `;
             });
 
-            // CATEGORIE GESTITE
             let catManager = document.getElementById('category-list-manager');
             catManager.innerHTML = '';
             
@@ -1223,7 +1215,6 @@
                 });
             });
 
-            // TRANSAZIONI
             let tList = document.getElementById('transaction-list');
             tList.innerHTML = data.transactions.length === 0 ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0;">Nessuna transazione registrata.</p>' : '';
             
@@ -1258,7 +1249,6 @@
                 `;
             });
 
-            // CONTI
             let accList = document.getElementById('account-list');
             accList.innerHTML = data.accounts.length === 0 ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0;">Nessun conto inserito.</p>' : '';
             
