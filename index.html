@@ -390,7 +390,7 @@
             padding-right: 4px;
         }
 
-        /* Transazioni formattate */
+        /* Transazioni formattate a Card */
         .transaction-card {
             background: var(--input-bg);
             border: 1px solid var(--card-border);
@@ -400,6 +400,11 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transition: border-color 0.2s ease;
+        }
+
+        .transaction-card:hover {
+            border-color: rgba(99, 102, 241, 0.4);
         }
 
         .transaction-left {
@@ -665,12 +670,47 @@
         </div>
     </div>
 
+    <!-- TAB 5: ANALISI & REPORT -->
+    <div id="tab-analytics" class="tab-content">
+        <div class="card">
+            <h2>Analisi Periodica</h2>
+            <div class="form-group">
+                <label>Seleziona Mese e Anno</label>
+                <input type="month" id="analytics-month-picker" onchange="renderAnalytics()">
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Andamento Finanziario</h2>
+            <div class="dashboard-grid">
+                <div class="stat-box">
+                    <h3>Risparmio Netto</h3>
+                    <div class="value" id="ana-savings">€ 0.00</div>
+                </div>
+                <div class="stat-box">
+                    <h3>Tasso di Risparmio</h3>
+                    <div class="value patrimony" id="ana-savings-rate">0%</div>
+                </div>
+            </div>
+            <div id="analytics-summary-text" style="font-size: 0.85rem; color: var(--text-light); line-height: 1.5; margin-top: 10px;"></div>
+        </div>
+
+        <div class="card">
+            <h2>Consigli Finanziari Personalizzati</h2>
+            <div class="advice-box" style="margin-top: 0;">
+                <h3>💡 Strategia & Ottimizzazione</h3>
+                <p id="ana-financial-advice">Generazione consigli in corso...</p>
+            </div>
+        </div>
+    </div>
+
     <!-- MENU DI NAVIGAZIONE IN BASSO -->
     <nav class="nav-tabs">
         <button class="nav-tab active" onclick="switchTab('dashboard', this)">Dashboard</button>
         <button class="nav-tab" onclick="switchTab('transactions', this)">Transazioni</button>
         <button class="nav-tab" onclick="switchTab('patrimony', this)">Patrimonio</button>
         <button class="nav-tab" onclick="switchTab('categories', this)">Categorie</button>
+        <button class="nav-tab" onclick="switchTab('analytics', this)">Analisi</button>
     </nav>
 
     <script>
@@ -710,6 +750,10 @@
             
             document.getElementById('tab-' + tabId).classList.add('active');
             btnElement.classList.add('active');
+
+            if(tabId === 'analytics') {
+                renderAnalytics();
+            }
         }
 
         function updateCategorySelect() {
@@ -816,7 +860,7 @@
             updateAccountSelect();
         }
 
-        // --- GESTIONE CATEGORIE (Modifica, Spostamento, Eliminazione) ---
+        /* --- GESTIONE CATEGORIE --- */
         function moveCategory(type, index, direction) {
             const list = data.categories[type];
             const newIndex = index + direction;
@@ -850,7 +894,7 @@
 
             let existing = data.categories[type].find(c => c.name.toLowerCase() === name.toLowerCase());
             if(existing) {
-                existing.limit = limit; // Aggiorna il limite se esiste già
+                existing.limit = limit;
             } else {
                 data.categories[type].push({ name, limit });
             }
@@ -869,8 +913,8 @@
             saveData();
             updateCategorySelect();
         }
-        // -------------------------------------------------------------
 
+        /* --- GESTIONE TRANSAZIONI --- */
         document.getElementById('transaction-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const type = document.getElementById('t-type').value;
@@ -923,6 +967,62 @@
             updateAccountSelect();
         }
 
+        /* --- TAB ANALISI --- */
+        function renderAnalytics() {
+            const picker = document.getElementById('analytics-month-picker');
+            if(!picker.value) {
+                const now = new Date();
+                picker.value = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            }
+
+            const parts = picker.value.split('-');
+            const targetYear = parseInt(parts[0]);
+            const targetMonth = parseInt(parts[1]) - 1;
+
+            let periodIncome = 0;
+            let periodExpense = 0;
+            let categoryBreakdown = {};
+
+            data.transactions.forEach(t => {
+                let d = new Date(t.date);
+                if (d.getFullYear() === targetYear && d.getMonth() === targetMonth) {
+                    if (t.type === 'Entrata') {
+                        periodIncome += t.amount;
+                    } else {
+                        periodExpense += t.amount;
+                        categoryBreakdown[t.category] = (categoryBreakdown[t.category] || 0) + t.amount;
+                    }
+                }
+            });
+
+            let savings = periodIncome - periodExpense;
+            let savingsRate = periodIncome > 0 ? (savings / periodIncome) * 100 : 0;
+
+            document.getElementById('ana-savings').textContent = `€ ${savings.toFixed(2)}`;
+            let rateEl = document.getElementById('ana-savings-rate');
+            rateEl.textContent = `${savingsRate.toFixed(1)}%`;
+            rateEl.className = `value ${savings >= 0 ? 'income' : 'expense'}`;
+
+            document.getElementById('analytics-summary-text').innerHTML = 
+                `Nel periodo selezionato hai registrato entrate per <strong>€ ${periodIncome.toFixed(2)}</strong> e uscite per <strong>€ ${periodExpense.toFixed(2)}</strong>.`;
+
+            let advice = "Continua così! La tua gestione finanziaria per questo periodo appare ben bilanciata.";
+            let topCategory = Object.keys(categoryBreakdown).reduce((a, b) => categoryBreakdown[a] > categoryBreakdown[b] ? a : b, null);
+
+            if (periodIncome === 0 && periodExpense === 0) {
+                advice = "Nessuna transazione registrata per questo mese. Aggiungi le tue operazioni per sbloccare l'analisi dettagliata.";
+            } else if (savingsRate < 0) {
+                advice = `⚠️ <strong>Attenzione:</strong> Stai spendendo più di quanto incassi (risparmio negativo del ${savingsRate.toFixed(1)}%). Ti consigliamo di tagliare temporaneamente le spese non essenziali.`;
+            } else if (topCategory && categoryBreakdown[topCategory] > (periodExpense * 0.4)) {
+                advice = `💡 La categoria <strong>"${topCategory}"</strong> rappresenta ben il <strong>${(categoryBreakdown[topCategory]/periodExpense*100).toFixed(0)}%</strong> delle tue uscite totali del mese. Prova a verificare se è possibile ottimizzare questo costo.`;
+            } else if (savingsRate >= 20) {
+                advice = `🌟 Ottimo lavoro! Hai mantenuto un tasso di risparmio eccellente del <strong>${savingsRate.toFixed(1)}%</strong>. Valuta la possibilità di destinare una quota di questo accumulo ai tuoi obiettivi o fondi di investimento.`;
+            }
+
+            document.getElementById('ana-financial-advice').innerHTML = advice;
+        }
+
+        /* --- INIZIALIZZAZIONE GENERALE --- */
         function initApp() {
             let totalNetWorth = data.accounts.reduce((sum, acc) => sum + acc.balance, 0);
             document.getElementById('net-worth').textContent = `€ ${totalNetWorth.toFixed(2)}`;
@@ -1016,7 +1116,7 @@
                 `;
             });
 
-            // RENDER CATEGORIE GESTITE
+            // CATEGORIE GESTITE
             let catManager = document.getElementById('category-list-manager');
             catManager.innerHTML = '';
             
@@ -1045,7 +1145,7 @@
                 });
             });
 
-            // RENDER TRANSAZIONI
+            // TRANSAZIONI (Card stile modern)
             let tList = document.getElementById('transaction-list');
             tList.innerHTML = data.transactions.length === 0 ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0;">Nessuna transazione registrata.</p>' : '';
             
@@ -1080,7 +1180,7 @@
                 `;
             });
 
-            // RENDER CONTI
+            // CONTI
             let accList = document.getElementById('account-list');
             accList.innerHTML = data.accounts.length === 0 ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0;">Nessun conto inserito.</p>' : '';
             
@@ -1107,6 +1207,8 @@
                     </div>
                 `;
             });
+
+            renderAnalytics();
         }
 
         updateCategorySelect();
