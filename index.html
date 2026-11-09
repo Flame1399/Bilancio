@@ -834,7 +834,10 @@
         </div>
 
         <div class="card">
-            <h2>I tuoi Asset</h2>
+            <h2>
+                <span>I tuoi Asset</span>
+                <button class="eye-toggle-btn" onclick="toggleAccountsVisibility()" id="eye-accounts-btn" title="Mostra/Nascondi Conti">👁️</button>
+            </h2>
             <div id="account-list"></div>
         </div>
     </div>
@@ -1001,6 +1004,7 @@
         };
 
         let hideNetWorth = JSON.parse(localStorage.getItem('smart_budget_hide_nw')) || false;
+        let hideAccounts = JSON.parse(localStorage.getItem('smart_budget_hide_acc')) || false;
 
         if (data.accounts.length > 0 && !data.accounts.some(acc => acc.isMain)) {
             data.accounts[0].isMain = true;
@@ -1014,6 +1018,12 @@
         function toggleNetWorthVisibility() {
             hideNetWorth = !hideNetWorth;
             localStorage.setItem('smart_budget_hide_nw', JSON.stringify(hideNetWorth));
+            initApp();
+        }
+
+        function toggleAccountsVisibility() {
+            hideAccounts = !hideAccounts;
+            localStorage.setItem('smart_budget_hide_acc', JSON.stringify(hideAccounts));
             initApp();
         }
 
@@ -1359,6 +1369,7 @@
             
             const netWorthEl = document.getElementById('net-worth');
             const eyeBtn = document.getElementById('eye-btn');
+            const eyeAccBtn = document.getElementById('eye-accounts-btn');
 
             if (hideNetWorth) {
                 netWorthEl.textContent = "€ ••••••";
@@ -1366,6 +1377,12 @@
             } else {
                 netWorthEl.textContent = `€ ${totalNetWorth.toFixed(2)}`;
                 eyeBtn.textContent = "👁️";
+            }
+
+            if (hideAccounts) {
+                eyeAccBtn.textContent = "🙈";
+            } else {
+                eyeAccBtn.textContent = "👁️";
             }
 
             const now = new Date();
@@ -1523,6 +1540,7 @@
             accList.innerHTML = data.accounts.length === 0 ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0;">Nessun conto inserito.</p>' : '';
             
             data.accounts.forEach((acc, index) => {
+                let displayBalance = hideAccounts ? "€ ••••••" : `€ ${acc.balance.toFixed(2)}`;
                 accList.innerHTML += `
                     <div class="account-card-item">
                         <div class="account-header-row">
@@ -1530,7 +1548,7 @@
                                 <span>${acc.name}</span>
                                 ${acc.isMain ? '<span class="main-badge">Principale ⭐</span>' : '<span class="normal-badge">Imposta ⭐</span>'}
                             </div>
-                            <div class="account-balance-area">€ ${acc.balance.toFixed(2)}</div>
+                            <div class="account-balance-area">${displayBalance}</div>
                         </div>
                         <div class="account-actions-row">
                             <div class="account-move-group">
