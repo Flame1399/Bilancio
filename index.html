@@ -11,6 +11,7 @@
             --success: #10b981;
             --danger: #ef4444;
             --warning: #f59e0b;
+            --info: #3b82f6;
             --bg: #090d16;
             --card-bg: #131c2e;
             --card-border: #1e293b;
@@ -611,6 +612,13 @@
             border: 1px solid rgba(239, 68, 68, 0.3);
         }
 
+        .transaction-badge.giroconto {
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--info);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            font-size: 0.9rem;
+        }
+
         .transaction-details {
             display: flex;
             flex-direction: column;
@@ -661,6 +669,7 @@
 
         .transaction-amount.entrata { color: var(--success); }
         .transaction-amount.uscita { color: var(--danger); }
+        .transaction-amount.giroconto { color: var(--info); }
 
         .analytics-card-grid {
             display: grid;
@@ -793,40 +802,58 @@
         </div>
     </div>
 
-    <!-- TAB 2: TRANSAZIONI -->
+    <!-- TAB 2: TRANSAZIONI & GIROCONTI -->
     <div id="tab-transactions" class="tab-content">
         <div class="card">
             <h2>Nuova Operazione</h2>
             <form id="transaction-form">
                 <div class="form-group">
-                    <label>Tipo</label>
-                    <select id="t-type" onchange="updateCategorySelect()">
-                        <option value="Uscita">Uscita</option>
-                        <option value="Entrata">Entrata</option>
+                    <label>Tipo di Operazione</label>
+                    <select id="t-type" onchange="onTransactionTypeChange()">
+                        <option value="Uscita">Uscita (Spesa)</option>
+                        <option value="Entrata">Entrata (Stipendio/Extra)</option>
+                        <option value="Giroconto">🔄 Giroconto (Tra i tuoi conti)</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label>Seleziona Conto di Riferimento</label>
-                    <select id="t-account" required></select>
+
+                <!-- CAMPI PER ENTRATA / USCITA -->
+                <div id="standard-transaction-fields">
+                    <div class="form-group">
+                        <label>Conto di Riferimento</label>
+                        <select id="t-account"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Categoria</label>
+                        <select id="t-category"></select>
+                    </div>
                 </div>
+
+                <!-- CAMPI PER GIROCONTO -->
+                <div id="transfer-transaction-fields" style="display: none;">
+                    <div class="form-group">
+                        <label>Conto di Origine (Da dove prelevi)</label>
+                        <select id="t-transfer-from"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Conto di Destinazione (Dove accrediti)</label>
+                        <select id="t-transfer-to"></select>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label>Importo (€)</label>
                     <input type="number" id="t-amount" step="0.01" placeholder="0.00" required>
                 </div>
                 <div class="form-group">
-                    <label>Categoria</label>
-                    <select id="t-category"></select>
-                </div>
-                <div class="form-group">
                     <label>Nota / Descrizione</label>
-                    <input type="text" id="t-desc" placeholder="Es. Stipendio, Spesa, Rimborso...">
+                    <input type="text" id="t-desc" placeholder="Es. Spostamento su conto deposito, Risparmio automatico...">
                 </div>
                 <button type="submit">Registra Operazione</button>
             </form>
         </div>
 
         <div class="card">
-            <h2>Ultime Operazioni</h2>
+            <h2>Ultime Operazioni & Movimenti</h2>
             <div class="transaction-list" id="transaction-list"></div>
         </div>
     </div>
@@ -838,7 +865,7 @@
             <form id="account-form">
                 <div class="form-group">
                     <label>Nome Conto / Investimento</label>
-                    <input type="text" id="acc-name" placeholder="Es. Conto Corrente, Contanti" required>
+                    <input type="text" id="acc-name" placeholder="Es. Conto Corrente, Conto Deposito" required>
                 </div>
                 <div class="form-group">
                     <label>Saldo Iniziale / Attuale (€)</label>
@@ -887,11 +914,11 @@
         </div>
     </div>
 
-    <!-- TAB 5: PIANO DI RISPARMIO FORMATTATO E PERFETTAMENTE ALLINEATO -->
+    <!-- TAB 5: PIANO DI RISPARMIO FORMATTATO -->
     <div id="tab-savings" class="tab-content">
         <div class="card">
             <h2>
-                <span>Configurazione piano</span>
+                <span>Configurazione Piano</span>
                 <button class="btn-edit" onclick="toggleEditSavingsPlan()" id="btn-toggle-edit-plan" style="width: auto; padding: 6px 12px;">✏️ Modifica Piano</button>
             </h2>
             
@@ -1136,9 +1163,10 @@
             data.transactions.forEach(t => {
                 if (t.type === 'Entrata') {
                     totalSavedActual += t.amount;
-                } else {
+                } else if (t.type === 'Uscita') {
                     totalSavedActual -= t.amount;
                 }
+                // I giroconti non alterano il risparmio complessivo netto del patrimonio totale, lo spostano solo di conto.
             });
             if(totalSavedActual < 0) totalSavedActual = 0;
 
@@ -1210,8 +1238,25 @@
             }
         }
 
+        function onTransactionTypeChange() {
+            const type = document.getElementById('t-type').value;
+            const standardFields = document.getElementById('standard-transaction-fields');
+            const transferFields = document.getElementById('transfer-transaction-fields');
+
+            if (type === 'Giroconto') {
+                standardFields.style.display = 'none';
+                transferFields.style.display = 'block';
+                updateTransferSelects();
+            } else {
+                standardFields.style.display = 'block';
+                transferFields.style.display = 'none';
+                updateCategorySelect();
+            }
+        }
+
         function updateCategorySelect() {
             const type = document.getElementById('t-type').value;
+            if(type === 'Giroconto') return;
             const select = document.getElementById('t-category');
             select.innerHTML = '';
             
@@ -1247,6 +1292,30 @@
                 }
                 select.appendChild(opt);
             });
+        }
+
+        function updateTransferSelects() {
+            const fromSelect = document.getElementById('t-transfer-from');
+            const toSelect = document.getElementById('t-transfer-to');
+            fromSelect.innerHTML = '';
+            toSelect.innerHTML = '';
+
+            data.accounts.forEach((acc, idx) => {
+                let opt1 = document.createElement('option');
+                opt1.value = acc.name;
+                opt1.textContent = `${acc.name} (€ ${acc.balance.toFixed(2)})`;
+                fromSelect.appendChild(opt1);
+
+                let opt2 = document.createElement('option');
+                opt2.value = acc.name;
+                opt2.textContent = `${acc.name} (€ ${acc.balance.toFixed(2)})`;
+                toSelect.appendChild(opt2);
+            });
+
+            // Seleziona di default il secondo conto come destinazione se esiste
+            if (data.accounts.length > 1) {
+                toSelect.selectedIndex = 1;
+            }
         }
 
         function setMainAccount(name) {
@@ -1370,34 +1439,67 @@
         document.getElementById('transaction-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const type = document.getElementById('t-type').value;
-            const accountName = document.getElementById('t-account').value;
             const amount = parseFloat(document.getElementById('t-amount').value);
-            const category = document.getElementById('t-category').value;
-            const desc = document.getElementById('t-desc').value || category;
+            const desc = document.getElementById('t-desc').value;
 
-            if(!accountName) return;
+            if (type === 'Giroconto') {
+                const fromAccName = document.getElementById('t-transfer-from').value;
+                const toAccName = document.getElementById('t-transfer-to').value;
 
-            let account = data.accounts.find(acc => acc.name === accountName);
-            if(account) {
-                if(type === 'Entrata') {
-                    account.balance += amount;
-                } else {
-                    account.balance -= amount;
+                if (fromAccName === toAccName) {
+                    alert("Il conto di origine e di destinazione devono essere differenti!");
+                    return;
                 }
-            }
 
-            data.transactions.unshift({
-                id: Date.now(),
-                type,
-                accountName,
-                amount,
-                category,
-                desc,
-                date: new Date().toISOString()
-            });
+                let accFrom = data.accounts.find(acc => acc.name === fromAccName);
+                let accTo = data.accounts.find(acc => acc.name === toAccName);
+
+                if (accFrom && accTo) {
+                    accFrom.balance -= amount;
+                    accTo.balance += amount;
+                }
+
+                data.transactions.unshift({
+                    id: Date.now(),
+                    type: 'Giroconto',
+                    fromAccount: fromAccName,
+                    toAccount: toAccName,
+                    amount,
+                    desc: desc || `Giroconto da ${fromAccName} a ${toAccName}`,
+                    date: new Date().toISOString()
+                });
+
+            } else {
+                const accountName = document.getElementById('t-account').value;
+                const category = document.getElementById('t-category').value;
+                const finalDesc = desc || category;
+
+                if(!accountName) return;
+
+                let account = data.accounts.find(acc => acc.name === accountName);
+                if(account) {
+                    if(type === 'Entrata') {
+                        account.balance += amount;
+                    } else {
+                        account.balance -= amount;
+                    }
+                }
+
+                data.transactions.unshift({
+                    id: Date.now(),
+                    type,
+                    accountName,
+                    amount,
+                    category,
+                    desc: finalDesc,
+                    date: new Date().toISOString()
+                });
+            }
 
             saveData();
             this.reset();
+            document.getElementById('t-type').value = 'Uscita';
+            onTransactionTypeChange();
             updateCategorySelect();
             updateAccountSelect();
         });
@@ -1405,12 +1507,19 @@
         function deleteTransaction(id) {
             let t = data.transactions.find(item => item.id === id);
             if(t) {
-                let account = data.accounts.find(acc => acc.name === t.accountName);
-                if(account) {
-                    if(t.type === 'Entrata') {
-                        account.balance -= t.amount;
-                    } else {
-                        account.balance += t.amount;
+                if (t.type === 'Giroconto') {
+                    let accFrom = data.accounts.find(acc => acc.name === t.fromAccount);
+                    let accTo = data.accounts.find(acc => acc.name === t.toAccount);
+                    if(accFrom) accFrom.balance += t.amount;
+                    if(accTo) accTo.balance -= t.amount;
+                } else {
+                    let account = data.accounts.find(acc => acc.name === t.accountName);
+                    if(account) {
+                        if(t.type === 'Entrata') {
+                            account.balance -= t.amount;
+                        } else {
+                            account.balance += t.amount;
+                        }
                     }
                 }
             }
@@ -1434,10 +1543,11 @@
                 if (d.getFullYear() === targetYear && d.getMonth() === targetMonth) {
                     if (t.type === 'Entrata') {
                         periodIncome += t.amount;
-                    } else {
+                    } else if (t.type === 'Uscita') {
                         periodExpense += t.amount;
                         categoryBreakdown[t.category] = (categoryBreakdown[t.category] || 0) + t.amount;
                     }
+                    // I giroconti non influiscono su entrate/uscite del budget mensile in quanto meri spostamenti patrimoniali interni.
                 }
             });
 
@@ -1520,7 +1630,7 @@
                 if (tDate.getMonth() === currentMonth && tDate.getFullYear() === currentYear) {
                     if (t.type === 'Entrata') {
                         monthlyIncome += t.amount;
-                    } else {
+                    } else if (t.type === 'Uscita') {
                         monthlyExpense += t.amount;
                         if (categoryExpenses[t.category] !== undefined) {
                             categoryExpenses[t.category] += t.amount;
@@ -1627,28 +1737,33 @@
             
             data.transactions.slice(0, 20).forEach(t => {
                 let d = new Date(t.date).toLocaleDateString();
+                let isGiroconto = t.type === 'Giroconto';
                 let isEntrata = t.type === 'Entrata';
                 
+                let badgeClass = isGiroconto ? 'giroconto' : (isEntrata ? 'entrata' : 'uscita');
+                let badgeSymbol = isGiroconto ? '🔄' : (isEntrata ? '+' : '-');
+                let amountClass = isGiroconto ? 'giroconto' : (isEntrata ? 'entrata' : 'uscita');
+                let amountPrefix = isGiroconto ? '🔄 ' : (isEntrata ? '+' : '-');
+                let metaText = isGiroconto ? `Da <strong>${t.fromAccount}</strong> a <strong>${t.toAccount}</strong>` : `<span class="t-tag">${t.category}</span><span>•</span><span>${t.accountName}</span>`;
+
                 tList.innerHTML += `
                     <div class="transaction-card">
                         <div class="transaction-left">
-                            <div class="transaction-badge ${isEntrata ? 'entrata' : 'uscita'}">
-                                ${isEntrata ? '+' : '-'}
+                            <div class="transaction-badge ${badgeClass}">
+                                ${badgeSymbol}
                             </div>
                             <div class="transaction-details">
                                 <span class="t-desc">${t.desc}</span>
                                 <span class="t-meta">
-                                    <span class="t-tag">${t.category}</span>
-                                    <span>•</span>
-                                    <span>${t.accountName}</span>
+                                    ${metaText}
                                     <span>•</span>
                                     <span>${d}</span>
                                 </span>
                             </div>
                         </div>
                         <div class="transaction-right">
-                            <span class="transaction-amount ${isEntrata ? 'entrata' : 'uscita'}">
-                                ${isEntrata ? '+' : '-'}€ ${t.amount.toFixed(2)}
+                            <span class="transaction-amount ${amountClass}">
+                                ${amountPrefix}€ ${t.amount.toFixed(2)}
                             </span>
                             <button class="btn-danger" onclick="deleteTransaction(${t.id})" style="padding: 3px 8px; font-size: 0.7rem;">Elimina</button>
                         </div>
