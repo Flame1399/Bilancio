@@ -900,6 +900,40 @@
             </div>
         </div>
 
+        <!-- CARD PIANO DI RISPARMIO IN PERCENTUALE -->
+        <div class="card">
+            <h2>🎯 Piano di Risparmio %</h2>
+            <div class="form-group">
+                <label>Inserisci il tuo Stipendio Fisso Mensile (€)</label>
+                <input type="number" id="savings-salary" placeholder="Es. 1800" oninput="calculatePercentPlan()">
+            </div>
+            
+            <div class="form-group">
+                <label>Seleziona Regola di Risparmio</label>
+                <select id="savings-rule" onchange="calculatePercentPlan()">
+                    <option value="50-30-20">Regola 50 / 30 / 20 (Consigliata)</option>
+                    <option value="60-20-10-10">Regola 60 / 20 / 10 / 10 (A Obiettivi)</option>
+                    <option value="custom-20">Risparmio Fisso 20%</option>
+                    <option value="custom-30">Risparmio Aggressivo 30%</option>
+                </select>
+            </div>
+
+            <div id="savings-plan-results" class="analytics-card-grid" style="margin-top: 14px; grid-template-columns: repeat(3, 1fr);">
+                <div class="analytics-mini-box">
+                    <span>Necessità</span>
+                    <strong class="value expense" id="plan-needs" style="font-size:0.85rem;">€ 0.00</strong>
+                </div>
+                <div class="analytics-mini-box">
+                    <span>Svago</span>
+                    <strong class="value" id="plan-wants" style="font-size:0.85rem; color:#f59e0b;">€ 0.00</strong>
+                </div>
+                <div class="analytics-mini-box">
+                    <span>Risparmio</span>
+                    <strong class="value income" id="plan-savings" style="font-size:0.85rem;">€ 0.00</strong>
+                </div>
+            </div>
+        </div>
+
         <div class="card">
             <h2>Andamento Periodico</h2>
             
@@ -1019,6 +1053,37 @@
                 }
                 monthSelect.value = now.getMonth();
             }
+        }
+
+        function calculatePercentPlan() {
+            const salary = parseFloat(document.getElementById('savings-salary').value) || 0;
+            const rule = document.getElementById('savings-rule').value;
+
+            let needs = 0;
+            let wants = 0;
+            let savings = 0;
+
+            if (rule === '50-30-20') {
+                needs = salary * 0.50;
+                wants = salary * 0.30;
+                savings = salary * 0.20;
+            } else if (rule === '60-20-10-10') {
+                needs = salary * 0.60;
+                wants = salary * 0.20;
+                savings = salary * 0.20;
+            } else if (rule === 'custom-20') {
+                savings = salary * 0.20;
+                needs = salary * 0.55;
+                wants = salary * 0.25;
+            } else if (rule === 'custom-30') {
+                savings = salary * 0.30;
+                needs = salary * 0.50;
+                wants = salary * 0.20;
+            }
+
+            document.getElementById('plan-needs').textContent = `€ ${needs.toFixed(2)}`;
+            document.getElementById('plan-wants').textContent = `€ ${wants.toFixed(2)}`;
+            document.getElementById('plan-savings').textContent = `€ ${savings.toFixed(2)}`;
         }
 
         function updateCategorySelect() {
