@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartBudget Locale</title>
+    <title>SmartBudget Dinamico</title>
     <style>
         :root {
             --primary: #4f46e5;
@@ -31,7 +31,7 @@
             padding: 16px;
             max-width: 600px;
             margin: 0 auto;
-            padding-bottom: 80px;
+            padding-bottom: 90px;
         }
 
         header {
@@ -176,22 +176,18 @@
             font-weight: bold;
         }
 
-        .transaction-list {
-            max-height: 200px;
+        .transaction-list, .category-list {
+            max-height: 220px;
             overflow-y: auto;
         }
 
-        .transaction-item {
+        .transaction-item, .category-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 8px 0;
             border-bottom: 1px solid var(--border);
             font-size: 0.85rem;
-        }
-
-        .transaction-details span {
-            display: block;
         }
 
         .transaction-details .t-desc {
@@ -203,7 +199,7 @@
             color: var(--text-light);
         }
 
-        /* Tabs di navigazione mobile */
+        /* Menu di navigazione inferiore fisso */
         .nav-tabs {
             position: fixed;
             bottom: 0;
@@ -221,7 +217,7 @@
             background: none;
             border: none;
             color: var(--text-light);
-            font-size: 0.75rem;
+            font-size: 0.70rem;
             font-weight: normal;
             width: auto;
             padding: 0;
@@ -245,10 +241,10 @@
 
     <header>
         <h1>SmartBudget</h1>
-        <p>Gestione Finanziaria Locale</p>
+        <p>Versione Smart & Dinamica</p>
     </header>
 
-    <!-- SEZIONE 1: DASHBOARD -->
+    <!-- TAB 1: DASHBOARD -->
     <div id="tab-dashboard" class="tab-content active">
         <div class="dashboard-grid">
             <div class="stat-box">
@@ -269,23 +265,20 @@
             </div>
         </div>
 
-        <!-- Monitoraggio Budget & Alert -->
         <div class="card">
             <h2>Controllo Budget & Alert Spese</h2>
-            <div id="budget-alerts-container">
-                <!-- Generato via JS -->
-            </div>
+            <div id="budget-alerts-container"></div>
         </div>
     </div>
 
-    <!-- SEZIONE 2: TRANSAZIONI -->
+    <!-- TAB 2: TRANSAZIONI -->
     <div id="tab-transactions" class="tab-content">
         <div class="card">
-            <h2>Nuova Transazione</h2>
+            <h2>Nuova Operazione</h2>
             <form id="transaction-form">
                 <div class="form-group">
                     <label>Tipo</label>
-                    <select id="t-type">
+                    <select id="t-type" onchange="updateCategorySelect()">
                         <option value="Uscita">Uscita</option>
                         <option value="Entrata">Entrata</option>
                     </select>
@@ -296,59 +289,72 @@
                 </div>
                 <div class="form-group">
                     <label>Categoria</label>
-                    <select id="t-category">
-                        <!-- Popolato dinamicamente -->
+                    <select id="t-category"></select>
+                </div>
+                <div class="form-group">
+                    <label>Nota / Descrizione</label>
+                    <input type="text" id="t-desc" placeholder="Es. Caffè, Stipendio, ecc.">
+                </div>
+                <button type="submit">Registra</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Ultime Operazioni</h2>
+            <div class="transaction-list" id="transaction-list"></div>
+        </div>
+    </div>
+
+    <!-- TAB 3: PATRIMONIO -->
+    <div id="tab-patrimony" class="tab-content">
+        <div class="card">
+            <h2>Gestione Conti & Asset</h2>
+            <form id="account-form">
+                <div class="form-group">
+                    <label>Nome Conto / Investimento</label>
+                    <input type="text" id="acc-name" placeholder="Es. Conto Corrente, Azioni" required>
+                </div>
+                <div class="form-group">
+                    <label>Valore Totale (€)</label>
+                    <input type="number" id="acc-balance" step="0.01" placeholder="0.00" required>
+                </div>
+                <button type="submit">Aggiorna / Aggiungi Conto</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>I tuoi Asset</h2>
+            <div id="account-list"></div>
+        </div>
+    </div>
+
+    <!-- TAB 4: CATEGORIE & BUDGET PERSONALIZZABILI -->
+    <div id="tab-categories" class="tab-content">
+        <div class="card">
+            <h2>Aggiungi Nuova Categoria</h2>
+            <form id="category-form">
+                <div class="form-group">
+                    <label>Tipo</label>
+                    <select id="c-type">
+                        <option value="Uscita">Uscita</option>
+                        <option value="Entrata">Entrata</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Descrizione / Nota</label>
-                    <input type="text" id="t-desc" placeholder="Es. Spesa al supermercato">
+                    <label>Nome Categoria</label>
+                    <input type="text" id="c-name" placeholder="Es. Abbigliamento, Freelance" required>
                 </div>
-                <button type="submit">Registra Operazione</button>
+                <div class="form-group" id="limit-group">
+                    <label>Limite di Budget Mensile (€) (Solo Uscite)</label>
+                    <input type="number" id="c-limit" value="150" step="10">
+                </div>
+                <button type="submit">Crea Categoria</button>
             </form>
         </div>
 
         <div class="card">
-            <h2>Storico Ultime Operazioni</h2>
-            <div class="transaction-list" id="transaction-list">
-                <!-- Generato via JS -->
-            </div>
-        </div>
-    </div>
-
-    <!-- SEZIONE 3: PATRIMONIO E CONTI -->
-    <div id="tab-patrimony" class="tab-content">
-        <div class="card">
-            <h2>Aggiorna Saldo Conti</h2>
-            <form id="account-form">
-                <div class="form-group">
-                    <label>Nome Conto / Asset</label>
-                    <input type="text" id="acc-name" placeholder="Es. Conto Corrente, Contanti, Azioni" required>
-                </div>
-                <div class="form-group">
-                    <label>Valore Attuale (€)</label>
-                    <input type="number" id="acc-balance" step="0.01" placeholder="0.00" required>
-                </div>
-                <button type="submit">Salva / Aggiorna Conto</button>
-            </form>
-        </div>
-
-        <div class="card">
-            <h2>I tuoi Conti & Asset</h2>
-            <div id="account-list">
-                <!-- Generato via JS -->
-            </div>
-        </div>
-    </div>
-
-    <!-- SEZIONE 4: BUDGET IMPOSTATI -->
-    <div id="tab-settings" class="tab-content">
-        <div class="card">
-            <h2>Imposta Budget Mensili per Categoria</h2>
-            <p style="font-size: 0.8rem; color: var(--text-light); margin-bottom: 12px;">Definisci un limite di spesa mensile. L'app ti avviserà se ti avvicini o sfori il budget.</p>
-            <div id="budget-settings-list">
-                <!-- Generato via JS -->
-            </div>
+            <h2>Categorie Attive</h2>
+            <div class="category-list" id="category-list-manager"></div>
         </div>
     </div>
 
@@ -357,37 +363,36 @@
         <button class="nav-tab active" onclick="switchTab('dashboard', this)">Dashboard</button>
         <button class="nav-tab" onclick="switchTab('transactions', this)">Transazioni</button>
         <button class="nav-tab" onclick="switchTab('patrimony', this)">Patrimonio</button>
-        <button class="nav-tab" onclick="switchTab('settings', this)">Budget</button>
+        <button class="nav-tab" onclick="switchTab('categories', this)">Categorie</button>
     </nav>
 
     <script>
-        // Categorie fondamentali predefinite
-        const categories = {
-            Uscita: ["Casa / Affitto", "Spesa Alimentare", "Bollette & Utenze", "Trasporti / Auto", "Svago & Tempo Libero", "Salute & Benessere", "Altro"],
-            Entrata: ["Stipendio", "Investimenti / Dividendi", "Extra / Regali", "Altro"]
-        };
-
-        // Dati salvati in locale o inizializzati
-        let data = JSON.parse(localStorage.getItem('smart_budget_data')) || {
+        // Dati strutturati salvati in locale o predefiniti intelligenti
+        let data = JSON.parse(localStorage.getItem('smart_budget_data_v2')) || {
+            categories: {
+                Uscita: [
+                    { name: "Casa / Affitto", limit: 600 },
+                    { name: "Spesa Alimentare", limit: 350 },
+                    { name: "Bollette & Utenze", limit: 150 },
+                    { name: "Trasporti / Auto", limit: 150 },
+                    { name: "Svago & Ristoranti", limit: 120 },
+                    { name: "Salute & Sport", limit: 80 }
+                ],
+                Entrata: [
+                    { name: "Stipendio", limit: 0 },
+                    { name: "Investimenti / Extra", limit: 0 }
+                ]
+            },
             transactions: [],
-            accounts: [],
-            budgets: {
-                "Casa / Affitto": 600,
-                "Spesa Alimentare": 300,
-                "Bollette & Utenze": 150,
-                "Trasporti / Auto": 150,
-                "Svago & Tempo Libero": 100,
-                "Salute & Benessere": 80,
-                "Altro": 100
-            }
+            accounts: []
         };
 
         function saveData() {
-            localStorage.setItem('smart_budget_data', JSON.stringify(data));
+            localStorage.setItem('smart_budget_data_v2', JSON.stringify(data));
             initApp();
         }
 
-        // Gestione Tab Navigazione
+        // Navigazione Tab
         function switchTab(tabId, btnElement) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
@@ -396,22 +401,23 @@
             btnElement.classList.add('active');
         }
 
-        // Popola categorie dinamicamente nel form transazioni
+        // Popola la select delle categorie in base al tipo scelto
         function updateCategorySelect() {
             const type = document.getElementById('t-type').value;
             const select = document.getElementById('t-category');
             select.innerHTML = '';
-            categories[type].forEach(cat => {
-                let opt = document.createElement('option');
-                opt.value = cat;
-                opt.textContent = cat;
-                select.appendChild(opt);
-            });
+            
+            if(data.categories[type]) {
+                data.categories[type].forEach(cat => {
+                    let opt = document.createElement('option');
+                    opt.value = cat.name;
+                    opt.textContent = cat.name;
+                    select.appendChild(opt);
+                });
+            }
         }
 
-        document.getElementById('t-type').addEventListener('change', updateCategorySelect);
-
-        // Aggiungi Transazione
+        // Gestione Aggiunta Transazione
         document.getElementById('transaction-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const type = document.getElementById('t-type').value;
@@ -431,13 +437,42 @@
             saveData();
             this.reset();
             updateCategorySelect();
-            alert('Operazione registrata con successo!');
         });
 
-        // Gestione Conti / Patrimonio
+        // Aggiunta Nuova Categoria personalizzata
+        document.getElementById('category-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const type = document.getElementById('c-type').value;
+            const name = document.getElementById('c-name').value.trim();
+            const limit = parseFloat(document.getElementById('c-limit').value) || 0;
+
+            // Verifica se esiste già
+            let exists = data.categories[type].some(c => c.name.toLowerCase() === name.toLowerCase());
+            if(exists) {
+                alert('Questa categoria esiste già!');
+                return;
+            }
+
+            data.categories[type].push({ name, limit });
+            saveData();
+            this.reset();
+            alert('Categoria aggiunta con successo!');
+        });
+
+        // Eliminazione Categoria
+        function deleteCategory(type, name) {
+            if(data.categories[type].length <= 1) {
+                alert('Devi mantenere almeno una categoria.');
+                return;
+            }
+            data.categories[type] = data.categories[type].filter(c => c.name !== name);
+            saveData();
+        }
+
+        // Gestione Conti
         document.getElementById('account-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            const name = document.getElementById('acc-name').value;
+            const name = document.getElementById('acc-name').value.trim();
             const balance = parseFloat(document.getElementById('acc-balance').value);
 
             let existing = data.accounts.find(acc => acc.name.toLowerCase() === name.toLowerCase());
@@ -461,15 +496,18 @@
             saveData();
         }
 
-        // Aggiorna Budget Settings
-        function updateBudgetLimit(category, newLimit) {
-            data.budgets[category] = parseFloat(newLimit) || 0;
-            saveData();
+        // Aggiorna limiti di budget rapidi
+        function updateLimit(categoryName, newLimit) {
+            let cat = data.categories["Uscita"].find(c => c.name === categoryName);
+            if(cat) {
+                cat.limit = parseFloat(newLimit) || 0;
+                saveData();
+            }
         }
 
-        // Calcoli e Rendering dell'App
+        // Funzione centrale di calcolo e aggiornamento interfaccia
         function initApp() {
-            // 1. Calcolo Patrimonio Netto
+            // 1. Patrimonio Netto
             let totalNetWorth = data.accounts.reduce((sum, acc) => sum + acc.balance, 0);
             document.getElementById('net-worth').textContent = `€ ${totalNetWorth.toFixed(2)}`;
 
@@ -481,7 +519,8 @@
             let monthlyIncome = 0;
             let monthlyExpense = 0;
             let categoryExpenses = {};
-            categories["Uscita"].forEach(c => categoryExpenses[c] = 0);
+            
+            data.categories["Uscita"].forEach(c => categoryExpenses[c.name] = 0);
 
             data.transactions.forEach(t => {
                 let tDate = new Date(t.date);
@@ -493,7 +532,7 @@
                         if (categoryExpenses[t.category] !== undefined) {
                             categoryExpenses[t.category] += t.amount;
                         } else {
-                            categoryExpenses[t.category] = t.amount;
+                            categoryExpenses[t.category] = t.amount; // Per categorie rimosse ma presenti in vecchie transazioni
                         }
                     }
                 }
@@ -507,40 +546,37 @@
             flowEl.textContent = `€ ${monthlyFlow.toFixed(2)}`;
             flowEl.className = `value ${monthlyFlow >= 0 ? 'income' : 'expense'}`;
 
-            // 3. Render Budget & Alert Visivi
+            // 3. Render Budget & Alert Dinamici
             let budgetContainer = document.getElementById('budget-alerts-container');
             budgetContainer.innerHTML = '';
 
-            let settingsContainer = document.getElementById('budget-settings-list');
-            settingsContainer.innerHTML = '';
-
-            categories["Uscita"].forEach(cat => {
-                let spent = categoryExpenses[cat] || 0;
-                let limit = data.budgets[cat] || 100;
+            data.categories["Uscita"].forEach(cat => {
+                let spent = categoryExpenses[cat.name] || 0;
+                let limit = cat.limit;
                 let percentage = limit > 0 ? (spent / limit) * 100 : 0;
 
-                // Colore barra e alert
                 let barColor = 'var(--success)';
-                let alertMsg = '';
+                let alertMsg = `Disponibile: € ${(limit - spent).toFixed(2)}`;
                 let alertColor = 'var(--text-light)';
 
-                if (percentage >= 100) {
-                    barColor = 'var(--danger)';
-                    alertMsg = '⚠️ Budget esaurito o superato!';
-                    alertColor = 'var(--danger)';
-                } else if (percentage >= 80) {
-                    barColor = 'var(--warning)';
-                    alertMsg = '⚠️ Attenzione: vicino al limite!';
-                    alertColor = 'var(--warning)';
+                if (limit > 0) {
+                    if (percentage >= 100) {
+                        barColor = 'var(--danger)';
+                        alertMsg = '⚠️ Budget esaurito o superato!';
+                        alertColor = 'var(--danger)';
+                    } else if (percentage >= 80) {
+                        barColor = 'var(--warning)';
+                        alertMsg = '⚠️ Attenzione: vicino al limite!';
+                        alertColor = 'var(--warning)';
+                    }
                 } else {
-                    alertMsg = `Disponibile: € ${(limit - spent).toFixed(2)}`;
+                    alertMsg = 'Nessun limite impostato';
                 }
 
-                // Aggiungi alla Dashboard (con Alert)
                 budgetContainer.innerHTML += `
                     <div class="budget-item">
                         <div class="budget-info">
-                            <span><strong>${cat}</strong></span>
+                            <span><strong>${cat.name}</strong></span>
                             <span>€ ${spent.toFixed(2)} / € ${limit.toFixed(2)}</span>
                         </div>
                         <div class="progress-bar-container">
@@ -549,19 +585,27 @@
                         <div class="alert-text" style="color: ${alertColor};">${alertMsg}</div>
                     </div>
                 `;
-
-                // Aggiungi alla Tab Impostazioni Budget
-                settingsContainer.innerHTML += `
-                    <div class="form-group">
-                        <label>${cat} (Limite Mensile €)</label>
-                        <input type="number" value="${limit}" onchange="updateBudgetLimit('${cat}', this.value)" step="10">
-                    </div>
-                `;
             });
 
-            // 4. Render Storico Transazioni
+            // 4. Gestione Manager Categorie (Tab Categorie)
+            let catManager = document.getElementById('category-list-manager');
+            catManager.innerHTML = '';
+            
+            ["Uscita", "Entrata"].forEach(type => {
+                catManager.innerHTML += `<p style="font-weight:bold; margin-top:8px; color:var(--primary);">${type}</p>`;
+                data.categories[type].forEach(cat => {
+                    catManager.innerHTML += `
+                        <div class="category-row">
+                            <span>${cat.name} ${type === 'Uscita' ? `(Budget: €${cat.limit})` : ''}</span>
+                            <button class="btn-danger" onclick="deleteCategory('${type}', '${cat.name}')">Elimina</button>
+                        </div>
+                    `;
+                });
+            });
+
+            // 5. Storico Transazioni
             let tList = document.getElementById('transaction-list');
-            tList.innerHTML = data.transactions.length === 0 ? '<p style="color:var(--text-light); text-align:center;">Nessuna transazione registrata.</p>' : '';
+            tList.innerHTML = data.transactions.length === 0 ? '<p style="color:var(--text-light); text-align:center;">Nessuna transazione.</p>' : '';
             data.transactions.slice(0, 20).forEach(t => {
                 let d = new Date(t.date).toLocaleDateString();
                 tList.innerHTML += `
@@ -580,9 +624,9 @@
                 `;
             });
 
-            // 5. Render Conti & Asset
+            // 6. Conti & Asset
             let accList = document.getElementById('account-list');
-            accList.innerHTML = data.accounts.length === 0 ? '<p style="color:var(--text-light); text-align:center;">Nessun conto inserito. Aggiungine uno sopra.</p>' : '';
+            accList.innerHTML = data.accounts.length === 0 ? '<p style="color:var(--text-light); text-align:center;">Nessun conto.</p>' : '';
             data.accounts.forEach(acc => {
                 accList.innerHTML += `
                     <div class="transaction-item">
@@ -598,7 +642,7 @@
             });
         }
 
-        // Avvio iniziale
+        // Avvio
         updateCategorySelect();
         initApp();
     </script>
