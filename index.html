@@ -365,23 +365,24 @@
             background: rgba(99, 102, 241, 0.08);
             border: 1px solid rgba(99, 102, 241, 0.2);
             border-radius: var(--radius-md);
-            padding: 14px;
-            margin-top: 16px;
+            padding: 16px;
+            margin-top: 12px;
         }
 
         .advice-box h3 {
-            font-size: 0.85rem;
+            font-size: 0.9rem;
             color: #818cf8;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
             gap: 6px;
+            font-weight: 700;
         }
 
         .advice-box p {
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: var(--text-light);
-            line-height: 1.4;
+            line-height: 1.5;
         }
 
         .transaction-list, .category-list {
@@ -400,11 +401,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: border-color 0.2s ease;
-        }
-
-        .transaction-card:hover {
-            border-color: rgba(99, 102, 241, 0.4);
         }
 
         .transaction-left {
@@ -488,6 +484,57 @@
 
         .transaction-amount.entrata { color: var(--success); }
         .transaction-amount.uscita { color: var(--danger); }
+
+        /* NUOVA STILIZZAZIONE ANALISI */
+        .analytics-card-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .analytics-mini-box {
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            text-align: center;
+        }
+
+        .analytics-mini-box span {
+            display: block;
+            font-size: 0.68rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            font-weight: 600;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .analytics-mini-box strong {
+            font-size: 0.95rem;
+            font-weight: 800;
+        }
+
+        .analytics-report-banner {
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            line-height: 1.5;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .analytics-report-banner svg {
+            width: 24px;
+            height: 24px;
+            flex-shrink: 0;
+            color: var(--primary);
+        }
 
         .nav-tabs {
             position: fixed;
@@ -670,36 +717,56 @@
         </div>
     </div>
 
-    <!-- TAB 5: ANALISI & REPORT -->
+    <!-- TAB 5: ANALISI & REPORT (Ridisegnata) -->
     <div id="tab-analytics" class="tab-content">
         <div class="card">
-            <h2>Analisi Periodica</h2>
-            <div class="form-group">
+            <h2>Periodo di Riferimento</h2>
+            <div class="form-group" style="margin-bottom: 0;">
                 <label>Seleziona Mese e Anno</label>
                 <input type="month" id="analytics-month-picker" onchange="renderAnalytics()">
             </div>
         </div>
 
         <div class="card">
-            <h2>Andamento Finanziario</h2>
-            <div class="dashboard-grid">
-                <div class="stat-box">
-                    <h3>Risparmio Netto</h3>
-                    <div class="value" id="ana-savings">€ 0.00</div>
+            <h2>Andamento Periodico</h2>
+            
+            <div class="analytics-card-grid">
+                <div class="analytics-mini-box">
+                    <span>Entrate</span>
+                    <strong class="value income" id="ana-income" style="font-size:0.9rem;">€ 0.00</strong>
                 </div>
+                <div class="analytics-mini-box">
+                    <span>Uscite</span>
+                    <strong class="value expense" id="ana-expense" style="font-size:0.9rem;">€ 0.00</strong>
+                </div>
+                <div class="analytics-mini-box">
+                    <span>Risparmio</span>
+                    <strong class="value" id="ana-savings" style="font-size:0.9rem;">€ 0.00</strong>
+                </div>
+            </div>
+
+            <div class="dashboard-grid" style="margin-bottom: 14px;">
                 <div class="stat-box">
                     <h3>Tasso di Risparmio</h3>
                     <div class="value patrimony" id="ana-savings-rate">0%</div>
                 </div>
+                <div class="stat-box">
+                    <h3>Flusso Netto</h3>
+                    <div class="value" id="ana-net-flow">€ 0.00</div>
+                </div>
             </div>
-            <div id="analytics-summary-text" style="font-size: 0.85rem; color: var(--text-light); line-height: 1.5; margin-top: 10px;"></div>
+
+            <div class="analytics-report-banner">
+                <div>📊</div>
+                <div id="analytics-summary-text">Seleziona un periodo per visualizzare l'estratto conto sintetico.</div>
+            </div>
         </div>
 
         <div class="card">
-            <h2>Consigli Finanziari Personalizzati</h2>
+            <h2>Consigli Strategici</h2>
             <div class="advice-box" style="margin-top: 0;">
-                <h3>💡 Strategia & Ottimizzazione</h3>
-                <p id="ana-financial-advice">Generazione consigli in corso...</p>
+                <h3>💡 Smart Advisor Finanziario</h3>
+                <p id="ana-financial-advice">In attesa di dati per elaborare i consigli...</p>
             </div>
         </div>
     </div>
@@ -967,7 +1034,7 @@
             updateAccountSelect();
         }
 
-        /* --- TAB ANALISI --- */
+        /* --- TAB ANALISI (Aggiornata e Pulita) --- */
         function renderAnalytics() {
             const picker = document.getElementById('analytics-month-picker');
             if(!picker.value) {
@@ -998,25 +1065,36 @@
             let savings = periodIncome - periodExpense;
             let savingsRate = periodIncome > 0 ? (savings / periodIncome) * 100 : 0;
 
-            document.getElementById('ana-savings').textContent = `€ ${savings.toFixed(2)}`;
+            // Aggiornamento mini-box e metriche
+            document.getElementById('ana-income').textContent = `€ ${periodIncome.toFixed(2)}`;
+            document.getElementById('ana-expense').textContent = `€ ${periodExpense.toFixed(2)}`;
+            
+            let savingsEl = document.getElementById('ana-savings');
+            savingsEl.textContent = `€ ${savings.toFixed(2)}`;
+            savingsEl.className = `value ${savings >= 0 ? 'income' : 'expense'}`;
+
             let rateEl = document.getElementById('ana-savings-rate');
             rateEl.textContent = `${savingsRate.toFixed(1)}%`;
-            rateEl.className = `value ${savings >= 0 ? 'income' : 'expense'}`;
+            rateEl.className = `value ${savings >= 0 ? 'patrimony' : 'expense'}`;
+
+            let netFlowEl = document.getElementById('ana-net-flow');
+            netFlowEl.textContent = `€ ${savings.toFixed(2)}`;
+            netFlowEl.className = `value ${savings >= 0 ? 'income' : 'expense'}`;
 
             document.getElementById('analytics-summary-text').innerHTML = 
-                `Nel periodo selezionato hai registrato entrate per <strong>€ ${periodIncome.toFixed(2)}</strong> e uscite per <strong>€ ${periodExpense.toFixed(2)}</strong>.`;
+                `Nel mese selezionato hai incassato <strong>€ ${periodIncome.toFixed(2)}</strong> a fronte di <strong>€ ${periodExpense.toFixed(2)}</strong> di uscite.`;
 
-            let advice = "Continua così! La tua gestione finanziaria per questo periodo appare ben bilanciata.";
+            let advice = "Ottima gestione! Le tue finanze in questo periodo risultano stabili ed equilibrate.";
             let topCategory = Object.keys(categoryBreakdown).reduce((a, b) => categoryBreakdown[a] > categoryBreakdown[b] ? a : b, null);
 
             if (periodIncome === 0 && periodExpense === 0) {
-                advice = "Nessuna transazione registrata per questo mese. Aggiungi le tue operazioni per sbloccare l'analisi dettagliata.";
+                advice = "Nessuna transazione registrata per questo mese. Aggiungi le tue operazioni per sbloccare l'analisi dettagliata e i consigli strategici.";
             } else if (savingsRate < 0) {
-                advice = `⚠️ <strong>Attenzione:</strong> Stai spendendo più di quanto incassi (risparmio negativo del ${savingsRate.toFixed(1)}%). Ti consigliamo di tagliare temporaneamente le spese non essenziali.`;
+                advice = `⚠️ <strong>Attenzione:</strong> Le uscite superano le entrate con un tasso di risparmio negativo del <strong>${savingsRate.toFixed(1)}%</strong>. Valuta di ridurre temporaneamente le spese superflue.`;
             } else if (topCategory && categoryBreakdown[topCategory] > (periodExpense * 0.4)) {
-                advice = `💡 La categoria <strong>"${topCategory}"</strong> rappresenta ben il <strong>${(categoryBreakdown[topCategory]/periodExpense*100).toFixed(0)}%</strong> delle tue uscite totali del mese. Prova a verificare se è possibile ottimizzare questo costo.`;
+                advice = `💡 La voce <strong>"${topCategory}"</strong> assorbe il <strong>${(categoryBreakdown[topCategory]/periodExpense*100).toFixed(0)}%</strong> del budget di spesa mensile. Monitorare questa categoria potrebbe aiutarti a risparmiare di più.`;
             } else if (savingsRate >= 20) {
-                advice = `🌟 Ottimo lavoro! Hai mantenuto un tasso di risparmio eccellente del <strong>${savingsRate.toFixed(1)}%</strong>. Valuta la possibilità di destinare una quota di questo accumulo ai tuoi obiettivi o fondi di investimento.`;
+                advice = `🌟 Risultato eccellente! Il tuo tasso di risparmio è del <strong>${savingsRate.toFixed(1)}%</strong>. Considera la possibilità di allocare il surplus in investimenti o in un fondo d'emergenza.`;
             }
 
             document.getElementById('ana-financial-advice').innerHTML = advice;
@@ -1145,7 +1223,7 @@
                 });
             });
 
-            // TRANSAZIONI (Card stile modern)
+            // TRANSAZIONI
             let tList = document.getElementById('transaction-list');
             tList.innerHTML = data.transactions.length === 0 ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0;">Nessuna transazione registrata.</p>' : '';
             
