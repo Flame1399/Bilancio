@@ -869,11 +869,18 @@
                 </div>
             </div>
 
-            <div style="margin-top: 20px; margin-bottom: 12px;">
-                <p style="font-size: 0.75rem; color: var(--text-light); margin-bottom: 8px; font-weight: 600; text-transform: uppercase;">Andamento Ultimi 6 Mesi</p>
-                <div style="position: relative; height: 200px; width: 100%;">
-                    <canvas id="trendBarChart"></canvas>
-                </div>
+            <!-- SELETTORE ORIZZONTE TEMPORALE PERSONALIZZABILE -->
+            <div style="margin-top: 20px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                <p style="font-size: 0.75rem; color: var(--text-light); font-weight: 600; text-transform: uppercase;">Andamento Storico (Mesi)</p>
+                <select id="trend-months-select" onchange="renderAnalytics()" style="width: 120px; padding: 6px; font-size: 0.8rem;">
+                    <option value="3">Ultimi 3 mesi</option>
+                    <option value="6" selected>Ultimi 6 mesi</option>
+                    <option value="12">Ultimi 12 mesi</option>
+                </select>
+            </div>
+            
+            <div style="position: relative; height: 200px; width: 100%;">
+                <canvas id="trendBarChart"></canvas>
             </div>
 
             <div class="analytics-report-banner" style="margin-top: 16px;">
@@ -1431,12 +1438,14 @@
                 }
             });
 
+            // GESTIONE NUMERO DI MESI PERSONALIZZABILE
+            const monthsCount = parseInt(document.getElementById('trend-months-select').value) || 6;
             const barCtx = document.getElementById('trendBarChart').getContext('2d');
             let monthsLabels = [];
             let incomeData = [];
             let expenseData = [];
 
-            for (let i = 5; i >= 0; i--) {
+            for (let i = monthsCount - 1; i >= 0; i--) {
                 let d = new Date(targetYear, targetMonth - i, 1);
                 let mName = d.toLocaleString('it-IT', { month: 'short', year: '2-digit' });
                 monthsLabels.push(mName);
@@ -1516,6 +1525,18 @@
             document.getElementById('monthly-income').textContent = `€ ${monthlyIncome.toFixed(2)}`;
             document.getElementById('monthly-expense').textContent = `€ ${monthlyExpense.toFixed(2)}`;
             document.getElementById('monthly-flow').textContent = `€ ${monthlyFlow.toFixed(2)}`;
+
+            // SMART ADVISOR DINAMICO
+            let adviceText = "Hai registrato le prime entrate. Controlla le uscite per mantenere il bilancio in positivo.";
+            let savingsRateMonth = monthlyIncome > 0 ? ((monthlyIncome - monthlyExpense) / monthlyIncome) * 100 : 0;
+            if (monthlyIncome === 0 && monthlyExpense === 0) {
+                adviceText = "Nessuna transazione registrata questo mese. Inserisci le tue spese o entrate per avviare l'analisi.";
+            } else if (savingsRateMonth < 0) {
+                adviceText = "⚠️ Attenzione: Le uscite superano le entrate in questo mese. Riduci le spese non essenziali.";
+            } else if (savingsRateMonth >= 20) {
+                adviceText = `🌟 Ottimo lavoro! Stai risparmiando il ${savingsRateMonth.toFixed(1)}% delle entrate mensili.`;
+            }
+            document.getElementById('advice-text').innerHTML = adviceText;
 
             let budgetContainer = document.getElementById('budget-alerts-container');
             budgetContainer.innerHTML = '';
