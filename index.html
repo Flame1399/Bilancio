@@ -36,13 +36,21 @@
             padding: 20px;
             max-width: 600px;
             margin: 0 auto;
-            padding-bottom: 100px;
+            padding-bottom: 50px;
         }
 
         header {
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 28px;
             padding-top: 12px;
+            position: relative;
+        }
+
+        .header-title-area {
+            text-align: center;
+            flex-grow: 1;
         }
 
         header h1 {
@@ -61,6 +69,142 @@
             font-weight: 400;
         }
 
+        /* Pulsante Menu Hamburger */
+        .menu-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text);
+            width: 42px;
+            height: 42px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: all 0.2s ease;
+            position: absolute;
+            left: 0;
+        }
+
+        .menu-btn:hover {
+            border-color: var(--primary);
+        }
+
+        /* Sidebar a scomparsa (Drawer) */
+        .sidebar-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: 998;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .sidebar-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            height: 100%;
+            background: var(--card-bg);
+            border-right: 1px solid var(--card-border);
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            padding: 24px 16px;
+            transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 10px 0 30px rgba(0,0,0,0.5);
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .sidebar-header h3 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .sidebar-close {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 1.2rem;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: none;
+        }
+
+        .sidebar-close:hover {
+            background: rgba(255,255,255,0.05);
+            color: var(--text);
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .nav-item {
+            background: none;
+            border: none;
+            color: var(--text-light);
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-align: left;
+            padding: 14px 16px;
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-item:hover {
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text);
+        }
+
+        .nav-item.active {
+            color: #818cf8;
+            font-weight: 700;
+            background: rgba(99, 102, 241, 0.12);
+            border: 1px solid rgba(99, 102, 241, 0.25);
+        }
+
         .card {
             background: var(--card-bg);
             border-radius: var(--radius-lg);
@@ -68,7 +212,7 @@
             margin-bottom: 20px;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
             border: 1px solid var(--card-border);
-            overflow: hidden; /* Evita qualsiasi trabokko visivo */
+            overflow: hidden;
         }
 
         .dashboard-grid {
@@ -211,7 +355,6 @@
             color: var(--text);
         }
 
-        /* CARD CONTO FORMATTATA */
         .account-card-item {
             background: var(--input-bg);
             border: 1px solid var(--card-border);
@@ -235,6 +378,7 @@
             gap: 8px;
             font-weight: 700;
             font-size: 0.95rem;
+            cursor: pointer;
         }
 
         .account-balance-area {
@@ -261,7 +405,6 @@
             gap: 6px;
         }
 
-        /* CARD CATEGORIA FORMATTATA */
         .category-card-item {
             background: var(--input-bg);
             border: 1px solid var(--card-border);
@@ -534,41 +677,6 @@
             flex-shrink: 0;
         }
 
-        .nav-tabs {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(19, 28, 46, 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-top: 1px solid var(--card-border);
-            display: flex;
-            justify-content: space-around;
-            padding: 14px 0;
-            z-index: 100;
-            box-shadow: 0 -10px 25px rgba(0,0,0,0.3);
-        }
-
-        .nav-tab {
-            background: none;
-            border: none;
-            color: var(--text-light);
-            font-size: 0.75rem;
-            font-weight: 500;
-            width: auto;
-            padding: 6px 12px;
-            border-radius: var(--radius-sm);
-            transition: all 0.2s;
-            box-shadow: none;
-        }
-
-        .nav-tab.active {
-            color: #818cf8;
-            font-weight: 700;
-            background: rgba(99, 102, 241, 0.12);
-        }
-
         .tab-content { display: none; }
         .tab-content.active {
             display: block;
@@ -588,9 +696,28 @@
 <body>
 
     <header>
-        <h1>SmartBudget</h1>
-        <p>Auto-Sync Conto & Patrimonio</p>
+        <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+        <div class="header-title-area">
+            <h1>SmartBudget</h1>
+            <p>Auto-Sync Conto & Patrimonio</p>
+        </div>
     </header>
+
+    <!-- SIDEBAR MENU A SCOMPARSA -->
+    <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h3>SmartBudget</h3>
+            <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
+        </div>
+        <div class="sidebar-nav">
+            <button class="nav-item active" onclick="switchTab('dashboard', this)">📊 Dashboard</button>
+            <button class="nav-item" onclick="switchTab('transactions', this)">💳 Transazioni</button>
+            <button class="nav-item" onclick="switchTab('patrimony', this)">💰 Patrimonio</button>
+            <button class="nav-item" onclick="switchTab('categories', this)">🏷️ Categorie</button>
+            <button class="nav-item" onclick="switchTab('analytics', this)">📈 Analisi & Report</button>
+        </div>
+    </div>
 
     <!-- TAB 1: DASHBOARD -->
     <div id="tab-dashboard" class="tab-content active">
@@ -769,15 +896,6 @@
         </div>
     </div>
 
-    <!-- MENU DI NAVIGAZIONE IN BASSO -->
-    <nav class="nav-tabs">
-        <button class="nav-tab active" onclick="switchTab('dashboard', this)">Dashboard</button>
-        <button class="nav-tab" onclick="switchTab('transactions', this)">Transazioni</button>
-        <button class="nav-tab" onclick="switchTab('patrimony', this)">Patrimonio</button>
-        <button class="nav-tab" onclick="switchTab('categories', this)">Categorie</button>
-        <button class="nav-tab" onclick="switchTab('analytics', this)">Analisi</button>
-    </nav>
-
     <script>
         let data = JSON.parse(localStorage.getItem('smart_budget_data_autosync')) || {
             categories: {
@@ -809,12 +927,20 @@
             initApp();
         }
 
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('sidebar-overlay').classList.toggle('active');
+        }
+
         function switchTab(tabId, btnElement) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-tab').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             
             document.getElementById('tab-' + tabId).classList.add('active');
             btnElement.classList.add('active');
+
+            // Chiude il menu laterale automaticamente dopo la selezione su mobile
+            toggleSidebar();
 
             if(tabId === 'analytics') {
                 renderAnalytics();
