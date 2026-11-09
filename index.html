@@ -232,11 +232,6 @@
             gap: 8px;
             font-weight: 700;
             font-size: 0.95rem;
-            cursor: pointer;
-        }
-
-        .account-name-area:hover {
-            opacity: 0.8;
         }
 
         .account-balance-area {
@@ -253,17 +248,55 @@
             padding-top: 8px;
         }
 
-        .account-move-group {
+        .account-move-group, .category-move-group {
             display: flex;
             gap: 4px;
         }
 
-        .account-mgmt-group {
+        .account-mgmt-group, .category-mgmt-group {
             display: flex;
             gap: 6px;
         }
 
-        /* Badge minimale per il conto principale cliccabile */
+        /* CARD CATEGORIA FORMATTATA */
+        .category-card-item {
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 12px 14px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .category-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .category-name-area {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: var(--text);
+        }
+
+        .category-limit-area {
+            font-weight: 700;
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        .category-actions-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid var(--card-border);
+            padding-top: 6px;
+        }
+
+        /* Badge principale conto */
         .main-badge {
             font-size: 0.7rem;
             background: rgba(16, 185, 129, 0.15);
@@ -272,7 +305,6 @@
             padding: 2px 6px;
             border-radius: 6px;
             font-weight: 600;
-            letter-spacing: 0.3px;
         }
 
         .normal-badge {
@@ -284,11 +316,9 @@
             border-radius: 6px;
             font-weight: 500;
             opacity: 0.7;
-            transition: opacity 0.2s;
+            cursor: pointer;
         }
-        .normal-badge:hover {
-            opacity: 1;
-        }
+        .normal-badge:hover { opacity: 1; }
 
         .budget-item {
             margin-bottom: 16px;
@@ -360,7 +390,7 @@
             padding-right: 4px;
         }
 
-        /* --- STILI OTTIMIZZATI PER LA SEZIONE TRANSAZIONI --- */
+        /* Transazioni formattate */
         .transaction-card {
             background: var(--input-bg);
             border: 1px solid var(--card-border);
@@ -370,11 +400,6 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            transition: border-color 0.2s ease;
-        }
-
-        .transaction-card:hover {
-            border-color: rgba(99, 102, 241, 0.4);
         }
 
         .transaction-left {
@@ -458,20 +483,6 @@
 
         .transaction-amount.entrata { color: var(--success); }
         .transaction-amount.uscita { color: var(--danger); }
-        /* -------------------------------------------------- */
-
-        .category-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--card-border);
-            font-size: 0.85rem;
-        }
-
-        .category-row:last-child {
-            border-bottom: none;
-        }
 
         .nav-tabs {
             position: fixed;
@@ -508,10 +519,7 @@
             background: rgba(99, 102, 241, 0.12);
         }
 
-        .tab-content {
-            display: none;
-        }
-
+        .tab-content { display: none; }
         .tab-content.active {
             display: block;
             animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -630,7 +638,7 @@
     <!-- TAB 4: CATEGORIE -->
     <div id="tab-categories" class="tab-content">
         <div class="card">
-            <h2>Aggiungi Nuova Categoria</h2>
+            <h2 id="category-form-title">Aggiungi Nuova Categoria</h2>
             <form id="category-form">
                 <div class="form-group">
                     <label>Tipo</label>
@@ -647,7 +655,7 @@
                     <label>Limite di Budget Mensile (€) (Solo Uscite)</label>
                     <input type="number" id="c-limit" value="150" step="10">
                 </div>
-                <button type="submit">Crea Categoria</button>
+                <button type="submit" id="category-submit-btn">Crea Categoria</button>
             </form>
         </div>
 
@@ -808,6 +816,61 @@
             updateAccountSelect();
         }
 
+        // --- GESTIONE CATEGORIE (Modifica, Spostamento, Eliminazione) ---
+        function moveCategory(type, index, direction) {
+            const list = data.categories[type];
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= list.length) return;
+            
+            const temp = list[index];
+            list[index] = list[newIndex];
+            list[newIndex] = temp;
+            
+            saveData();
+            updateCategorySelect();
+        }
+
+        function editCategory(type, name) {
+            let cat = data.categories[type].find(c => c.name === name);
+            if(cat) {
+                document.getElementById('c-type').value = type;
+                document.getElementById('c-name').value = cat.name;
+                document.getElementById('c-limit').value = cat.limit;
+                document.getElementById('category-form-title').textContent = "Modifica Categoria";
+                document.getElementById('category-submit-btn').textContent = "Aggiorna Categoria";
+                document.getElementById('c-name').focus();
+            }
+        }
+
+        document.getElementById('category-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const type = document.getElementById('c-type').value;
+            const name = document.getElementById('c-name').value.trim();
+            const limit = parseFloat(document.getElementById('c-limit').value) || 0;
+
+            let existing = data.categories[type].find(c => c.name.toLowerCase() === name.toLowerCase());
+            if(existing) {
+                existing.limit = limit; // Aggiorna il limite se esiste già
+            } else {
+                data.categories[type].push({ name, limit });
+            }
+
+            saveData();
+            this.reset();
+            
+            document.getElementById('category-form-title').textContent = "Aggiungi Nuova Categoria";
+            document.getElementById('category-submit-btn').textContent = "Crea Categoria";
+            updateCategorySelect();
+        });
+
+        function deleteCategory(type, name) {
+            if(data.categories[type].length <= 1) return;
+            data.categories[type] = data.categories[type].filter(c => c.name !== name);
+            saveData();
+            updateCategorySelect();
+        }
+        // -------------------------------------------------------------
+
         document.getElementById('transaction-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const type = document.getElementById('t-type').value;
@@ -842,26 +905,6 @@
             updateCategorySelect();
             updateAccountSelect();
         });
-
-        document.getElementById('category-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const type = document.getElementById('c-type').value;
-            const name = document.getElementById('c-name').value.trim();
-            const limit = parseFloat(document.getElementById('c-limit').value) || 0;
-
-            let exists = data.categories[type].some(c => c.name.toLowerCase() === name.toLowerCase());
-            if(exists) return;
-
-            data.categories[type].push({ name, limit });
-            saveData();
-            this.reset();
-        });
-
-        function deleteCategory(type, name) {
-            if(data.categories[type].length <= 1) return;
-            data.categories[type] = data.categories[type].filter(c => c.name !== name);
-            saveData();
-        }
 
         function deleteTransaction(id) {
             let t = data.transactions.find(item => item.id === id);
@@ -973,21 +1016,36 @@
                 `;
             });
 
+            // RENDER CATEGORIE GESTITE
             let catManager = document.getElementById('category-list-manager');
             catManager.innerHTML = '';
             
             ["Uscita", "Entrata"].forEach(type => {
-                catManager.innerHTML += `<p style="font-weight:bold; margin-top:10px; color:#818cf8; font-size:0.85rem;">${type}</p>`;
-                data.categories[type].forEach(cat => {
+                catManager.innerHTML += `<p style="font-weight:bold; margin-top:12px; margin-bottom: 6px; color:#818cf8; font-size:0.85rem;">${type}</p>`;
+                
+                data.categories[type].forEach((cat, index) => {
                     catManager.innerHTML += `
-                        <div class="category-row">
-                            <span style="color:var(--text);">${cat.name} ${type === 'Uscita' ? `<span style="color:var(--text-light)">(Budget: €${cat.limit})</span>` : ''}</span>
-                            <button class="btn-danger" onclick="deleteCategory('${type}', '${cat.name}')">Elimina</button>
+                        <div class="category-card-item">
+                            <div class="category-header-row">
+                                <span class="category-name-area">${cat.name}</span>
+                                <span class="category-limit-area">${type === 'Uscita' ? `Budget: € ${cat.limit.toFixed(2)}` : 'Entrata'}</span>
+                            </div>
+                            <div class="category-actions-row">
+                                <div class="category-move-group">
+                                    <button class="btn-move" onclick="moveCategory('${type}', ${index}, -1)" ${index === 0 ? 'disabled style="opacity:0.3;"' : ''}>▲</button>
+                                    <button class="btn-move" onclick="moveCategory('${type}', ${index}, 1)" ${index === data.categories[type].length - 1 ? 'disabled style="opacity:0.3;"' : ''}>▼</button>
+                                </div>
+                                <div class="category-mgmt-group">
+                                    <button class="btn-edit" onclick="editCategory('${type}', '${cat.name}')">Modifica</button>
+                                    <button class="btn-danger" onclick="deleteCategory('${type}', '${cat.name}')">Elimina</button>
+                                </div>
+                            </div>
                         </div>
                     `;
                 });
             });
 
+            // RENDER TRANSAZIONI
             let tList = document.getElementById('transaction-list');
             tList.innerHTML = data.transactions.length === 0 ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0;">Nessuna transazione registrata.</p>' : '';
             
@@ -1022,6 +1080,7 @@
                 `;
             });
 
+            // RENDER CONTI
             let accList = document.getElementById('account-list');
             accList.innerHTML = data.accounts.length === 0 ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0;">Nessun conto inserito.</p>' : '';
             
@@ -1029,7 +1088,7 @@
                 accList.innerHTML += `
                     <div class="account-card-item">
                         <div class="account-header-row">
-                            <div class="account-name-area" onclick="setMainAccount('${acc.name}')">
+                            <div class="account-name-area" onclick="setMainAccount('${acc.name}')" style="cursor: pointer;">
                                 <span>${acc.name}</span>
                                 ${acc.isMain ? '<span class="main-badge">Principale ⭐</span>' : '<span class="normal-badge">Imposta ⭐</span>'}
                             </div>
