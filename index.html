@@ -402,15 +402,14 @@
             background: var(--input-bg);
             border: 1px solid var(--card-border);
             border-radius: var(--radius-md);
-            padding: 10px 12px;
+            padding: 12px;
             margin-bottom: 8px;
             display: flex;
-            flex-direction: column;
-            gap: 6px;
+            justify-content: space-between;
+            align-items: center;
         }
-        .category-header-row { display: flex; justify-content: space-between; align-items: center; }
-        .category-name-area { font-weight: 700; font-size: 0.88rem; }
-        .category-limit-area { font-weight: 700; color: var(--text-light); font-size: 0.8rem; }
+        .category-name-area { font-weight: 700; font-size: 0.88rem; display: flex; flex-direction: column; gap: 2px; }
+        .category-actions { display: flex; gap: 6px; align-items: center; }
 
         .main-badge { font-size: 0.68rem; background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 5px; border-radius: 4px; }
         .normal-badge { font-size: 0.68rem; background: rgba(255, 255, 255, 0.05); color: var(--text-light); border: 1px solid var(--card-border); padding: 2px 5px; border-radius: 4px; cursor: pointer; }
@@ -1227,7 +1226,7 @@
             }
         }
 
-        // GESTIONE DELLE CATEGORIE NELLA SCHEDA DEDICATA
+        // GESTIONE DELLE CATEGORIE NELLA SCHEDA DEDICATA (CREAZIONE, EDIT E ELIMINAZIONE)
         document.getElementById('category-form').addEventListener('submit', function(e) {
             e.preventDefault();
             const type = document.getElementById('c-type').value;
@@ -1247,6 +1246,20 @@
             this.reset();
             document.getElementById('c-limit').value = "150";
         });
+
+        function editCategory(type, name) {
+            let cat = data.categories[type].find(c => c.name === name);
+            if (!cat) return;
+            let promptVal = prompt(`Modifica limite mensile per la categoria "${name}" (€):`, cat.limit);
+            if (promptVal === null) return;
+            let newLimit = parseFloat(promptVal);
+            if (isNaN(newLimit) || newLimit < 0) {
+                alert("Inserisci un importo valido!");
+                return;
+            }
+            cat.limit = newLimit;
+            saveData();
+        }
 
         function deleteCategory(type, name) {
             if(data.categories[type]) {
@@ -1607,7 +1620,7 @@
                     </div>`;
             });
 
-            // RENDER LISTA CATEGORIE NELLA SCHEDA CATEGORIE
+            // RENDER LISTA CATEGORIE NELLA SCHEDA CATEGORIE (CON PULSANTE MODIFICA IMPORTO)
             let catManagerList = document.getElementById('category-list-manager');
             if (catManagerList) {
                 catManagerList.innerHTML = '';
@@ -1617,11 +1630,12 @@
                             let limitText = type === 'Uscita' ? ` (Budget: € ${c.limit.toFixed(2)})` : '';
                             catManagerList.innerHTML += `
                                 <div class="category-card-item">
-                                    <div class="category-header-row">
-                                        <div class="category-name-area">
-                                            <span>${type === 'Uscita' ? '🔴' : '🟢'} ${c.name}</span>
-                                            <span style="font-size:0.75rem; color:var(--text-light); font-weight:normal;">${limitText}</span>
-                                        </div>
+                                    <div class="category-name-area">
+                                        <span>${type === 'Uscita' ? '🔴' : '🟢'} ${c.name}</span>
+                                        <span style="font-size:0.75rem; color:var(--text-light); font-weight:normal;">${limitText}</span>
+                                    </div>
+                                    <div class="category-actions">
+                                        ${type === 'Uscita' ? `<button class="btn-edit" onclick="editCategory('${type}', '${c.name}')">Modifica</button>` : ''}
                                         <button class="btn-danger" onclick="deleteCategory('${type}', '${c.name}')">Elimina</button>
                                     </div>
                                 </div>`;
