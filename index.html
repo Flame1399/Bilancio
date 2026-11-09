@@ -191,18 +191,24 @@
             font-weight: 600;
         }
 
-        .btn-star {
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid rgba(245, 158, 11, 0.25);
-            color: var(--warning);
-            font-size: 0.85rem;
+        .btn-move {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            color: var(--text-light);
+            font-size: 0.75rem;
             cursor: pointer;
             width: auto;
             padding: 6px 8px;
             border-radius: var(--radius-sm);
+            box-shadow: none;
         }
 
-        /* CARD CONTO RIMODELLATA PER EVITARE ACCAVALLAMENTI */
+        .btn-move:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text);
+        }
+
+        /* CARD CONTO FORMATTATA */
         .account-card-item {
             background: var(--input-bg);
             border: 1px solid var(--card-border);
@@ -226,6 +232,11 @@
             gap: 8px;
             font-weight: 700;
             font-size: 0.95rem;
+            cursor: pointer;
+        }
+
+        .account-name-area:hover {
+            opacity: 0.8;
         }
 
         .account-balance-area {
@@ -236,10 +247,47 @@
 
         .account-actions-row {
             display: flex;
-            justify-content: flex-end;
-            gap: 6px;
+            justify-content: space-between;
+            align-items: center;
             border-top: 1px solid var(--card-border);
             padding-top: 8px;
+        }
+
+        .account-move-group {
+            display: flex;
+            gap: 4px;
+        }
+
+        .account-mgmt-group {
+            display: flex;
+            gap: 6px;
+        }
+
+        /* Badge minimale per il conto principale cliccabile */
+        .main-badge {
+            font-size: 0.7rem;
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        .normal-badge {
+            font-size: 0.7rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-light);
+            border: 1px solid var(--card-border);
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-weight: 500;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+        .normal-badge:hover {
+            opacity: 1;
         }
 
         .budget-item {
@@ -283,7 +331,6 @@
             font-weight: 500;
         }
 
-        /* SEZIONE CONSIGLI / ADVISOR */
         .advice-box {
             background: rgba(99, 102, 241, 0.08);
             border: 1px solid rgba(99, 102, 241, 0.2);
@@ -424,7 +471,6 @@
             <h2>Controllo Budget & Alert Spese</h2>
             <div id="budget-alerts-container"></div>
             
-            <!-- Box Consigli Intelligenti -->
             <div class="advice-box" id="smart-advice-box">
                 <h3>💡 Smart Advisor</h3>
                 <p id="advice-text">Analisi in corso...</p>
@@ -617,6 +663,19 @@
             updateAccountSelect();
         }
 
+        function moveAccount(index, direction) {
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= data.accounts.length) return;
+            
+            // Scambia di posizione
+            const temp = data.accounts[index];
+            data.accounts[index] = data.accounts[newIndex];
+            data.accounts[newIndex] = temp;
+            
+            saveData();
+            updateAccountSelect();
+        }
+
         function editAccount(name) {
             let account = data.accounts.find(acc => acc.name === name);
             if(account) {
@@ -772,7 +831,6 @@
             flowEl.textContent = `€ ${monthlyFlow.toFixed(2)}`;
             flowEl.className = `value ${monthlyFlow >= 0 ? 'income' : 'expense'}`;
 
-            // Generazione Consigli / Smart Advisor
             let adviceText = "Ottimo lavoro! Le tue finanze sono stabili questo mese. Continua a monitorare le spese.";
             if (monthlyExpense > monthlyIncome && monthlyIncome > 0) {
                 adviceText = "⚠️ Attenzione: Questo mese stai spendendo più di quanto guadagni. Cerca di ridurre le spese superflue.";
@@ -867,20 +925,25 @@
             let accList = document.getElementById('account-list');
             accList.innerHTML = data.accounts.length === 0 ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0;">Nessun conto inserito.</p>' : '';
             
-            data.accounts.forEach(acc => {
+            data.accounts.forEach((acc, index) => {
                 accList.innerHTML += `
                     <div class="account-card-item">
                         <div class="account-header-row">
-                            <div class="account-name-area">
+                            <div class="account-name-area" onclick="setMainAccount('${acc.name}')" title="Clicca per impostare come principale">
                                 <span>${acc.name}</span>
-                                <span style="font-size: 0.95rem;" title="${acc.isMain ? 'Conto Principale' : ''}">${acc.isMain ? '⭐' : ''}</span>
+                                ${acc.isMain ? '<span class="main-badge">Principale</span>' : '<span class="normal-badge">Imposta principale</span>'}
                             </div>
                             <div class="account-balance-area">€ ${acc.balance.toFixed(2)}</div>
                         </div>
                         <div class="account-actions-row">
-                            ${!acc.isMain ? `<button class="btn-star" onclick="setMainAccount('${acc.name}')" title="Imposta come principale">⭐ Principale</button>` : ''}
-                            <button class="btn-edit" onclick="editAccount('${acc.name}')">Modifica</button>
-                            <button class="btn-danger" onclick="deleteAccount('${acc.name}')">Elimina</button>
+                            <div class="account-move-group">
+                                ${index > 0 ? `<button class="btn-move" onclick="moveAccount(${index}, -1)" title="Sposta su">▲</button>` : ''}
+                                ${index < data.accounts.length - 1 ? `<button class="btn-move" onclick="moveAccount(${index}, 1)" title="Sposta giù">▼</button>` : ''}
+                            </div>
+                            <div class="account-mgmt-group">
+                                <button class="btn-edit" onclick="editAccount('${acc.name}')">Modifica</button>
+                                <button class="btn-danger" onclick="deleteAccount('${acc.name}')">Elimina</button>
+                            </div>
                         </div>
                     </div>
                 `;
