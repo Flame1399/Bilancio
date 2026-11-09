@@ -171,14 +171,18 @@
             border: 1px solid rgba(129, 140, 248, 0.3);
         }
 
-        .btn-primary-action {
-            background-color: rgba(52, 211, 153, 0.15);
-            color: var(--success);
-            padding: 6px 10px;
-            font-size: 0.75rem;
+        .btn-star {
+            background: none;
+            border: none;
+            font-size: 1.1rem;
+            cursor: pointer;
             width: auto;
-            border-radius: 8px;
-            border: 1px solid rgba(52, 211, 153, 0.3);
+            padding: 4px;
+            transition: transform 0.2s;
+        }
+
+        .btn-star:hover {
+            transform: scale(1.2);
         }
 
         .budget-item {
@@ -360,7 +364,7 @@
                     <label>Nota / Descrizione</label>
                     <input type="text" id="t-desc" placeholder="Es. Stipendio, Spesa, Rimborso...">
                 </div>
-                <button type="submit">Registra e Aggiorna Conto</button>
+                <button type="submit">Registra Operazione</button>
             </form>
         </div>
 
@@ -453,7 +457,6 @@
             ]
         };
 
-        // Retrocompatibilità se isMain non è definito su vecchi dati salvati
         if (data.accounts.length > 0 && !data.accounts.some(acc => acc.isMain)) {
             data.accounts[0].isMain = true;
         }
@@ -492,18 +495,17 @@
             if(data.accounts.length === 0) {
                 let opt = document.createElement('option');
                 opt.value = "";
-                opt.textContent = "Nessun conto disponibile (Crea uno in Patrimonio)";
+                opt.textContent = "Nessun conto disponibile";
                 select.appendChild(opt);
                 return;
             }
             
-            // Trova il conto principale da preselezionare
             let mainAccount = data.accounts.find(acc => acc.isMain) || data.accounts[0];
 
             data.accounts.forEach(acc => {
                 let opt = document.createElement('option');
                 opt.value = acc.name;
-                opt.textContent = `${acc.name} (€ ${acc.balance.toFixed(2)})${acc.isMain ? ' ⭐ [Principale]' : ''}`;
+                opt.textContent = `${acc.name} (€ ${acc.balance.toFixed(2)})${acc.isMain ? ' ⭐' : ''}`;
                 if(acc.name === mainAccount.name) {
                     opt.selected = true;
                 }
@@ -517,7 +519,6 @@
             });
             saveData();
             updateAccountSelect();
-            alert(`"${name}" è ora il conto principale.`);
         }
 
         function editAccount(name) {
@@ -540,7 +541,6 @@
             if (existing) {
                 existing.balance = balance;
             } else {
-                // Se è il primo conto in assoluto, impostalo automaticamente come principale
                 let makeMain = data.accounts.length === 0;
                 data.accounts.push({ name, balance, isMain: makeMain });
             }
@@ -552,14 +552,12 @@
             document.getElementById('account-submit-btn').textContent = "Salva Conto";
             
             updateAccountSelect();
-            alert('Conto salvato con successo!');
         });
 
         function deleteAccount(name) {
             let accToDelete = data.accounts.find(acc => acc.name === name);
             data.accounts = data.accounts.filter(acc => acc.name !== name);
             
-            // Se abbiamo eliminato il conto principale e ne sono rimasti altri, impostiamo il primo come principale
             if (accToDelete && accToDelete.isMain && data.accounts.length > 0) {
                 data.accounts[0].isMain = true;
             }
@@ -576,10 +574,7 @@
             const category = document.getElementById('t-category').value;
             const desc = document.getElementById('t-desc').value || category;
 
-            if(!accountName) {
-                alert('Seleziona prima un conto di riferimento nella sezione Patrimonio!');
-                return;
-            }
+            if(!accountName) return;
 
             let account = data.accounts.find(acc => acc.name === accountName);
             if(account) {
@@ -604,7 +599,6 @@
             this.reset();
             updateCategorySelect();
             updateAccountSelect();
-            alert('Operazione registrata e conto aggiornato in automatico!');
         });
 
         document.getElementById('category-form').addEventListener('submit', function(e) {
@@ -614,22 +608,15 @@
             const limit = parseFloat(document.getElementById('c-limit').value) || 0;
 
             let exists = data.categories[type].some(c => c.name.toLowerCase() === name.toLowerCase());
-            if(exists) {
-                alert('Questa categoria esiste già!');
-                return;
-            }
+            if(exists) return;
 
             data.categories[type].push({ name, limit });
             saveData();
             this.reset();
-            alert('Categoria aggiunta con successo!');
         });
 
         function deleteCategory(type, name) {
-            if(data.categories[type].length <= 1) {
-                alert('Devi mantenere almeno una categoria.');
-                return;
-            }
+            if(data.categories[type].length <= 1) return;
             data.categories[type] = data.categories[type].filter(c => c.name !== name);
             saveData();
         }
@@ -770,14 +757,13 @@
             data.accounts.forEach(acc => {
                 accList.innerHTML += `
                     <div class="transaction-item">
-                        <div class="transaction-details">
-                            <span class="t-desc" style="font-size:0.95rem;">
-                                ${acc.name} ${acc.isMain ? '<span style="color: var(--success); font-size:0.75rem;">(Principale)</span>' : ''}
-                            </span>
+                        <div class="transaction-details" style="display: flex; align-items: center; gap: 6px;">
+                            <span class="t-desc" style="font-size:0.95rem;">${acc.name}</span>
+                            <span style="font-size: 1rem;" title="${acc.isMain ? 'Conto Principale' : ''}">${acc.isMain ? '⭐' : ''}</span>
                         </div>
                         <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap; justify-content: flex-end;">
                             <span style="font-weight: 700; color: #818cf8; margin-right: 4px;">€ ${acc.balance.toFixed(2)}</span>
-                            ${!acc.isMain ? `<button class="btn-primary-action" onclick="setMainAccount('${acc.name}')">⭐ Principale</button>` : ''}
+                            ${!acc.isMain ? `<button class="btn-star" onclick="setMainAccount('${acc.name}')" title="Imposta come principale">⭐</button>` : ''}
                             <button class="btn-edit" onclick="editAccount('${acc.name}')">Modifica</button>
                             <button class="btn-danger" onclick="deleteAccount('${acc.name}')">Elimina</button>
                         </div>
