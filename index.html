@@ -310,7 +310,7 @@
             font-weight: 700;
         }
 
-        .form-group { margin-bottom: 12px; width: 100%; }
+        .form-group { margin-bottom: 12px; width: 100%; display: flex; flex-direction: column; }
 
         label {
             display: flex;
@@ -325,7 +325,8 @@
         input, select {
             width: 100%;
             max-width: 100%;
-            padding: 10px 12px;
+            height: 42px;
+            padding: 0 12px;
             border: 1px solid var(--card-border);
             border-radius: var(--radius-md);
             font-size: 0.9rem;
@@ -333,7 +334,16 @@
             color: var(--text);
             outline: none;
             box-sizing: border-box;
+            line-height: 40px;
         }
+
+        input[type="date"] {
+            display: block;
+            -webkit-appearance: none;
+            appearance: none;
+            min-height: 42px;
+        }
+
         input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
 
         button:not(.eye-toggle-btn):not(.menu-btn):not(.sidebar-close):not(.theme-btn) {
@@ -447,31 +457,61 @@
         .transaction-amount.uscita { color: var(--danger); }
         .transaction-amount.giroconto { color: var(--info); }
 
-        /* STRUTTURA COMPATTA E PULITA PER I RICORRENTI RAGGRUPPATI */
+        /* SEZIONI ESPANDIBILI RICORRENTI */
         .recurring-category-section {
-            margin-bottom: 14px;
+            margin-bottom: 10px;
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            background: var(--input-bg);
         }
 
-        .recurring-category-title {
-            font-size: 0.78rem;
+        .recurring-category-header {
+            font-size: 0.82rem;
             color: var(--primary);
-            text-transform: uppercase;
-            letter-spacing: 0.6px;
             font-weight: 800;
-            margin-bottom: 6px;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.02);
             display: flex;
+            justify-content: space-between;
             align-items: center;
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.2s ease;
+        }
+
+        .recurring-category-header:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .recurring-category-header .toggle-icon {
+            font-size: 0.75rem;
+            transition: transform 0.2s ease;
+            color: var(--text-light);
+        }
+
+        .recurring-category-body {
+            display: none;
+            padding: 8px 10px;
+            border-top: 1px solid var(--card-border);
+            background: var(--card-bg);
+        }
+
+        .recurring-category-section.open .recurring-category-body {
+            display: flex;
+            flex-direction: column;
             gap: 6px;
-            border-bottom: 1px solid var(--card-border);
-            padding-bottom: 4px;
+        }
+
+        .recurring-category-section.open .toggle-icon {
+            transform: rotate(90deg);
         }
 
         .recurring-compact-item {
             background: var(--input-bg);
             border: 1px solid var(--card-border);
-            border-radius: var(--radius-md);
-            padding: 10px;
-            margin-bottom: 6px;
+            border-radius: var(--radius-sm);
+            padding: 8px 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -489,7 +529,7 @@
         .recurring-compact-title {
             font-weight: 700;
             color: var(--text);
-            font-size: 0.86rem;
+            font-size: 0.85rem;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -508,13 +548,13 @@
             display: flex;
             flex-direction: column;
             align-items: flex-end;
-            gap: 6px;
+            gap: 4px;
             flex-shrink: 0;
         }
 
         .recurring-compact-amount {
             font-weight: 800;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             color: #818cf8;
             white-space: nowrap;
         }
@@ -1651,6 +1691,11 @@
             alert(`Operazione "${r.desc}" registrata per € ${finalAmount.toFixed(2)}!\nNuova scadenza impostata al: ${new Date(r.nextDate).toLocaleDateString()}`);
         }
 
+        function toggleRecurringGroup(element) {
+            const section = element.closest('.recurring-category-section');
+            section.classList.toggle('open');
+        }
+
         function renderAnalytics() {
             initAnalyticsSelectors();
             const targetMonth = parseInt(document.getElementById('analytics-month').value);
@@ -1916,7 +1961,7 @@
                     </div>`;
             });
 
-            // RENDERING LISTA RICORRENTI RAGGRUPPATA PER CATEGORIA/TIPO
+            // RENDERING LISTA RICORRENTI FISARMONICA ESPANDIBILE
             let rList = document.getElementById('recurring-list');
             rList.innerHTML = (!data.recurring || data.recurring.length === 0) ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0; font-size:0.8rem;">Nessun promemoria ricorrente.</p>' : '';
             
@@ -1928,7 +1973,6 @@
             }
 
             if(data.recurring && data.recurring.length > 0) {
-                // Raggruppa i promemoria per categoria o tipo (es. Giroconto, Entrata, Uscite varie)
                 let grouped = {};
                 data.recurring.forEach(r => {
                     let groupKey = r.type === 'Giroconto' ? '🔄 Giroconti Ricorrenti' : (r.category || 'Altre Uscite');
@@ -1937,9 +1981,14 @@
                 });
 
                 for (let catName in grouped) {
+                    let itemsCount = grouped[catName].length;
                     let sectionHtml = `
                         <div class="recurring-category-section">
-                            <div class="recurring-category-title">📂 ${catName}</div>
+                            <div class="recurring-category-header" onclick="toggleRecurringGroup(this)">
+                                <span>📂 ${catName} (${itemsCount})</span>
+                                <span class="toggle-icon">►</span>
+                            </div>
+                            <div class="recurring-category-body">
                     `;
 
                     grouped[catName].forEach(r => {
@@ -1968,7 +2017,10 @@
                         `;
                     });
 
-                    sectionHtml += `</div>`;
+                    sectionHtml += `
+                            </div>
+                        </div>
+                    `;
                     rList.innerHTML += sectionHtml;
                 }
             }
