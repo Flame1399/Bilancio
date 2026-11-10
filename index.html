@@ -324,6 +324,7 @@
 
         input, select {
             width: 100%;
+            max-width: 100%;
             padding: 10px 12px;
             border: 1px solid var(--card-border);
             border-radius: var(--radius-md);
@@ -331,6 +332,7 @@
             background: var(--input-bg);
             color: var(--text);
             outline: none;
+            box-sizing: border-box;
         }
         input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
 
@@ -445,83 +447,93 @@
         .transaction-amount.uscita { color: var(--danger); }
         .transaction-amount.giroconto { color: var(--info); }
 
-        /* NUOVA STRUTTURA FLUIDA PER I PROMEMORIA RICORRENTI SU MOBILE */
-        .recurring-item-card {
+        /* STRUTTURA COMPATTA E PULITA PER I RICORRENTI RAGGRUPPATI */
+        .recurring-category-section {
+            margin-bottom: 14px;
+        }
+
+        .recurring-category-title {
+            font-size: 0.78rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            font-weight: 800;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 4px;
+        }
+
+        .recurring-compact-item {
             background: var(--input-bg);
             border: 1px solid var(--card-border);
             border-radius: var(--radius-md);
-            padding: 12px;
-            margin-bottom: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .recurring-top-row {
+            padding: 10px;
+            margin-bottom: 6px;
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            gap: 10px;
+            align-items: center;
+            gap: 8px;
         }
 
-        .recurring-info-box {
+        .recurring-compact-info {
             display: flex;
             flex-direction: column;
-            gap: 3px;
+            gap: 2px;
             min-width: 0;
             flex-grow: 1;
         }
 
-        .recurring-title {
+        .recurring-compact-title {
             font-weight: 700;
             color: var(--text);
-            font-size: 0.92rem;
-            word-break: break-word;
-            overflow-wrap: break-word;
-        }
-
-        .recurring-meta {
-            font-size: 0.72rem;
-            color: var(--text-light);
-            line-height: 1.35;
-            word-break: break-word;
-        }
-
-        .recurring-amount-badge {
-            font-weight: 800;
-            font-size: 0.88rem;
+            font-size: 0.86rem;
             white-space: nowrap;
-            background: rgba(99, 102, 241, 0.1);
-            border: 1px solid rgba(99, 102, 241, 0.25);
-            padding: 3px 8px;
-            border-radius: var(--radius-sm);
-            color: #818cf8;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .recurring-compact-meta {
+            font-size: 0.68rem;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-wrap: wrap;
+        }
+
+        .recurring-compact-right {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
             flex-shrink: 0;
         }
 
-        .recurring-amount-badge.variable {
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid rgba(245, 158, 11, 0.25);
-            color: var(--warning);
-            font-size: 0.75rem;
-        }
-
-        .recurring-buttons-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 6px;
-            border-top: 1px solid var(--card-border);
-            padding-top: 8px;
-        }
-
-        .recurring-buttons-grid button {
-            width: 100% !important;
-            padding: 8px 2px !important;
-            font-size: 0.72rem !important;
-            text-align: center;
-            justify-content: center;
-            border-radius: var(--radius-sm) !important;
+        .recurring-compact-amount {
+            font-weight: 800;
+            font-size: 0.85rem;
+            color: #818cf8;
             white-space: nowrap;
+        }
+
+        .recurring-compact-amount.variable {
+            color: var(--warning);
+            font-size: 0.72rem;
+        }
+
+        .recurring-compact-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .recurring-compact-actions button {
+            width: auto !important;
+            padding: 3px 6px !important;
+            font-size: 0.68rem !important;
+            border-radius: var(--radius-sm) !important;
         }
 
         .analytics-card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; }
@@ -1041,7 +1053,6 @@
         document.body.setAttribute('data-theme', currentTheme);
         document.getElementById('theme-toggle-icon').textContent = currentTheme === 'dark' ? '☀️' : '🌙';
 
-        // Imposta la data odierna come default nel campo scadenza ricorrenti
         document.getElementById('r-next-date').value = new Date().toISOString().slice(0, 10);
 
         let pieChartInstance = null;
@@ -1634,7 +1645,6 @@
                 data.transactions.unshift({ id: Date.now(), type: r.type, accountName: r.accountName, amount: finalAmount, category: r.category, desc: r.desc, date: transactionDate });
             }
 
-            // Aggiorna automaticamente la prossima scadenza
             r.nextDate = calculateNextDueDate(r.nextDate, r.frequency || 'Mensile');
 
             saveData();
@@ -1906,7 +1916,7 @@
                     </div>`;
             });
 
-            // RENDERING LISTA RICORRENTI CON FREQUENZA E PROSSIMA SCADENZA
+            // RENDERING LISTA RICORRENTI RAGGRUPPATA PER CATEGORIA/TIPO
             let rList = document.getElementById('recurring-list');
             rList.innerHTML = (!data.recurring || data.recurring.length === 0) ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0; font-size:0.8rem;">Nessun promemoria ricorrente.</p>' : '';
             
@@ -1917,31 +1927,50 @@
                 recurringBadge.style.display = 'none';
             }
 
-            if(data.recurring) {
+            if(data.recurring && data.recurring.length > 0) {
+                // Raggruppa i promemoria per categoria o tipo (es. Giroconto, Entrata, Uscite varie)
+                let grouped = {};
                 data.recurring.forEach(r => {
-                    let infoText = r.type === 'Giroconto' ? `${r.fromAccount} ➡️ ${r.toAccount}` : `${r.accountName} • ${r.category}`;
-                    let freqLabel = r.frequency || 'Mensile';
-                    let nextDateFormatted = r.nextDate ? new Date(r.nextDate).toLocaleDateString() : 'Non impostata';
-                    
-                    let displayAmt = r.amount > 0 ? `€ ${r.amount.toFixed(2)}` : `Variabile`;
-                    let amtClass = r.amount > 0 ? 'recurring-amount-badge' : 'recurring-amount-badge variable';
-                    
-                    rList.innerHTML += `
-                        <div class="recurring-item-card">
-                            <div class="recurring-top-row">
-                                <div class="recurring-info-box">
-                                    <span class="recurring-title">${r.desc}</span>
-                                    <span class="recurring-meta">🔄 ${freqLabel} • Scadenza: <strong>${nextDateFormatted}</strong><br>${r.type} • ${infoText}</span>
-                                </div>
-                                <div class="${amtClass}">${displayAmt}</div>
-                            </div>
-                            <div class="recurring-buttons-grid">
-                                <button class="btn-edit" onclick="editRecurring(${r.id})">✏️ Modifica</button>
-                                <button class="btn-secondary" onclick="executeRecurring(${r.id})" style="background:rgba(16,185,129,0.15)!important; color:var(--success)!important; border:1px solid rgba(16,185,129,0.3)!important; font-weight:700;">▶️ Applica</button>
-                                <button class="btn-danger" onclick="deleteRecurring(${r.id})">🗑️ Elimina</button>
-                            </div>
-                        </div>`;
+                    let groupKey = r.type === 'Giroconto' ? '🔄 Giroconti Ricorrenti' : (r.category || 'Altre Uscite');
+                    if (!grouped[groupKey]) grouped[groupKey] = [];
+                    grouped[groupKey].push(r);
                 });
+
+                for (let catName in grouped) {
+                    let sectionHtml = `
+                        <div class="recurring-category-section">
+                            <div class="recurring-category-title">📂 ${catName}</div>
+                    `;
+
+                    grouped[catName].forEach(r => {
+                        let infoText = r.type === 'Giroconto' ? `${r.fromAccount} ➡️ ${r.toAccount}` : `${r.accountName}`;
+                        let freqLabel = r.frequency || 'Mensile';
+                        let nextDateFormatted = r.nextDate ? new Date(r.nextDate).toLocaleDateString() : 'Non impostata';
+                        
+                        let displayAmt = r.amount > 0 ? `€ ${r.amount.toFixed(2)}` : `Variabile`;
+                        let amtClass = r.amount > 0 ? 'recurring-compact-amount' : 'recurring-compact-amount variable';
+
+                        sectionHtml += `
+                            <div class="recurring-compact-item">
+                                <div class="recurring-compact-info">
+                                    <span class="recurring-compact-title">${r.desc}</span>
+                                    <span class="recurring-compact-meta">🔄 ${freqLabel} • Scad. <strong>${nextDateFormatted}</strong> • ${infoText}</span>
+                                </div>
+                                <div class="recurring-compact-right">
+                                    <span class="${amtClass}">${displayAmt}</span>
+                                    <div class="recurring-compact-actions">
+                                        <button class="btn-edit" onclick="editRecurring(${r.id})">✏️</button>
+                                        <button class="btn-secondary" onclick="executeRecurring(${r.id})" style="background:rgba(16,185,129,0.15)!important; color:var(--success)!important; border:1px solid rgba(16,185,129,0.3)!important; font-weight:700;">▶️</button>
+                                        <button class="btn-danger" onclick="deleteRecurring(${r.id})">🗑️</button>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    sectionHtml += `</div>`;
+                    rList.innerHTML += sectionHtml;
+                }
             }
 
             updateAccountSelect();
