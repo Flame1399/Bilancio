@@ -576,7 +576,6 @@
         <button class="menu-btn" onclick="toggleSidebar()">☰</button>
         <div class="header-title-area">
             <h1>SmartBudget</h1>
-            <p>PWA Auto-Sync Conto & Patrimonio</p>
         </div>
         <div class="header-actions">
             <button class="theme-btn" onclick="toggleTheme()" id="theme-toggle-icon" title="Cambia Tema">☀️</button>
@@ -661,9 +660,9 @@
                 <div class="form-group">
                     <label>Tipo di Operazione</label>
                     <select id="t-type" onchange="onTransactionTypeChange()">
-                        <option value="Uscita">Uscita (Spesa)</option>
-                        <option value="Entrata">Entrata (Stipendio/Extra)</option>
-                        <option value="Giroconto">🔄 Giroconto (Tra i tuoi conti)</option>
+                        <option value="Uscita">Uscita</option>
+                        <option value="Entrata">Entrata</option>
+                        <option value="Giroconto">Giroconto 🔄 </option>
                     </select>
                 </div>
 
@@ -794,7 +793,7 @@
     <div id="tab-savings" class="tab-content">
         <div class="card">
             <h2>
-                <span>⚙️ Configurazione Piano</span>
+                <span>Configurazione Piano</span>
                 <button class="btn-edit" onclick="toggleEditSavingsPlan()" id="btn-toggle-edit-plan" style="padding: 5px 8px; width:auto;">✏️ Modifica</button>
             </h2>
             
@@ -846,7 +845,7 @@
         </div>
 
         <div class="card">
-            <h2>🏆 Avanzamento Obiettivo</h2>
+            <h2>Avanzamento Obiettivo 🏆 </h2>
             <div>
                 <div class="budget-info">
                     <span>Risparmio Effettivo: <strong id="goal-current-saved" style="color:var(--success);">€ 0.00</strong></span>
@@ -874,7 +873,7 @@
                     <select id="r-type" onchange="onRecurringTypeChange()">
                         <option value="Uscita">Uscita Ricorrente / Variabile</option>
                         <option value="Entrata">Entrata Ricorrente</option>
-                        <option value="Giroconto">🔄 Giroconto Ricorrente</option>
+                        <option value="Giroconto">Giroconto Ricorrente 🔄 </option>
                     </select>
                 </div>
                 
