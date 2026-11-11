@@ -1475,8 +1475,8 @@
         }
 
         function updateSavingsPlanUI() {
-            const salary = savingsSettings.salary || 0;
-            const rule = savingsSettings.rule;
+            const salary = parseFloat(savingsSettings.salary) || 0;
+            const rule = savingsSettings.rule || '50-30-20';
 
             let needs = 0, wants = 0, savingsPerMonth = 0;
             
@@ -1502,10 +1502,14 @@
             document.getElementById('plan-wants').textContent = `€ ${wants.toFixed(2)}`;
             document.getElementById('plan-savings').textContent = `€ ${savingsPerMonth.toFixed(2)}`;
 
-            let totalSavedActual = data.accounts.reduce((sum, acc) => sum + acc.balance, 0);
-            if(totalSavedActual < 0) totalSavedActual = 0;
+            // Calcolo sicuro del patrimonio attuale
+            let totalSavedActual = 0;
+            if (data && Array.isArray(data.accounts)) {
+                totalSavedActual = data.accounts.reduce((sum, acc) => sum + (parseFloat(acc.balance) || 0), 0);
+            }
+            if (totalSavedActual < 0) totalSavedActual = 0;
 
-            const target = savingsSettings.target || 1;
+            const target = parseFloat(savingsSettings.target) || 1;
             const percentage = target > 0 ? (totalSavedActual / target) * 100 : 0;
 
             document.getElementById('goal-current-saved').textContent = hideAccounts ? "€ ••••••" : `€ ${totalSavedActual.toFixed(2)}`;
@@ -1513,26 +1517,32 @@
             document.getElementById('goal-percentage-label').textContent = `${percentage.toFixed(1)}%`;
             document.getElementById('goal-progress-bar').style.width = `${Math.min(percentage, 100)}%`;
 
-            // Le proiezioni future continuano a funzionare indipendentemente dal raggiungimento del target
+            // Proiezioni future protette da errori di tipo
             document.getElementById('proj-6m').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (savingsPerMonth * 6)).toFixed(2)}`;
             document.getElementById('proj-1y').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (savingsPerMonth * 12)).toFixed(2)}`;
             document.getElementById('proj-3y').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (savingsPerMonth * 36)).toFixed(2)}`;
 
             const slider = document.getElementById('sim-range-input');
-            if (slider && savingsPerMonth > 0 && slider.value == 360) {
+            if (slider && savingsPerMonth > 0 && (slider.value == 360 || slider.value == 0)) {
                 slider.value = Math.round(savingsPerMonth);
             }
             updateSavingsSimulation();
         }
 
         function updateSavingsSimulation() {
-            const simVal = parseFloat(document.getElementById('sim-range-input').value) || 0;
-            document.getElementById('sim-savings-val').textContent = `€ ${simVal.toFixed(0)} / mese`;
-
-            let totalSavedActual = data.accounts.reduce((sum, acc) => sum + acc.balance, 0);
-            if(totalSavedActual < 0) totalSavedActual = 0;
+            const sliderEl = document.getElementById('sim-range-input');
+            const simVal = sliderEl ? (parseFloat(sliderEl.value) || 0) : 0;
             
-            const target = savingsSettings.target;
+            const simValEl = document.getElementById('sim-savings-val');
+            if (simValEl) simValEl.textContent = `€ ${simVal.toFixed(0)} / mese`;
+
+            let totalSavedActual = 0;
+            if (data && Array.isArray(data.accounts)) {
+                totalSavedActual = data.accounts.reduce((sum, acc) => sum + (parseFloat(acc.balance) || 0), 0);
+            }
+            if (totalSavedActual < 0) totalSavedActual = 0;
+            
+            const target = parseFloat(savingsSettings.target) || 0;
             const remaining = target - totalSavedActual;
 
             const resultTextEl = document.getElementById('sim-result-text');
@@ -1541,7 +1551,7 @@
             if (simVal <= 0) {
                 resultTextEl.innerHTML = `⚠️ Seleziona un accantonamento mensile maggiore di zero.`;
             } else if (remaining <= 0) {
-                resultTextEl.innerHTML = `🎉 <strong>Obiettivo centrato! Hai superato il target di € ${Math.abs(remaining).toFixed(2)}. Il tuo capitale continua a crescere!</strong>`;
+                resultTextEl.innerHTML = `🎉 <strong>Obiettivo centrato! Il tuo capitale continua a crescere in autonomia.</strong>`;
             } else {
                 const monthsNeeded = Math.ceil(remaining / simVal);
                 const years = Math.floor(monthsNeeded / 12);
@@ -2172,7 +2182,7 @@
         }
 
         function renderApp() {
-            let totalNetWorth = data.accounts.reduce((sum, acc) => sum + acc.balance, 0);
+            let totalNetWorth = data.accounts.reduce((sum, acc) => sum + (parseFloat(acc.balance) || 0), 0);
             
             const netWorthEl = document.getElementById('net-worth');
             const eyeBtn = document.getElementById('eye-btn');
@@ -2314,7 +2324,7 @@
             if(accList) {
                 accList.innerHTML = '';
                 data.accounts.forEach((acc, index) => {
-                    let displayBalance = hideAccounts ? "€ ••••••" : `€ ${acc.balance.toFixed(2)}`;
+                    let displayBalance = hideAccounts ? "€ ••••••" : `€ ${(parseFloat(acc.balance) || 0).toFixed(2)}`;
                     accList.innerHTML += `
                         <div class="account-card-item">
                             <div class="account-header-row">
