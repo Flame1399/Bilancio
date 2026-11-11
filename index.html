@@ -764,7 +764,6 @@
             <button class="nav-item" onclick="switchTab('savings', this)">🎯 Piano Risparmio</button>
             <button class="nav-item" onclick="switchTab('recurring', this)">🔄 Ricorrenti <span id="recurring-badge" style="display:none; background:var(--warning); color:#000; font-size:0.58rem; padding:1px 4px; border-radius:6px; font-weight:800; margin-left:auto;">PROMEMORIA</span></button>
             <button class="nav-item" onclick="switchTab('analytics', this)">📈 Analisi & Report</button>
-            <button class="nav-item" onclick="switchTab('gamification', this)">🏆 Traguardi & Badge</button>
         </div>
 
         <div class="sidebar-section-title">Sicurezza & Privacy</div>
@@ -1042,19 +1041,6 @@
         </div>
     </div>
 
-    <!-- TAB 8: GAMIFICATION & BADGE -->
-    <div id="tab-gamification" class="tab-content">
-        <div class="card">
-            <h2>I tuoi Traguardi 🏆</h2>
-            <p style="font-size: 0.78rem; color: var(--text-light); margin-bottom: 14px;">
-                Sblocca i badge mantenendo abitudini finanziarie sane!
-            </p>
-            <div id="badges-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
-                <!-- Generato dinamicamente via JS -->
-            </div>
-        </div>
-    </div>
-
     <!-- FLOATING ACTION BUTTON (FAB) & MODALE RAPIDO -->
     <div class="fab-container">
         <div class="fab-menu" id="fab-menu">
@@ -1317,68 +1303,6 @@
             document.getElementById('goal-status-text').innerHTML = statusMsg;
         }
 
-        // Funzione per la Gamification e rendering dei Badge
-        function renderGamification() {
-            const grid = document.getElementById('badges-grid');
-            if (!grid) return;
-            grid.innerHTML = '';
-
-            let totalTransactions = data.transactions.length;
-            let hasPositiveSavingsMonth = false;
-            
-            let now = new Date();
-            let monthlyInc = 0, monthlyExp = 0;
-            data.transactions.forEach(t => {
-                let d = new Date(t.date);
-                if(d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear()) {
-                    if(t.type === 'Entrata') monthlyInc += t.amount;
-                    if(t.type === 'Uscita') monthlyExp += t.amount;
-                }
-            });
-            if(monthlyInc > 0 && (monthlyInc - monthlyExp) > 0) hasPositiveSavingsMonth = true;
-
-            const badges = [
-                {
-                    id: 'first_tx',
-                    title: 'Primo Passo 🚀',
-                    desc: 'Registra la tua prima transazione',
-                    unlocked: totalTransactions > 0
-                },
-                {
-                    id: 'tracker_pro',
-                    title: 'Tracciatore Pro 📊',
-                    desc: 'Registra almeno 10 operazioni',
-                    unlocked: totalTransactions >= 10
-                },
-                {
-                    id: 'saver_month',
-                    title: 'Mese in Verde 🌟',
-                    desc: 'Chiudi il mese corrente con un bilancio positivo',
-                    unlocked: hasPositiveSavingsMonth
-                },
-                {
-                    id: 'account_master',
-                    title: 'Multi-Conto 💼',
-                    desc: 'Crea almeno 2 conti o asset differenti',
-                    unlocked: data.accounts.length >= 2
-                }
-            ];
-
-            badges.forEach(b => {
-                let opacity = b.unlocked ? '1' : '0.4';
-                let borderColor = b.unlocked ? 'var(--primary)' : 'var(--card-border)';
-                let bgStyle = b.unlocked ? 'rgba(99, 102, 241, 0.1)' : 'var(--input-bg)';
-                
-                grid.innerHTML += `
-                    <div style="background: ${bgStyle}; border: 1px solid ${borderColor}; border-radius: var(--radius-md); padding: 12px; text-align: center; opacity: ${opacity}; transition: all 0.3s;">
-                        <div style="font-size: 1.8rem; margin-bottom: 6px;">${b.unlocked ? '🔓' : '🔒'}</div>
-                        <div style="font-weight: 800; font-size: 0.85rem; color: var(--text); margin-bottom: 2px;">${b.title}</div>
-                        <div style="font-size: 0.7rem; color: var(--text-light);">${b.desc}</div>
-                    </div>
-                `;
-            });
-        }
-
         function toggleAccountsVisibility() {
             hideAccounts = !hideAccounts;
             localStorage.setItem('smart_budget_hide_acc', JSON.stringify(hideAccounts));
@@ -1400,7 +1324,6 @@
 
             if(tabId === 'analytics') renderAnalytics();
             else if(tabId === 'savings') updateSavingsPlanUI();
-            else if(tabId === 'gamification') renderGamification();
         }
 
         function initAnalyticsSelectors() {
@@ -2221,7 +2144,6 @@
 
             updateAccountSelect();
             renderAnalytics();
-            renderGamification();
         }
 
         renderApp();
