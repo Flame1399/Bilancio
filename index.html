@@ -1102,10 +1102,11 @@
         </div>
     </div>
 
-    <!-- TAB 7: ANALISI & REPORT -->
+    <!-- TAB 7: ANALISI & REPORT POTENZIATA -->
     <div id="tab-analytics" class="tab-content">
+        <!-- SELETTORE PERIODO ELEGANTE -->
         <div class="card">
-            <h2>Periodo di Riferimento</h2>
+            <h2>📅 Seleziona Periodo di Analisi</h2>
             <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px;">
                 <div class="form-group" style="margin-bottom: 0;">
                     <label>Mese</label>
@@ -1123,49 +1124,55 @@
             </div>
         </div>
 
+        <!-- DASHBOARD KPI FINANZIARIE -->
         <div class="card">
-            <h2>Andamento Periodico</h2>
-            <div class="analytics-card-grid">
+            <h2>📊 Performance del Periodo</h2>
+            <div class="analytics-card-grid" style="margin-bottom: 12px;">
                 <div class="analytics-mini-box"><span>Entrate</span><strong class="value income" id="ana-income">€ 0.00</strong></div>
                 <div class="analytics-mini-box"><span>Uscite</span><strong class="value expense" id="ana-expense">€ 0.00</strong></div>
                 <div class="analytics-mini-box"><span>Risparmio</span><strong class="value" id="ana-savings">€ 0.00</strong></div>
             </div>
 
-            <div class="dashboard-grid" style="margin-bottom: 10px;">
-                <div class="stat-box"><h3>Tasso Risparmio</h3><div class="value patrimony" id="ana-savings-rate">0%</div></div>
+            <div class="dashboard-grid" style="margin-bottom: 0;">
+                <div class="stat-box"><h3>Tasso di Risparmio</h3><div class="value patrimony" id="ana-savings-rate">0%</div></div>
                 <div class="stat-box"><h3>Flusso Netto</h3><div class="value" id="ana-net-flow">€ 0.00</div></div>
             </div>
+        </div>
 
-            <div style="margin-top: 14px; margin-bottom: 14px;">
-                <p style="font-size: 0.72rem; color: var(--text-light); margin-bottom: 6px; font-weight: 600; text-transform: uppercase;">Ripartizione Spese per Categoria</p>
-                <div style="position: relative; height: 200px; width: 100%;">
-                    <canvas id="categoryPieChart"></canvas>
-                </div>
+        <!-- GRAFICO CIAMBELLA CATEGORIE -->
+        <div class="card">
+            <h2>🏷️ Ripartizione Spese per Categoria</h2>
+            <div style="position: relative; height: 220px; width: 100%;">
+                <canvas id="categoryPieChart"></canvas>
             </div>
+        </div>
 
-            <div style="margin-top: 16px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
-                <p style="font-size: 0.72rem; color: var(--text-light); font-weight: 600; text-transform: uppercase;">Andamento Storico (Mesi)</p>
-                <select id="trend-months-select" onchange="renderAnalytics()" style="width: 110px; padding: 5px; font-size: 0.78rem;">
+        <!-- GRAFICO A BARRE STORICO -->
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h2>📈 Andamento Storico</h2>
+                <select id="trend-months-select" onchange="renderAnalytics()" style="width: 120px; padding: 4px; font-size: 0.75rem;">
                     <option value="3">Ultimi 3 mesi</option>
                     <option value="6" selected>Ultimi 6 mesi</option>
                     <option value="12">Ultimi 12 mesi</option>
                 </select>
             </div>
             
-            <div style="position: relative; height: 180px; width: 100%;">
+            <div style="position: relative; height: 190px; width: 100%;">
                 <canvas id="trendBarChart"></canvas>
             </div>
 
             <div class="analytics-report-banner" style="margin-top: 14px;">
-                <div>📊</div>
+                <div>💡</div>
                 <div id="analytics-summary-text">Estratto conto in caricamento...</div>
             </div>
         </div>
 
+        <!-- SMART ADVISOR FINANZIARIO -->
         <div class="card">
-            <h2>Consigli Strategici</h2>
+            <h2>🧠 Smart Advisor Finanziario</h2>
             <div class="advice-box" style="margin-top: 0;">
-                <h3>💡 Smart Advisor Finanziario</h3>
+                <h3>Consiglio Strategico Personalizzato</h3>
                 <p id="ana-financial-advice">Analisi in corso...</p>
             </div>
         </div>
@@ -1971,11 +1978,18 @@
             document.getElementById('ana-savings-rate').textContent = `${savingsRate.toFixed(1)}%`;
             document.getElementById('ana-net-flow').textContent = `€ ${savings.toFixed(2)}`;
 
-            document.getElementById('analytics-summary-text').innerHTML = `Entrate <strong>€ ${periodIncome.toFixed(2)}</strong> | Uscite <strong>€ ${periodExpense.toFixed(2)}</strong>.`;
+            document.getElementById('analytics-summary-text').innerHTML = `Nel periodo selezionato hai registrato entrate per <strong>€ ${periodIncome.toFixed(2)}</strong> e uscite per <strong>€ ${periodExpense.toFixed(2)}</strong>.`;
 
-            let advice = "Ottima gestione finanziaria!";
-            if (savingsRate < 0) advice = "⚠️ Attenzione: Risparmio negativo questo mese.";
-            else if (savingsRate >= 20) advice = `🌟 Ottimo tasso di risparmio (${savingsRate.toFixed(1)}%)!`;
+            let advice = "Gestione stabile.";
+            if (periodIncome === 0 && periodExpense === 0) {
+                advice = "Nessuna transazione registrata in questo mese. Inizia ad aggiungere i movimenti per visualizzare l'analisi completa.";
+            } else if (savingsRate < 0) {
+                advice = "⚠️ Attenzione: Le uscite superano le entrate in questo periodo. Controlla le categorie di spesa più elevate.";
+            } else if (savingsRate >= 20) {
+                advice = `🌟 Eccellente! Stai mantenendo un tasso di risparmio del ${savingsRate.toFixed(1)}%, superiore alla soglia raccomandata del 20%.`;
+            } else {
+                advice = `👍 Gestione regolare. Il tasso di risparmio del ${savingsRate.toFixed(1)}% può essere incrementato ottimizzando le spese superflue.`;
+            }
             document.getElementById('ana-financial-advice').innerHTML = advice;
 
             renderCharts(categoryBreakdown, targetYear, targetMonth);
