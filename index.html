@@ -1502,7 +1502,6 @@
             document.getElementById('plan-wants').textContent = `€ ${wants.toFixed(2)}`;
             document.getElementById('plan-savings').textContent = `€ ${savingsPerMonth.toFixed(2)}`;
 
-            // Calcolo sicuro del patrimonio attuale
             let totalSavedActual = 0;
             if (data && Array.isArray(data.accounts)) {
                 totalSavedActual = data.accounts.reduce((sum, acc) => sum + (parseFloat(acc.balance) || 0), 0);
@@ -1517,15 +1516,19 @@
             document.getElementById('goal-percentage-label').textContent = `${percentage.toFixed(1)}%`;
             document.getElementById('goal-progress-bar').style.width = `${Math.min(percentage, 100)}%`;
 
-            // Proiezioni future protette da errori di tipo
-            document.getElementById('proj-6m').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (savingsPerMonth * 6)).toFixed(2)}`;
-            document.getElementById('proj-1y').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (savingsPerMonth * 12)).toFixed(2)}`;
-            document.getElementById('proj-3y').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (savingsPerMonth * 36)).toFixed(2)}`;
-
             const slider = document.getElementById('sim-range-input');
-            if (slider && savingsPerMonth > 0 && (slider.value == 360 || slider.value == 0)) {
+            let activeSimSaving = savingsPerMonth;
+            if (slider && slider.value > 0 && slider.value != 360) {
+                activeSimSaving = parseFloat(slider.value) || savingsPerMonth;
+            } else if (slider && savingsPerMonth > 0) {
                 slider.value = Math.round(savingsPerMonth);
             }
+
+            // Proiezioni future basate dinamicamente sul valore attuale dello slider o sul risparmio calcolato
+            document.getElementById('proj-6m').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (activeSimSaving * 6)).toFixed(2)}`;
+            document.getElementById('proj-1y').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (activeSimSaving * 12)).toFixed(2)}`;
+            document.getElementById('proj-3y').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (activeSimSaving * 36)).toFixed(2)}`;
+
             updateSavingsSimulation();
         }
 
@@ -1565,6 +1568,17 @@
                 }
 
                 resultTextEl.innerHTML = `Continuando così, colmerai i restanti <strong>€ ${remaining.toFixed(2)}</strong> in ${timeString}.`;
+            }
+
+            // Sincronizza le proiezioni in tempo reale spostando il cursore dello slider
+            let proj6mEl = document.getElementById('proj-6m');
+            let proj1yEl = document.getElementById('proj-1y');
+            let proj3yEl = document.getElementById('proj-3y');
+
+            if (proj6mEl && !hideAccounts) {
+                proj6mEl.textContent = `€ ${(totalSavedActual + (simVal * 6)).toFixed(2)}`;
+                proj1yEl.textContent = `€ ${(totalSavedActual + (simVal * 12)).toFixed(2)}`;
+                proj3yEl.textContent = `€ ${(totalSavedActual + (simVal * 36)).toFixed(2)}`;
             }
         }
 
