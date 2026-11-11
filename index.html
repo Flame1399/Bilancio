@@ -1513,6 +1513,7 @@
             document.getElementById('goal-percentage-label').textContent = `${percentage.toFixed(1)}%`;
             document.getElementById('goal-progress-bar').style.width = `${Math.min(percentage, 100)}%`;
 
+            // Le proiezioni future continuano a funzionare indipendentemente dal raggiungimento del target
             document.getElementById('proj-6m').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (savingsPerMonth * 6)).toFixed(2)}`;
             document.getElementById('proj-1y').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (savingsPerMonth * 12)).toFixed(2)}`;
             document.getElementById('proj-3y').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (savingsPerMonth * 36)).toFixed(2)}`;
@@ -1537,10 +1538,10 @@
             const resultTextEl = document.getElementById('sim-result-text');
             if (!resultTextEl) return;
 
-            if (remaining <= 0) {
-                resultTextEl.innerHTML = `🎉 <strong>Obiettivo centrato! Hai superato il target di € ${Math.abs(remaining).toFixed(2)}.</strong>`;
-            } else if (simVal <= 0) {
+            if (simVal <= 0) {
                 resultTextEl.innerHTML = `⚠️ Seleziona un accantonamento mensile maggiore di zero.`;
+            } else if (remaining <= 0) {
+                resultTextEl.innerHTML = `🎉 <strong>Obiettivo centrato! Hai superato il target di € ${Math.abs(remaining).toFixed(2)}. Il tuo capitale continua a crescere!</strong>`;
             } else {
                 const monthsNeeded = Math.ceil(remaining / simVal);
                 const years = Math.floor(monthsNeeded / 12);
