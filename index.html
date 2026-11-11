@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SmartBudget PWA Ultimate Pro</title>
-    <!-- Libreria Chart.js per i grafici visivi -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -52,7 +51,6 @@
             transition: background 0.3s, color 0.3s;
         }
 
-        /* BANNER AGGIORNAMENTO DISPONIBILE */
         #update-banner {
             position: fixed;
             top: 12px;
@@ -93,7 +91,6 @@
             width: auto !important;
         }
 
-        /* OVERLAY SCHERMATA DI BLOCCO */
         #app-lock-screen {
             position: fixed;
             top: 0;
@@ -496,7 +493,6 @@
         .transaction-amount.uscita { color: var(--danger); }
         .transaction-amount.giroconto { color: var(--info); }
 
-        /* SEZIONI ESPANDIBILI RICORRENTI */
         .recurring-category-section {
             margin-bottom: 10px;
             border: 1px solid var(--card-border);
@@ -615,7 +611,6 @@
             border-radius: var(--radius-sm) !important;
         }
 
-        /* CARD PIANO RISPARMIO STRATEGICO */
         .savings-hero-box {
             background: linear-gradient(135deg, rgba(99, 102, 241, 0.18) 0%, rgba(192, 132, 252, 0.12) 100%);
             border: 1px solid rgba(99, 102, 241, 0.35);
@@ -741,7 +736,6 @@
         .tab-content.active { display: block; animation: fadeIn 0.25s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* STILI FAB & MODALE */
         .fab-container {
             position: fixed;
             bottom: 24px;
@@ -865,13 +859,11 @@
 </head>
 <body data-theme="dark">
 
-    <!-- BANNER AGGIORNAMENTO DISPONIBILE -->
     <div id="update-banner">
         <div class="update-banner-text">🚀 Nuova versione disponibile!</div>
         <button class="update-banner-btn" onclick="applyAppUpdate()">Aggiorna ora</button>
     </div>
 
-    <!-- SCHERMATA DI BLOCCO APPLICAZIONE -->
     <div id="app-lock-screen" style="display: none;">
         <div class="lock-card">
             <div class="lock-icon">🔐</div>
@@ -897,7 +889,6 @@
         </div>
     </header>
 
-    <!-- SIDEBAR MENU A SCOMPARSA -->
     <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -930,7 +921,6 @@
         </div>
     </div>
 
-    <!-- TAB 1: DASHBOARD -->
     <div id="tab-dashboard" class="tab-content active">
         <div class="dashboard-grid">
             <div class="stat-box">
@@ -965,7 +955,6 @@
         </div>
     </div>
 
-    <!-- TAB 2: TRANSAZIONI -->
     <div id="tab-transactions" class="tab-content">
         <div class="card">
             <h2>
@@ -1003,7 +992,6 @@
         </div>
     </div>
 
-    <!-- TAB 3: PATRIMONIO -->
     <div id="tab-patrimony" class="tab-content">
         <div class="card">
             <h2 id="account-form-title">Aggiungi / Crea Conto</h2>
@@ -1029,7 +1017,6 @@
         </div>
     </div>
 
-    <!-- TAB 4: CATEGORIE -->
     <div id="tab-categories" class="tab-content">
         <div class="card">
             <h2>Categorie Attive</h2>
@@ -1037,9 +1024,7 @@
         </div>
     </div>
 
-    <!-- TAB 5: PIANO RISPARMIO STRATEGICO -->
     <div id="tab-savings" class="tab-content">
-        <!-- OBIETTIVO CAPITALE -->
         <div class="card">
             <h2>
                 <span>🎯 Obiettivo Capitale & Accumulo</span>
@@ -1060,7 +1045,6 @@
                 </div>
             </div>
 
-            <!-- SIMULATORE INTERATTIVO SLIDER -->
             <div class="sim-slider-container">
                 <label>
                     <span>⚡ Simulatore Accantonamento Mensile</span>
@@ -1073,7 +1057,6 @@
                 </div>
             </div>
 
-            <!-- MODULO CONFIGURAZIONE -->
             <div id="savings-plan-edit-form" style="display: none; border-top: 1px solid var(--card-border); padding-top: 14px; margin-top: 14px;">
                 <div class="form-group">
                     <label>Stipendio / Entrata Mensile (€)</label>
@@ -1103,7 +1086,6 @@
             </div>
         </div>
 
-        <!-- RIPARTIZIONE E PROIEZIONI -->
         <div class="card">
             <h2>📊 Ripartizione Budget Suggerita</h2>
             <div class="savings-grid-cards">
@@ -1139,7 +1121,6 @@
         </div>
     </div>
 
-    <!-- TAB 6: MOVIMENTI RICORRENTI -->
     <div id="tab-recurring" class="tab-content">
         <div class="card">
             <h2>I tuoi Promemoria Ricorrenti</h2>
@@ -1150,9 +1131,7 @@
         </div>
     </div>
 
-    <!-- TAB 7: ANALISI & REPORT POTENZIATA -->
     <div id="tab-analytics" class="tab-content">
-        <!-- SELETTORE PERIODO ELEGANTE -->
         <div class="card">
             <h2>📅 Seleziona Periodo di Analisi</h2>
             <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px;">
@@ -1172,7 +1151,6 @@
             </div>
         </div>
 
-        <!-- DASHBOARD KPI FINANZIARIE -->
         <div class="card">
             <h2>📊 Performance del Periodo</h2>
             <div class="analytics-card-grid" style="margin-bottom: 12px;">
@@ -1187,7 +1165,6 @@
             </div>
         </div>
 
-        <!-- GRAFICO CIAMBELLA CATEGORIE -->
         <div class="card">
             <h2>🏷️ Ripartizione Spese per Categoria</h2>
             <div style="position: relative; height: 220px; width: 100%;">
@@ -1195,7 +1172,6 @@
             </div>
         </div>
 
-        <!-- GRAFICO A BARRE STORICO -->
         <div class="card">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                 <h2>📈 Andamento Storico</h2>
@@ -1216,7 +1192,6 @@
             </div>
         </div>
 
-        <!-- SMART ADVISOR FINANZIARIO -->
         <div class="card">
             <h2>🧠 Smart Advisor Finanziario</h2>
             <div class="advice-box" style="margin-top: 0;">
@@ -1226,7 +1201,6 @@
         </div>
     </div>
 
-    <!-- FLOATING ACTION BUTTON (FAB) & MODALE RAPIDO -->
     <div class="fab-container">
         <div class="fab-menu" id="fab-menu">
             <button class="fab-item" onclick="openQuickModal('transaction')" title="Nuova Transazione">
@@ -1252,7 +1226,6 @@
     </div>
 
     <script>
-        // Gestione Service Worker & Funzione Sincronizzazione Forzata
         let globalReg = null;
 
         if ('serviceWorker' in navigator) {
@@ -1424,14 +1397,30 @@
             renderAnalytics();
         }
 
+        // METODO DI BACKUP JSON ROBUSTO E UNIVERSALE PER PWA MOBILE
         function exportBackupJSON() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
-            const dlAnchor = document.createElement('a');
-            dlAnchor.setAttribute("href", dataStr);
-            dlAnchor.setAttribute("download", `smartbudget_backup_${new Date().toISOString().slice(0,10)}.json`);
-            document.body.appendChild(dlAnchor);
-            dlAnchor.click();
-            dlAnchor.remove();
+            try {
+                const dataStr = JSON.stringify(data, null, 2);
+                const blob = new Blob([dataStr], { type: 'application/json;charset=utf-8' });
+                const fileName = `smartbudget_backup_${new Date().toISOString().slice(0,10)}.json`;
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const dlAnchor = document.createElement('a');
+                    dlAnchor.href = e.target.result;
+                    dlAnchor.download = fileName;
+                    dlAnchor.style.display = 'none';
+                    document.body.appendChild(dlAnchor);
+                    dlAnchor.click();
+                    setTimeout(() => {
+                        document.body.removeChild(dlAnchor);
+                    }, 1000);
+                };
+                reader.readAsDataURL(blob);
+            } catch (err) {
+                const dataStr = JSON.stringify(data, null, 2);
+                prompt("Copia il codice JSON del backup e salvalo in un file .json:", dataStr);
+            }
         }
 
         function exportTransactionsCSV() {
@@ -1517,7 +1506,6 @@
             document.getElementById('goal-percentage-label').textContent = `${Math.min(percentage, 100).toFixed(1)}%`;
             document.getElementById('goal-progress-bar').style.width = `${Math.min(percentage, 100)}%`;
 
-            // Proiezioni patrimoniali
             document.getElementById('proj-6m').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (savingsPerMonth * 6)).toFixed(2)}`;
             document.getElementById('proj-1y').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (savingsPerMonth * 12)).toFixed(2)}`;
             document.getElementById('proj-3y').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (savingsPerMonth * 36)).toFixed(2)}`;
@@ -1736,7 +1724,6 @@
             section.classList.toggle('open');
         }
 
-        /* LOGICA FAB & MODALE RAPIDO */
         function toggleFabMenu() {
             const container = document.querySelector('.fab-container');
             container.classList.toggle('active');
