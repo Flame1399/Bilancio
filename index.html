@@ -52,6 +52,47 @@
             transition: background 0.3s, color 0.3s;
         }
 
+        /* BANNER AGGIORNAMENTO DISPONIBILE */
+        #update-banner {
+            position: fixed;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            width: 90%;
+            max-width: 420px;
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            padding: 14px 18px;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+            z-index: 20000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #update-banner.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        .update-banner-text {
+            font-size: 0.82rem;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+        .update-banner-btn {
+            background: white !important;
+            color: var(--primary) !important;
+            border: none !important;
+            padding: 6px 12px !important;
+            border-radius: var(--radius-sm) !important;
+            font-size: 0.78rem !important;
+            font-weight: 800 !important;
+            cursor: pointer;
+            white-space: nowrap;
+            width: auto !important;
+        }
+
         /* OVERLAY SCHERMATA DI BLOCCO */
         #app-lock-screen {
             position: fixed;
@@ -344,7 +385,7 @@
 
         input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
 
-        button:not(.eye-toggle-btn):not(.menu-btn):not(.sidebar-close):not(.theme-btn):not(.fab-main):not(.fab-item) {
+        button:not(.eye-toggle-btn):not(.menu-btn):not(.sidebar-close):not(.theme-btn):not(.fab-main):not(.fab-item):not(.update-banner-btn) {
             width: 100%;
             padding: 11px;
             background-color: var(--primary);
@@ -356,7 +397,7 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        button:not(.eye-toggle-btn):not(.menu-btn):not(.sidebar-close):not(.theme-btn):not(.fab-main):not(.fab-item):hover { background-color: var(--primary-hover); }
+        button:not(.eye-toggle-btn):not(.menu-btn):not(.sidebar-close):not(.theme-btn):not(.fab-main):not(.fab-item):not(.update-banner-btn):hover { background-color: var(--primary-hover); }
 
         .btn-secondary { background: rgba(255, 255, 255, 0.05) !important; border: 1px solid var(--card-border) !important; color: var(--text) !important; }
         .btn-secondary:hover { background: rgba(255, 255, 255, 0.1) !important; }
@@ -824,6 +865,12 @@
 </head>
 <body data-theme="dark">
 
+    <!-- BANNER AGGIORNAMENTO DISPONIBILE -->
+    <div id="update-banner">
+        <div class="update-banner-text">🚀 Nuova versione disponibile!</div>
+        <button class="update-banner-btn" onclick="applyAppUpdate()">Aggiorna ora</button>
+    </div>
+
     <!-- SCHERMATA DI BLOCCO APPLICAZIONE -->
     <div id="app-lock-screen" style="display: none;">
         <div class="lock-card">
@@ -1204,16 +1251,36 @@
     </div>
 
     <script>
-        // Registrazione Service Worker per la modalità Offline-First
+        // Gestione Service Worker & Pulsante Aggiornamento Disponibile
+        let globalReg = null;
+
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(reg => {
-                        reg.update();
-                        console.log('Service Worker registrato con successo:', reg.scope);
-                    })
-                    .catch(err => console.log('Registrazione Service Worker fallita:', err));
+                navigator.serviceWorker.register('./sw.js').then(reg => {
+                    globalReg = reg;
+                    
+                    reg.onupdatefound = () => {
+                        const installingWorker = reg.installing;
+                        if (installingWorker) {
+                            installingWorker.onstatechange = () => {
+                                if (installingWorker.state === 'installed') {
+                                    if (navigator.serviceWorker.controller) {
+                                        // Mostra il banner di aggiornamento
+                                        document.getElementById('update-banner').classList.add('show');
+                                    }
+                                }
+                            };
+                        }
+                    };
+                }).catch(err => console.log('Registrazione Service Worker fallita:', err));
             });
+        }
+
+        function applyAppUpdate() {
+            if (globalReg && globalReg.waiting) {
+                globalReg.waiting.postMessage({ type: 'SKIP_WAITING' });
+            }
+            window.location.reload();
         }
 
         let data = JSON.parse(localStorage.getItem('smart_budget_data_autosync')) || {
