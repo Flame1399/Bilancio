@@ -120,8 +120,6 @@
             letter-spacing: -0.5px;
         }
 
-        header p { font-size: 0.78rem; color: var(--text-light); margin-top: 4px; font-weight: 400; }
-
         .header-actions { display: flex; gap: 8px; position: absolute; right: 0; }
 
         .menu-btn, .theme-btn {
@@ -438,7 +436,7 @@
         .advice-box h3 { font-size: 0.82rem; color: #818cf8; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; font-weight: 700; }
         .advice-box p { font-size: 0.78rem; color: var(--text-light); line-height: 1.4; }
 
-        .transaction-list { max-height: 380px; overflow-y: auto; padding-right: 2px; }
+        .transaction-list { max-height: 450px; overflow-y: auto; padding-right: 2px; }
         .transaction-card { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         .transaction-left { display: flex; align-items: flex-start; gap: 8px; overflow: hidden; }
         .transaction-badge { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; flex-shrink: 0; }
@@ -818,59 +816,13 @@
         </div>
     </div>
 
-    <!-- TAB 2: TRANSAZIONI -->
+    <!-- TAB 2: TRANSAZIONI (Solo lista e filtri, form rimosso e delegato al FAB) -->
     <div id="tab-transactions" class="tab-content">
         <div class="card">
             <h2>
-                <span>Nuova Operazione</span>
+                <span>Ultime Operazioni</span>
                 <button class="eye-toggle-btn" onclick="toggleAccountsVisibility()" id="eye-trans-btn" title="Mostra/Nascondi Saldi">👁️</button>
             </h2>
-            <form id="transaction-form">
-                <div class="form-group">
-                    <label>Tipo di Operazione</label>
-                    <select id="t-type" onchange="onTransactionTypeChange()">
-                        <option value="Uscita">Uscita</option>
-                        <option value="Entrata">Entrata</option>
-                        <option value="Giroconto">Giroconto 🔄 </option>
-                    </select>
-                </div>
-
-                <div id="standard-transaction-fields">
-                    <div class="form-group">
-                        <label>Conto di Riferimento</label>
-                        <select id="t-account"></select>
-                    </div>
-                    <div class="form-group">
-                        <label>Categoria</label>
-                        <select id="t-category"></select>
-                    </div>
-                </div>
-
-                <div id="transfer-transaction-fields" style="display: none;">
-                    <div class="form-group">
-                        <label>Conto Origine (Da dove prelevi)</label>
-                        <select id="t-transfer-from"></select>
-                    </div>
-                    <div class="form-group">
-                        <label>Conto Destinazione (Dove accrediti)</label>
-                        <select id="t-transfer-to"></select>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Importo (€)</label>
-                    <input type="number" id="t-amount" step="0.01" placeholder="0.00" required>
-                </div>
-                <div class="form-group">
-                    <label>Nota / Descrizione</label>
-                    <input type="text" id="t-desc" placeholder="Es. Spesa, Risparmio automatico...">
-                </div>
-                <button type="submit">Registra Operazione</button>
-            </form>
-        </div>
-
-        <div class="card">
-            <h2>Ultime Operazioni</h2>
             <div class="filter-bar">
                 <select id="filter-type" onchange="renderApp()">
                     <option value="ALL">Tutti i Tipi</option>
@@ -928,30 +880,8 @@
         </div>
     </div>
 
-    <!-- TAB 4: CATEGORIE -->
+    <!-- TAB 4: CATEGORIE (Solo lista e gestione, form rimosso e delegato al FAB) -->
     <div id="tab-categories" class="tab-content">
-        <div class="card">
-            <h2 id="category-form-title">Aggiungi Nuova Categoria</h2>
-            <form id="category-form">
-                <div class="form-group">
-                    <label>Tipo</label>
-                    <select id="c-type">
-                        <option value="Uscita">Uscita</option>
-                        <option value="Entrata">Entrata</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Nome Categoria</label>
-                    <input type="text" id="c-name" placeholder="Es. Abbigliamento, Freelance" required>
-                </div>
-                <div class="form-group">
-                    <label>Limite Budget Mensile (€)</label>
-                    <input type="number" id="c-limit" value="150" step="10">
-                </div>
-                <button type="submit" id="category-submit-btn">Crea Categoria</button>
-            </form>
-        </div>
-
         <div class="card">
             <h2>Categorie Attive</h2>
             <div class="category-list" id="category-list-manager"></div>
@@ -1031,71 +961,8 @@
         </div>
     </div>
 
-    <!-- TAB 6: MOVIMENTI RICORRENTI -->
+    <!-- TAB 6: MOVIMENTI RICORRENTI (Solo lista e gestione, form rimosso e delegato al FAB) -->
     <div id="tab-recurring" class="tab-content">
-        <div class="card">
-            <h2 id="recurring-form-title">Nuovo Promemoria Ricorrente</h2>
-            <form id="recurring-form">
-                <input type="hidden" id="r-edit-id" value="">
-                <div class="form-group">
-                    <label>Tipo</label>
-                    <select id="r-type" onchange="onRecurringTypeChange()">
-                        <option value="Uscita">Uscita Ricorrente / Variabile</option>
-                        <option value="Entrata">Entrata Ricorrente</option>
-                        <option value="Giroconto">Giroconto Ricorrente 🔄 </option>
-                    </select>
-                </div>
-                
-                <div id="r-standard-fields">
-                    <div class="form-group">
-                        <label>Conto</label>
-                        <select id="r-account"></select>
-                    </div>
-                    <div class="form-group">
-                        <label>Categoria</label>
-                        <select id="r-category"></select>
-                    </div>
-                </div>
-
-                <div id="r-transfer-fields" style="display:none;">
-                    <div class="form-group">
-                        <label>Conto Origine</label>
-                        <select id="r-from-account"></select>
-                    </div>
-                    <div class="form-group">
-                        <label>Conto Destinazione</label>
-                        <select id="r-to-account"></select>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Frequenza</label>
-                    <select id="r-frequency">
-                        <option value="Mensile">Mensile</option>
-                        <option value="Settimanale">Settimanale</option>
-                        <option value="Trimestrale">Trimestrale</option>
-                        <option value="Semestrale">Semestrale</option>
-                        <option value="Annuale">Annuale</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Prossima Scadenza</label>
-                    <input type="date" id="r-next-date" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Importo (€) <span style="font-size:0.65rem; color:var(--text-light);">(Vuoto = variabile)</span></label>
-                    <input type="number" id="r-amount" step="0.01" placeholder="0.00">
-                </div>
-                <div class="form-group">
-                    <label>Descrizione / Nome Tipologia</label>
-                    <input type="text" id="r-desc" placeholder="Es. Stipendio, Affitto..." required>
-                </div>
-                <button type="submit" id="recurring-submit-btn">Crea Tipologia Ricorrente</button>
-            </form>
-        </div>
-
         <div class="card">
             <h2>I tuoi Promemoria Ricorrenti</h2>
             <div class="analytics-report-banner" style="margin-bottom: 12px; font-size: 0.75rem;">
@@ -1234,8 +1101,6 @@
         let currentTheme = localStorage.getItem('smart_budget_theme') || 'dark';
         document.body.setAttribute('data-theme', currentTheme);
         document.getElementById('theme-toggle-icon').textContent = currentTheme === 'dark' ? '☀️' : '🌙';
-
-        document.getElementById('r-next-date').value = new Date().toISOString().slice(0, 10);
 
         let pieChartInstance = null;
         let barChartInstance = null;
@@ -1469,92 +1334,6 @@
             }
         }
 
-        function onTransactionTypeChange() {
-            const type = document.getElementById('t-type').value;
-            const standardFields = document.getElementById('standard-transaction-fields');
-            const transferFields = document.getElementById('transfer-transaction-fields');
-
-            if (type === 'Giroconto') {
-                standardFields.style.display = 'none';
-                transferFields.style.display = 'block';
-                updateTransferSelects('t-transfer-from', 't-transfer-to');
-            } else {
-                standardFields.style.display = 'block';
-                transferFields.style.display = 'none';
-                updateCategorySelect();
-            }
-        }
-
-        function onRecurringTypeChange() {
-            const type = document.getElementById('r-type').value;
-            const stdFields = document.getElementById('r-standard-fields');
-            const trFields = document.getElementById('r-transfer-fields');
-
-            if(type === 'Giroconto') {
-                stdFields.style.display = 'none';
-                trFields.style.display = 'block';
-                updateTransferSelects('r-from-account', 'r-to-account');
-            } else {
-                stdFields.style.display = 'block';
-                trFields.style.display = 'none';
-                updateRecurringCategorySelect();
-            }
-        }
-
-        function updateCategorySelect() {
-            const select = document.getElementById('t-category');
-            if (!select) return;
-            const type = document.getElementById('t-type').value;
-            if(type === 'Giroconto') return;
-            select.innerHTML = '';
-            
-            if(data.categories[type]) {
-                data.categories[type].forEach(cat => {
-                    let opt = document.createElement('option');
-                    opt.value = cat.name; opt.textContent = cat.name;
-                    select.appendChild(opt);
-                });
-            }
-        }
-
-        function updateRecurringCategorySelect(selectedCat = '') {
-            const type = document.getElementById('r-type').value;
-            if (type === 'Giroconto') return;
-            const select = document.getElementById('r-category');
-            if (!select) return;
-            select.innerHTML = '';
-
-            if (data.categories[type]) {
-                data.categories[type].forEach(cat => {
-                    let opt = document.createElement('option');
-                    opt.value = cat.name;
-                    opt.textContent = cat.name;
-                    if (cat.name === selectedCat) opt.selected = true;
-                    select.appendChild(opt);
-                });
-            }
-        }
-
-        document.getElementById('category-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const type = document.getElementById('c-type').value;
-            const name = document.getElementById('c-name').value.trim();
-            const limit = parseFloat(document.getElementById('c-limit').value) || 0;
-
-            if(!data.categories[type]) data.categories[type] = [];
-
-            let existing = data.categories[type].find(c => c.name.toLowerCase() === name.toLowerCase());
-            if (existing) {
-                existing.limit = limit;
-            } else {
-                data.categories[type].push({ name, limit });
-            }
-
-            saveData();
-            this.reset();
-            document.getElementById('c-limit').value = "150";
-        });
-
         function editCategory(type, name) {
             let cat = data.categories[type].find(c => c.name === name);
             if (!cat) return;
@@ -1577,37 +1356,12 @@
         }
 
         function updateAccountSelect() {
-            const select = document.getElementById('t-account');
-            const rSelect = document.getElementById('r-account');
             const filterAcc = document.getElementById('filter-account');
-
-            if (select) select.innerHTML = ''; 
-            if (rSelect) rSelect.innerHTML = '';
             if (filterAcc) filterAcc.innerHTML = '<option value="ALL">Tutti i Conti</option>';
 
             data.accounts.forEach(acc => {
-                let balanceText = hideAccounts ? "€ ••••••" : `€ ${acc.balance.toFixed(2)}`;
-                let label = `${acc.name} (${balanceText})${acc.isMain ? ' ⭐' : ''}`;
-
-                if (select) { let opt = document.createElement('option'); opt.value = acc.name; opt.textContent = label; select.appendChild(opt); }
-                if (rSelect) { let optR = document.createElement('option'); optR.value = acc.name; optR.textContent = label; rSelect.appendChild(optR); }
                 if (filterAcc) { let optFilter = document.createElement('option'); optFilter.value = acc.name; optFilter.textContent = acc.name; filterAcc.appendChild(optFilter); }
             });
-        }
-
-        function updateTransferSelects(fromId, toId) {
-            const fromSelect = document.getElementById(fromId);
-            const toSelect = document.getElementById(toId);
-            if(!fromSelect || !toSelect) return;
-
-            fromSelect.innerHTML = ''; toSelect.innerHTML = '';
-
-            data.accounts.forEach((acc) => {
-                let balanceText = hideAccounts ? "€ ••••••" : `€ ${acc.balance.toFixed(2)}`;
-                let opt1 = document.createElement('option'); opt1.value = acc.name; opt1.textContent = `${acc.name} (${balanceText})`; fromSelect.appendChild(opt1);
-                let opt2 = document.createElement('option'); opt2.value = acc.name; opt2.textContent = `${acc.name} (${balanceText})`; toSelect.appendChild(opt2);
-            });
-            if (data.accounts.length > 1) toSelect.selectedIndex = 1;
         }
 
         function setMainAccount(name) {
@@ -1650,30 +1404,6 @@
             saveData();
         }
 
-        document.getElementById('transaction-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const type = document.getElementById('t-type').value;
-            const amount = parseFloat(document.getElementById('t-amount').value);
-            const desc = document.getElementById('t-desc').value;
-
-            if (type === 'Giroconto') {
-                const fromAccName = document.getElementById('t-transfer-from').value;
-                const toAccName = document.getElementById('t-transfer-to').value;
-                if (fromAccName === toAccName) { alert("Scegli due conti differenti!"); return; }
-                let accFrom = data.accounts.find(acc => acc.name === fromAccName);
-                let accTo = data.accounts.find(acc => acc.name === toAccName);
-                if (accFrom && accTo) { accFrom.balance -= amount; accTo.balance += amount; }
-                data.transactions.unshift({ id: Date.now(), type: 'Giroconto', fromAccount: fromAccName, toAccount: toAccName, amount, desc: desc || `Giroconto ${fromAccName} -> ${toAccName}`, date: new Date().toISOString() });
-            } else {
-                const accountName = document.getElementById('t-account').value;
-                const category = document.getElementById('t-category').value;
-                let account = data.accounts.find(acc => acc.name === accountName);
-                if(account) { if(type === 'Entrata') account.balance += amount; else account.balance -= amount; }
-                data.transactions.unshift({ id: Date.now(), type, accountName, amount, category, desc: desc || category, date: new Date().toISOString() });
-            }
-            saveData(); this.reset(); document.getElementById('t-type').value = 'Uscita'; onTransactionTypeChange();
-        });
-
         function deleteTransaction(id) {
             let t = data.transactions.find(item => item.id === id);
             if(t) {
@@ -1689,91 +1419,6 @@
             }
             data.transactions = data.transactions.filter(item => item.id !== id);
             saveData();
-        }
-
-        document.getElementById('recurring-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const editId = document.getElementById('r-edit-id').value;
-            const type = document.getElementById('r-type').value;
-            const amount = parseFloat(document.getElementById('r-amount').value) || 0;
-            const desc = document.getElementById('r-desc').value;
-            const frequency = document.getElementById('r-frequency').value;
-            const nextDate = document.getElementById('r-next-date').value;
-
-            if(!data.recurring) data.recurring = [];
-
-            if (editId) {
-                let item = data.recurring.find(r => r.id == editId);
-                if (item) {
-                    item.type = type;
-                    item.amount = amount;
-                    item.desc = desc;
-                    item.frequency = frequency;
-                    item.nextDate = nextDate;
-                    if (type === 'Giroconto') {
-                        item.fromAccount = document.getElementById('r-from-account').value;
-                        item.toAccount = document.getElementById('r-to-account').value;
-                        delete item.accountName;
-                        delete item.category;
-                    } else {
-                        item.accountName = document.getElementById('r-account').value;
-                        item.category = document.getElementById('r-category').value;
-                        delete item.fromAccount;
-                        delete item.toAccount;
-                    }
-                }
-            } else {
-                let item = { id: Date.now(), type, amount, desc, frequency, nextDate };
-                if(type === 'Giroconto') {
-                    item.fromAccount = document.getElementById('r-from-account').value;
-                    item.toAccount = document.getElementById('r-to-account').value;
-                    if(item.fromAccount === item.toAccount) { alert("Scegli due conti differenti!"); return; }
-                } else {
-                    item.accountName = document.getElementById('r-account').value;
-                    item.category = document.getElementById('r-category').value;
-                }
-                data.recurring.push(item);
-            }
-
-            saveData();
-            resetRecurringForm();
-        });
-
-        function resetRecurringForm() {
-            document.getElementById('recurring-form').reset();
-            document.getElementById('r-edit-id').value = '';
-            document.getElementById('r-amount').value = '';
-            document.getElementById('r-next-date').value = new Date().toISOString().slice(0, 10);
-            document.getElementById('recurring-form-title').textContent = "Nuovo Promemoria Ricorrente";
-            document.getElementById('recurring-submit-btn').textContent = "Crea Tipologia Ricorrente";
-            onRecurringTypeChange();
-        }
-
-        function editRecurring(id) {
-            let r = data.recurring.find(item => item.id == id);
-            if (!r) return;
-
-            document.getElementById('r-edit-id').value = r.id;
-            document.getElementById('r-type').value = r.type;
-            onRecurringTypeChange();
-
-            if (r.type === 'Giroconto') {
-                document.getElementById('r-from-account').value = r.fromAccount;
-                document.getElementById('r-to-account').value = r.toAccount;
-            } else {
-                document.getElementById('r-account').value = r.accountName;
-                updateRecurringCategorySelect(r.category);
-            }
-
-            document.getElementById('r-frequency').value = r.frequency || 'Mensile';
-            document.getElementById('r-next-date').value = r.nextDate || new Date().toISOString().slice(0, 10);
-            document.getElementById('r-amount').value = (r.amount && r.amount > 0) ? r.amount : '';
-            document.getElementById('r-desc').value = r.desc;
-
-            document.getElementById('recurring-form-title').textContent = "Modifica Promemoria Ricorrente";
-            document.getElementById('recurring-submit-btn').textContent = "Salva Modifiche";
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function deleteRecurring(id) {
@@ -1936,21 +1581,36 @@
                             <select id="q-r-type" onchange="onQuickRecurringTypeChange()">
                                 <option value="Uscita">Uscita Ricorrente</option>
                                 <option value="Entrata">Entrata Ricorrente</option>
+                                <option value="Giroconto">Giroconto Ricorrente 🔄</option>
                             </select>
                         </div>
-                        <div class="form-group">
-                            <label>Conto</label>
-                            <select id="q-r-account"></select>
+                        <div id="q-r-standard-fields">
+                            <div class="form-group">
+                                <label>Conto</label>
+                                <select id="q-r-account"></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Categoria</label>
+                                <select id="q-r-category"></select>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>Categoria</label>
-                            <select id="q-r-category"></select>
+                        <div id="q-r-transfer-fields" style="display:none;">
+                            <div class="form-group">
+                                <label>Conto Origine</label>
+                                <select id="q-r-from-account"></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Conto Destinazione</label>
+                                <select id="q-r-to-account"></select>
+                            </div>
                         </div>
                         <div class="form-group">
                             <label>Frequenza</label>
                             <select id="q-r-frequency">
                                 <option value="Mensile">Mensile</option>
                                 <option value="Settimanale">Settimanale</option>
+                                <option value="Trimestrale">Trimestrale</option>
+                                <option value="Semestrale">Semestrale</option>
                                 <option value="Annuale">Annuale</option>
                             </select>
                         </div>
@@ -1959,12 +1619,12 @@
                             <input type="date" id="q-r-date" value="${new Date().toISOString().slice(0, 10)}" required>
                         </div>
                         <div class="form-group">
-                            <label>Importo (€)</label>
+                            <label>Importo (€) <span style="font-size:0.65rem; color:var(--text-light);">(Vuoto = variabile)</span></label>
                             <input type="number" id="q-r-amount" step="0.01" placeholder="0.00">
                         </div>
                         <div class="form-group">
                             <label>Descrizione</label>
-                            <input type="text" id="q-r-desc" placeholder="Es. Abbonamento..." required>
+                            <input type="text" id="q-r-desc" placeholder="Es. Affitto, Stipendio..." required>
                         </div>
                         <button type="submit">Crea Ricorrente</button>
                     </form>
@@ -2033,6 +1693,7 @@
 
         function updateQuickRecurringCategorySelect() {
             const type = document.getElementById('q-r-type').value;
+            if (type === 'Giroconto') return;
             const catSelect = document.getElementById('q-r-category');
             if (!catSelect) return;
             catSelect.innerHTML = '';
@@ -2044,7 +1705,24 @@
         }
 
         function onQuickRecurringTypeChange() {
-            updateQuickRecurringCategorySelect();
+            const type = document.getElementById('q-r-type').value;
+            const std = document.getElementById('q-r-standard-fields');
+            const tr = document.getElementById('q-r-transfer-fields');
+            if (type === 'Giroconto') {
+                std.style.display = 'none';
+                tr.style.display = 'block';
+                const fromSel = document.getElementById('q-r-from-account');
+                const toSel = document.getElementById('q-r-to-account');
+                fromSel.innerHTML = ''; toSel.innerHTML = '';
+                data.accounts.forEach(acc => {
+                    fromSel.innerHTML += `<option value="${acc.name}">${acc.name}</option>`;
+                    toSel.innerHTML += `<option value="${acc.name}">${acc.name}</option>`;
+                });
+            } else {
+                std.style.display = 'block';
+                tr.style.display = 'none';
+                updateQuickRecurringCategorySelect();
+            }
         }
 
         function handleQuickSubmit(event, formType) {
@@ -2077,18 +1755,32 @@
                 const name = document.getElementById('q-c-name').value.trim();
                 const limit = parseFloat(document.getElementById('q-c-limit').value) || 0;
                 if (!data.categories[type]) data.categories[type] = [];
-                data.categories[type].push({ name, limit });
+                let existing = data.categories[type].find(c => c.name.toLowerCase() === name.toLowerCase());
+                if (!existing) {
+                    data.categories[type].push({ name, limit });
+                } else {
+                    alert("Esiste già una categoria con questo nome!");
+                    return;
+                }
             } else if (formType === 'recurring') {
                 const type = document.getElementById('q-r-type').value;
-                const accountName = document.getElementById('q-r-account').value;
-                const category = document.getElementById('q-r-category').value;
                 const frequency = document.getElementById('q-r-frequency').value;
                 const nextDate = document.getElementById('q-r-date').value;
                 const amount = parseFloat(document.getElementById('q-r-amount').value) || 0;
                 const desc = document.getElementById('q-r-desc').value;
 
                 if (!data.recurring) data.recurring = [];
-                data.recurring.push({ id: Date.now(), type, accountName, category, frequency, nextDate, amount, desc });
+                let newItem = { id: Date.now(), type, frequency, nextDate, amount, desc };
+
+                if (type === 'Giroconto') {
+                    newItem.fromAccount = document.getElementById('q-r-from-account').value;
+                    newItem.toAccount = document.getElementById('q-r-to-account').value;
+                    if (newItem.fromAccount === newItem.toAccount) { alert("Scegli conti differenti!"); return; }
+                } else {
+                    newItem.accountName = document.getElementById('q-r-account').value;
+                    newItem.category = document.getElementById('q-r-category').value;
+                }
+                data.recurring.push(newItem);
             }
 
             saveData();
@@ -2424,8 +2116,7 @@
                                     <div class="recurring-compact-right">
                                         <span class="${amtClass}">${displayAmt}</span>
                                         <div class="recurring-compact-actions">
-                                            <button class="btn-edit" onclick="editRecurring(${r.id})">✏️</button>
-                                            <button class="btn-secondary" onclick="executeRecurring(${r.id})" style="background:rgba(16,185,129,0.15)!important; color:var(--success)!important; border:1px solid rgba(16,185,129,0.3)!important; font-weight:700;">▶️</button>
+                                            <button class="btn-secondary" onclick="executeRecurring(${r.id})" style="background:rgba(16,185,129,0.15)!important; color:var(--success)!important; border:1px solid rgba(16,185,129,0.3)!important; font-weight:700;">▶️ Applica</button>
                                             <button class="btn-danger" onclick="deleteRecurring(${r.id})">🗑️</button>
                                         </div>
                                     </div>
@@ -2443,15 +2134,9 @@
             }
 
             updateAccountSelect();
-            if (document.getElementById('t-type') && document.getElementById('t-type').value === 'Giroconto') updateTransferSelects('t-transfer-from', 't-transfer-to');
-            if (document.getElementById('r-type') && document.getElementById('r-type').value === 'Giroconto') updateTransferSelects('r-from-account', 'r-to-account');
-            else updateRecurringCategorySelect();
-            
             renderAnalytics();
         }
 
-        updateCategorySelect();
-        updateRecurringCategorySelect();
         renderApp();
         checkAppSecurityLock();
     </script>
