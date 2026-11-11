@@ -574,18 +574,20 @@
             border-radius: var(--radius-sm) !important;
         }
 
-        /* CARD PIANO RISPARMIO RIPROGETTATE */
+        /* CARD PIANO RISPARMIO STRATEGICO */
         .savings-hero-box {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(192, 132, 252, 0.1) 100%);
-            border: 1px solid rgba(99, 102, 241, 0.3);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.18) 0%, rgba(192, 132, 252, 0.12) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.35);
             border-radius: var(--radius-md);
-            padding: 16px;
+            padding: 18px 14px;
             text-align: center;
             margin-bottom: 14px;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(99, 102, 241, 0.05);
         }
 
         .savings-hero-title {
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             color: var(--text-light);
             text-transform: uppercase;
             letter-spacing: 0.8px;
@@ -594,7 +596,7 @@
         }
 
         .savings-hero-value {
-            font-size: 1.8rem;
+            font-size: 1.9rem;
             font-weight: 900;
             color: var(--success);
             letter-spacing: -0.5px;
@@ -617,7 +619,7 @@
 
         .savings-pill-card span {
             display: block;
-            font-size: 0.65rem;
+            font-size: 0.63rem;
             color: var(--text-light);
             font-weight: 600;
             text-transform: uppercase;
@@ -625,7 +627,7 @@
         }
 
         .savings-pill-card strong {
-            font-size: 0.85rem;
+            font-size: 0.88rem;
             font-weight: 800;
         }
 
@@ -634,10 +636,10 @@
             width: 100%;
             background: var(--input-bg);
             border-radius: 99px;
-            height: 12px;
+            height: 14px;
             overflow: hidden;
             border: 1px solid var(--card-border);
-            margin: 10px 0;
+            margin: 12px 0 8px 0;
         }
 
         .savings-progress-fill {
@@ -646,6 +648,31 @@
             background: linear-gradient(90deg, #10b981 0%, #38bdf8 100%);
             border-radius: 99px;
             transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .sim-slider-container {
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            margin-top: 10px;
+        }
+
+        .sim-slider-container label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .sim-slider {
+            width: 100%;
+            accent-color: var(--primary);
+            cursor: pointer;
+            height: 6px;
+            background: var(--card-border);
+            border-radius: 4px;
+            outline: none;
         }
 
         .analytics-card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; }
@@ -962,17 +989,17 @@
         </div>
     </div>
 
-    <!-- TAB 5: PIANO RISPARMIO RIPROGETTATO -->
+    <!-- TAB 5: PIANO RISPARMIO STRATEGICO -->
     <div id="tab-savings" class="tab-content">
-        <!-- HERO MONITORAGGIO RISPARMIO -->
+        <!-- OBIETTIVO CAPITALE -->
         <div class="card">
             <h2>
-                <span>🎯 Target di Accumulo Capitale</span>
-                <button class="btn-edit" onclick="toggleEditSavingsPlan()" id="btn-toggle-edit-plan">✏️ Modifica</button>
+                <span>🎯 Obiettivo Capitale & Accumulo</span>
+                <button class="btn-edit" onclick="toggleEditSavingsPlan()" id="btn-toggle-edit-plan">✏️ Configura</button>
             </h2>
 
             <div class="savings-hero-box">
-                <div class="savings-hero-title">Capitale Accantonato Attuale</div>
+                <div class="savings-hero-title">Patrimonio Attuale Accantonato</div>
                 <div class="savings-hero-value" id="goal-current-saved">€ 0.00</div>
                 
                 <div class="savings-progress-track">
@@ -980,44 +1007,57 @@
                 </div>
 
                 <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-light); font-weight:600;">
-                    <span>Avanzamento: <strong id="goal-percentage-label" style="color:var(--text);">0%</strong></span>
-                    <span>Obiettivo: <strong id="goal-target-label" style="color:var(--text);">€ 0.00</strong></span>
+                    <span>Completato: <strong id="goal-percentage-label" style="color:var(--text);">0%</strong></span>
+                    <span>Target: <strong id="goal-target-label" style="color:var(--text);">€ 0.00</strong></span>
                 </div>
             </div>
 
-            <!-- MODULO EDIT DISCRETO -->
-            <div id="savings-plan-edit-form" style="display: none; border-top: 1px solid var(--card-border); padding-top: 14px; margin-top: 10px;">
+            <!-- SIMULATORE INTERATTIVO SLIDER -->
+            <div class="sim-slider-container">
+                <label>
+                    <span>⚡ Simulatore Accantonamento Mensile</span>
+                    <strong id="sim-savings-val" style="color:var(--primary);">€ 360 / mese</strong>
+                </label>
+                <input type="range" class="sim-slider" id="sim-range-input" min="50" max="2000" step="50" value="360" oninput="updateSavingsSimulation()">
+                
+                <div style="font-size: 0.72rem; color: var(--text-light); margin-top: 8px; text-align: center;" id="sim-result-text">
+                    Raggiungerai l'obiettivo in circa <strong>16 mesi</strong>.
+                </div>
+            </div>
+
+            <!-- MODULO CONFIGURAZIONE -->
+            <div id="savings-plan-edit-form" style="display: none; border-top: 1px solid var(--card-border); padding-top: 14px; margin-top: 14px;">
                 <div class="form-group">
-                    <label>Entrata / Stipendio Mensile (€)</label>
+                    <label>Stipendio / Entrata Mensile (€)</label>
                     <input type="number" id="savings-salary" placeholder="Es. 1800" oninput="saveSavingsPlanSettings()">
                 </div>
                 
                 <div class="form-group">
-                    <label>Strategia di Budgeting</label>
+                    <label>Strategia Ripartizione</label>
                     <select id="savings-rule" onchange="saveSavingsPlanSettings()">
-                        <option value="50-30-20">Regola 50 / 30 / 20 (Standard)</option>
+                        <option value="50-30-20">Regola 50 / 30 / 20 (Consigliata)</option>
                         <option value="60-20-10-10">Regola 60 / 20 / 10 / 10</option>
-                        <option value="custom-20">Accantonamento Fisso 20%</option>
-                        <option value="custom-30">Accantonamento Aggressivo 30%</option>
+                        <option value="custom-20">Fisso 20% Risparmio</option>
+                        <option value="custom-30">Aggressivo 30% Risparmio</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label>Obiettivo di Risparmio (€)</label>
+                    <label>Obiettivo Finale Target (€)</label>
                     <input type="number" id="goal-target" placeholder="Es. 6000" oninput="saveSavingsPlanSettings()">
                 </div>
 
                 <div class="form-group">
-                    <label>Orizzonte Temporale (Mesi)</label>
+                    <label>Orizzonte Temporale Desiderato (Mesi)</label>
                     <input type="number" id="goal-months" placeholder="Es. 12" oninput="saveSavingsPlanSettings()">
                 </div>
-                <button class="btn-secondary" onclick="toggleEditSavingsPlan()" style="margin-top:6px;">Salva e Chiudi</button>
+                <button class="btn-secondary" onclick="toggleEditSavingsPlan()" style="margin-top:6px;">Salva & Chiudi</button>
             </div>
         </div>
 
-        <!-- RIPARTIZIONE IDEALE MENSILE -->
+        <!-- RIPARTIZIONE E PROIEZIONI -->
         <div class="card">
-            <h2>📊 Ripartizione Ideale Mensile</h2>
+            <h2>📊 Ripartizione Budget Suggerita</h2>
             <div class="savings-grid-cards">
                 <div class="savings-pill-card">
                     <span>Necessità</span>
@@ -1032,10 +1072,21 @@
                     <strong style="color:var(--success);" id="plan-savings">€ 0.00</strong>
                 </div>
             </div>
-            
-            <div class="analytics-report-banner">
-                <div style="font-size:1.2rem;">💡</div>
-                <div id="goal-status-text" style="font-size: 0.78rem;">Calcolo della sostenibilità finanziaria in corso...</div>
+
+            <h2>🔮 Proiezione Capitale Futuro</h2>
+            <div class="analytics-card-grid" style="margin-bottom: 0;">
+                <div class="analytics-mini-box">
+                    <span>Tra 6 Mesi</span>
+                    <strong style="color:#818cf8;" id="proj-6m">€ 0.00</strong>
+                </div>
+                <div class="analytics-mini-box">
+                    <span>Tra 1 Anno</span>
+                    <strong style="color:#818cf8;" id="proj-1y">€ 0.00</strong>
+                </div>
+                <div class="analytics-mini-box">
+                    <span>Tra 3 Anni</span>
+                    <strong style="color:#818cf8;" id="proj-3y">€ 0.00</strong>
+                </div>
             </div>
         </div>
     </div>
@@ -1334,7 +1385,7 @@
                 btn.textContent = '✕ Chiudi';
             } else {
                 form.style.display = 'none';
-                btn.textContent = '✏️ Modifica';
+                btn.textContent = '✏️ Configura';
             }
         }
 
@@ -1366,7 +1417,6 @@
             if(totalSavedActual < 0) totalSavedActual = 0;
 
             const target = savingsSettings.target;
-            const months = savingsSettings.months;
             const percentage = target > 0 ? (totalSavedActual / target) * 100 : 0;
 
             document.getElementById('goal-current-saved').textContent = hideAccounts ? "€ ••••••" : `€ ${totalSavedActual.toFixed(2)}`;
@@ -1374,12 +1424,32 @@
             document.getElementById('goal-percentage-label').textContent = `${Math.min(percentage, 100).toFixed(1)}%`;
             document.getElementById('goal-progress-bar').style.width = `${Math.min(percentage, 100)}%`;
 
-            let statusMsg = `Hai raggiunto il <strong>${percentage.toFixed(1)}%</strong> del target stabilito.`;
-            if (months > 0 && target > 0) {
-                let requiredMonthly = target / months;
-                statusMsg += `<br>Quota mensile di risparmio consigliata: <strong>€ ${requiredMonthly.toFixed(2)}/mese</strong> per ${months} mesi.`;
+            // Proiezioni patrimoniali
+            document.getElementById('proj-6m').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (savingsPerMonth * 6)).toFixed(2)}`;
+            document.getElementById('proj-1y').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (savingsPerMonth * 12)).toFixed(2)}`;
+            document.getElementById('proj-3y').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (savingsPerMonth * 36)).toFixed(2)}`;
+
+            const slider = document.getElementById('sim-range-input');
+            if (slider && savingsPerMonth > 0) slider.value = Math.round(savingsPerMonth);
+            updateSavingsSimulation();
+        }
+
+        function updateSavingsSimulation() {
+            const simVal = parseFloat(document.getElementById('sim-range-input').value) || 0;
+            document.getElementById('sim-savings-val').textContent = `€ ${simVal.toFixed(0)} / mese`;
+
+            let totalSavedActual = data.accounts.reduce((sum, acc) => sum + acc.balance, 0);
+            if(totalSavedActual < 0) totalSavedActual = 0;
+            
+            const target = savingsSettings.target;
+            const remaining = target - totalSavedActual;
+
+            if (remaining <= 0) {
+                document.getElementById('sim-result-text').innerHTML = `🎉 <strong>Obiettivo già raggiunto!</strong>`;
+            } else if (simVal > 0) {
+                const monthsNeeded = Math.ceil(remaining / simVal);
+                document.getElementById('sim-result-text').innerHTML = `Raggiungerai l'obiettivo rimanente di <strong>€ ${remaining.toFixed(2)}</strong> in circa <strong>${monthsNeeded} mesi</strong>.`;
             }
-            document.getElementById('goal-status-text').innerHTML = statusMsg;
         }
 
         function toggleAccountsVisibility() {
