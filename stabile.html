@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SmartBudget PWA Ultimate Pro</title>
-    <!-- Libreria Chart.js per i grafici visivi -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root {
@@ -52,7 +51,46 @@
             transition: background 0.3s, color 0.3s;
         }
 
-        /* OVERLAY SCHERMATA DI BLOCCO */
+        #update-banner {
+            position: fixed;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%) translateY(-100px);
+            width: 90%;
+            max-width: 420px;
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white;
+            padding: 14px 18px;
+            border-radius: var(--radius-lg);
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+            z-index: 20000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        #update-banner.show {
+            transform: translateX(-50%) translateY(0);
+        }
+        .update-banner-text {
+            font-size: 0.82rem;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+        .update-banner-btn {
+            background: white !important;
+            color: var(--primary) !important;
+            border: none !important;
+            padding: 6px 12px !important;
+            border-radius: var(--radius-sm) !important;
+            font-size: 0.78rem !important;
+            font-weight: 800 !important;
+            cursor: pointer;
+            white-space: nowrap;
+            width: auto !important;
+        }
+
         #app-lock-screen {
             position: fixed;
             top: 0;
@@ -119,8 +157,6 @@
             font-weight: 800;
             letter-spacing: -0.5px;
         }
-
-        header p { font-size: 0.78rem; color: var(--text-light); margin-top: 4px; font-weight: 400; }
 
         .header-actions { display: flex; gap: 8px; position: absolute; right: 0; }
 
@@ -346,7 +382,7 @@
 
         input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
 
-        button:not(.eye-toggle-btn):not(.menu-btn):not(.sidebar-close):not(.theme-btn) {
+        button:not(.eye-toggle-btn):not(.menu-btn):not(.sidebar-close):not(.theme-btn):not(.fab-main):not(.fab-item):not(.update-banner-btn) {
             width: 100%;
             padding: 11px;
             background-color: var(--primary);
@@ -358,7 +394,7 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        button:not(.eye-toggle-btn):not(.menu-btn):not(.sidebar-close):not(.theme-btn):hover { background-color: var(--primary-hover); }
+        button:not(.eye-toggle-btn):not(.menu-btn):not(.sidebar-close):not(.theme-btn):not(.fab-main):not(.fab-item):not(.update-banner-btn):hover { background-color: var(--primary-hover); }
 
         .btn-secondary { background: rgba(255, 255, 255, 0.05) !important; border: 1px solid var(--card-border) !important; color: var(--text) !important; }
         .btn-secondary:hover { background: rgba(255, 255, 255, 0.1) !important; }
@@ -438,7 +474,7 @@
         .advice-box h3 { font-size: 0.82rem; color: #818cf8; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; font-weight: 700; }
         .advice-box p { font-size: 0.78rem; color: var(--text-light); line-height: 1.4; }
 
-        .transaction-list { max-height: 380px; overflow-y: auto; padding-right: 2px; }
+        .transaction-list { max-height: 450px; overflow-y: auto; padding-right: 2px; }
         .transaction-card { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         .transaction-left { display: flex; align-items: flex-start; gap: 8px; overflow: hidden; }
         .transaction-badge { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; flex-shrink: 0; }
@@ -457,7 +493,6 @@
         .transaction-amount.uscita { color: var(--danger); }
         .transaction-amount.giroconto { color: var(--info); }
 
-        /* SEZIONI ESPANDIBILI RICORRENTI */
         .recurring-category-section {
             margin-bottom: 10px;
             border: 1px solid var(--card-border);
@@ -576,6 +611,106 @@
             border-radius: var(--radius-sm) !important;
         }
 
+        .savings-hero-box {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.18) 0%, rgba(192, 132, 252, 0.12) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.35);
+            border-radius: var(--radius-md);
+            padding: 18px 14px;
+            text-align: center;
+            margin-bottom: 14px;
+            position: relative;
+            box-shadow: inset 0 0 20px rgba(99, 102, 241, 0.05);
+        }
+
+        .savings-hero-title {
+            font-size: 0.7rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .savings-hero-value {
+            font-size: 1.9rem;
+            font-weight: 900;
+            color: var(--success);
+            letter-spacing: -0.5px;
+        }
+
+        .savings-grid-cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .savings-pill-card {
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 10px 6px;
+            text-align: center;
+        }
+
+        .savings-pill-card span {
+            display: block;
+            font-size: 0.63rem;
+            color: var(--text-light);
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 2px;
+        }
+
+        .savings-pill-card strong {
+            font-size: 0.88rem;
+            font-weight: 800;
+        }
+
+        .savings-progress-track {
+            position: relative;
+            width: 100%;
+            background: var(--input-bg);
+            border-radius: 99px;
+            height: 14px;
+            overflow: hidden;
+            border: 1px solid var(--card-border);
+            margin: 12px 0 8px 0;
+        }
+
+        .savings-progress-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #10b981 0%, #38bdf8 100%);
+            border-radius: 99px;
+            transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .sim-slider-container {
+            background: var(--input-bg);
+            border: 1px solid var(--card-border);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            margin-top: 10px;
+        }
+
+        .sim-slider-container label {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .sim-slider {
+            width: 100%;
+            accent-color: var(--primary);
+            cursor: pointer;
+            height: 6px;
+            background: var(--card-border);
+            border-radius: 4px;
+            outline: none;
+        }
+
         .analytics-card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; }
         .analytics-mini-box { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 8px 2px; text-align: center; overflow: hidden; }
         .analytics-mini-box span { display: block; font-size: 0.6rem; color: var(--text-light); text-transform: uppercase; font-weight: 600; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -601,6 +736,122 @@
         .tab-content.active { display: block; animation: fadeIn 0.25s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
+        .fab-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 997;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .fab-main {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            font-size: 2rem;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s;
+        }
+
+        .fab-main:hover {
+            background: var(--primary-hover);
+            transform: scale(1.05);
+        }
+
+        .fab-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 12px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .fab-container.active .fab-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .fab-container.active .fab-main {
+            transform: rotate(45deg);
+        }
+
+        .fab-item {
+            background: var(--card-bg) !important;
+            color: var(--text) !important;
+            border: 1px solid var(--card-border) !important;
+            padding: 8px 14px !important;
+            border-radius: var(--radius-md) !important;
+            font-size: 0.85rem !important;
+            font-weight: 700 !important;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            width: auto !important;
+            white-space: nowrap;
+            transition: transform 0.2s;
+        }
+
+        .fab-item:hover {
+            border-color: var(--primary) !important;
+            transform: translateX(-4px);
+        }
+
+        .fab-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.95);
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            width: 90%;
+            max-width: 420px;
+            border-radius: var(--radius-lg);
+            z-index: 999;
+            padding: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s ease;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .fab-modal.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .fab-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .fab-modal-header h3 {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--text);
+        }
+
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 4px; }
@@ -608,7 +859,11 @@
 </head>
 <body data-theme="dark">
 
-    <!-- SCHERMATA DI BLOCCO APPLICAZIONE -->
+    <div id="update-banner">
+        <div class="update-banner-text">🚀 Nuova versione disponibile!</div>
+        <button class="update-banner-btn" onclick="applyAppUpdate()">Aggiorna ora</button>
+    </div>
+
     <div id="app-lock-screen" style="display: none;">
         <div class="lock-card">
             <div class="lock-icon">🔐</div>
@@ -634,7 +889,6 @@
         </div>
     </header>
 
-    <!-- SIDEBAR MENU A SCOMPARSA -->
     <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -662,11 +916,11 @@
             <button class="btn-secondary" onclick="exportBackupJSON()" style="font-size: 0.8rem; padding: 10px;">💾 Backup Completo (JSON)</button>
             <button class="btn-secondary" onclick="exportTransactionsCSV()" style="font-size: 0.8rem; padding: 10px;">📊 Esporta Report (CSV)</button>
             <button class="btn-secondary" onclick="document.getElementById('import-file-input').click()" style="font-size: 0.8rem; padding: 10px;">📥 Ripristina Backup</button>
+            <button class="btn-secondary" onclick="forceAppUpdate()" style="font-size: 0.8rem; padding: 10px; background: rgba(99, 102, 241, 0.15) !important; color: #818cf8 !important; border-color: rgba(99, 102, 241, 0.3) !important;">🔄 Cerca Aggiornamenti</button>
             <input type="file" id="import-file-input" accept=".json" style="display: none;" onchange="importBackupJSON(event)">
         </div>
     </div>
 
-    <!-- TAB 1: DASHBOARD -->
     <div id="tab-dashboard" class="tab-content active">
         <div class="dashboard-grid">
             <div class="stat-box">
@@ -701,59 +955,12 @@
         </div>
     </div>
 
-    <!-- TAB 2: TRANSAZIONI -->
     <div id="tab-transactions" class="tab-content">
         <div class="card">
             <h2>
-                <span>Nuova Operazione</span>
+                <span>Ultime Operazioni</span>
                 <button class="eye-toggle-btn" onclick="toggleAccountsVisibility()" id="eye-trans-btn" title="Mostra/Nascondi Saldi">👁️</button>
             </h2>
-            <form id="transaction-form">
-                <div class="form-group">
-                    <label>Tipo di Operazione</label>
-                    <select id="t-type" onchange="onTransactionTypeChange()">
-                        <option value="Uscita">Uscita</option>
-                        <option value="Entrata">Entrata</option>
-                        <option value="Giroconto">Giroconto 🔄 </option>
-                    </select>
-                </div>
-
-                <div id="standard-transaction-fields">
-                    <div class="form-group">
-                        <label>Conto di Riferimento</label>
-                        <select id="t-account"></select>
-                    </div>
-                    <div class="form-group">
-                        <label>Categoria</label>
-                        <select id="t-category"></select>
-                    </div>
-                </div>
-
-                <div id="transfer-transaction-fields" style="display: none;">
-                    <div class="form-group">
-                        <label>Conto Origine (Da dove prelevi)</label>
-                        <select id="t-transfer-from"></select>
-                    </div>
-                    <div class="form-group">
-                        <label>Conto Destinazione (Dove accrediti)</label>
-                        <select id="t-transfer-to"></select>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Importo (€)</label>
-                    <input type="number" id="t-amount" step="0.01" placeholder="0.00" required>
-                </div>
-                <div class="form-group">
-                    <label>Nota / Descrizione</label>
-                    <input type="text" id="t-desc" placeholder="Es. Spesa, Risparmio automatico...">
-                </div>
-                <button type="submit">Registra Operazione</button>
-            </form>
-        </div>
-
-        <div class="card">
-            <h2>Ultime Operazioni</h2>
             <div class="filter-bar">
                 <select id="filter-type" onchange="renderApp()">
                     <option value="ALL">Tutti i Tipi</option>
@@ -785,7 +992,6 @@
         </div>
     </div>
 
-    <!-- TAB 3: PATRIMONIO -->
     <div id="tab-patrimony" class="tab-content">
         <div class="card">
             <h2 id="account-form-title">Aggiungi / Crea Conto</h2>
@@ -811,174 +1017,111 @@
         </div>
     </div>
 
-    <!-- TAB 4: CATEGORIE -->
     <div id="tab-categories" class="tab-content">
-        <div class="card">
-            <h2 id="category-form-title">Aggiungi Nuova Categoria</h2>
-            <form id="category-form">
-                <div class="form-group">
-                    <label>Tipo</label>
-                    <select id="c-type">
-                        <option value="Uscita">Uscita</option>
-                        <option value="Entrata">Entrata</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label>Nome Categoria</label>
-                    <input type="text" id="c-name" placeholder="Es. Abbigliamento, Freelance" required>
-                </div>
-                <div class="form-group">
-                    <label>Limite Budget Mensile (€)</label>
-                    <input type="number" id="c-limit" value="150" step="10">
-                </div>
-                <button type="submit" id="category-submit-btn">Crea Categoria</button>
-            </form>
-        </div>
-
         <div class="card">
             <h2>Categorie Attive</h2>
             <div class="category-list" id="category-list-manager"></div>
         </div>
     </div>
 
-    <!-- TAB 5: PIANO RISPARMIO -->
     <div id="tab-savings" class="tab-content">
         <div class="card">
             <h2>
-                <span>Configurazione Piano</span>
-                <button class="btn-edit" onclick="toggleEditSavingsPlan()" id="btn-toggle-edit-plan" style="padding: 5px 8px; width:auto;">✏️ Modifica</button>
+                <span>🎯 Obiettivo Capitale & Accumulo</span>
+                <button class="btn-edit" onclick="toggleEditSavingsPlan()" id="btn-toggle-edit-plan">✏️ Configura</button>
             </h2>
-            
-            <div id="savings-plan-edit-form" style="display: none; border-top: 1px solid var(--card-border); padding-top: 12px; margin-top: 10px; margin-bottom: 12px;">
+
+            <div class="savings-hero-box">
+                <div class="savings-hero-title">Patrimonio Attuale Accantonato</div>
+                <div class="savings-hero-value" id="goal-current-saved">€ 0.00</div>
+                
+                <div class="savings-progress-track">
+                    <div class="savings-progress-fill" id="goal-progress-bar"></div>
+                </div>
+
+                <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-light); font-weight:600;">
+                    <span>Completato: <strong id="goal-percentage-label" style="color:var(--text);">0%</strong></span>
+                    <span>Target: <strong id="goal-target-label" style="color:var(--text);">€ 0.00</strong></span>
+                </div>
+            </div>
+
+            <div class="sim-slider-container">
+                <label>
+                    <span>⚡ Simulatore Accantonamento Mensile</span>
+                    <strong id="sim-savings-val" style="color:var(--primary);">€ 360 / mese</strong>
+                </label>
+                <input type="range" class="sim-slider" id="sim-range-input" min="50" max="2000" step="50" value="360" oninput="updateSavingsSimulation()">
+                
+                <div style="font-size: 0.72rem; color: var(--text-light); margin-top: 8px; text-align: center;" id="sim-result-text">
+                    Raggiungerai l'obiettivo in circa <strong>16 mesi</strong>.
+                </div>
+            </div>
+
+            <div id="savings-plan-edit-form" style="display: none; border-top: 1px solid var(--card-border); padding-top: 14px; margin-top: 14px;">
                 <div class="form-group">
-                    <label>Stipendio Mensile Fisso (€)</label>
+                    <label>Stipendio / Entrata Mensile (€)</label>
                     <input type="number" id="savings-salary" placeholder="Es. 1800" oninput="saveSavingsPlanSettings()">
                 </div>
                 
                 <div class="form-group">
-                    <label>Regola di Ripartizione</label>
+                    <label>Strategia Ripartizione</label>
                     <select id="savings-rule" onchange="saveSavingsPlanSettings()">
                         <option value="50-30-20">Regola 50 / 30 / 20 (Consigliata)</option>
                         <option value="60-20-10-10">Regola 60 / 20 / 10 / 10</option>
-                        <option value="custom-20">Risparmio Fisso 20%</option>
-                        <option value="custom-30">Risparmio Aggressivo 30%</option>
+                        <option value="custom-20">Fisso 20% Risparmio</option>
+                        <option value="custom-30">Aggressivo 30% Risparmio</option>
                     </select>
                 </div>
 
                 <div class="form-group">
-                    <label>Cifra Target Risparmio (€)</label>
+                    <label>Obiettivo Finale Target (€)</label>
                     <input type="number" id="goal-target" placeholder="Es. 6000" oninput="saveSavingsPlanSettings()">
                 </div>
 
                 <div class="form-group">
-                    <label>Tempo Target (Mesi)</label>
+                    <label>Orizzonte Temporale Desiderato (Mesi)</label>
                     <input type="number" id="goal-months" placeholder="Es. 12" oninput="saveSavingsPlanSettings()">
                 </div>
-                <button class="btn-secondary" onclick="toggleEditSavingsPlan()">Chiudi Modifica</button>
-            </div>
-
-            <div style="margin-top: 4px;">
-                <p style="font-size: 0.72rem; color: var(--text-light); margin-bottom: 8px; font-weight: 600; text-transform: uppercase;">Ripartizione Stipendio Attuale</p>
-                <div class="analytics-card-grid" style="margin-bottom: 0;">
-                    <div class="analytics-mini-box">
-                        <span>Necessità</span>
-                        <strong class="value expense" id="plan-needs">€ 0.00</strong>
-                    </div>
-                    <div class="analytics-mini-box">
-                        <span>Svago</span>
-                        <strong class="value" id="plan-wants" style="color:#f59e0b;">€ 0.00</strong>
-                    </div>
-                    <div class="analytics-mini-box">
-                        <span>Risparmio</span>
-                        <strong class="value income" id="plan-savings">€ 0.00</strong>
-                    </div>
-                </div>
+                <button class="btn-secondary" onclick="toggleEditSavingsPlan()" style="margin-top:6px;">Salva & Chiudi</button>
             </div>
         </div>
 
         <div class="card">
-            <h2>Avanzamento Obiettivo 🏆 </h2>
-            <div>
-                <div class="budget-info">
-                    <span>Risparmio Effettivo: <strong id="goal-current-saved" style="color:var(--success);">€ 0.00</strong></span>
-                    <span>Target: <strong id="goal-target-label">€ 0.00</strong></span>
+            <h2>📊 Ripartizione Budget Suggerita</h2>
+            <div class="savings-grid-cards">
+                <div class="savings-pill-card">
+                    <span>Necessità</span>
+                    <strong style="color:var(--danger);" id="plan-needs">€ 0.00</strong>
                 </div>
-                <div class="progress-bar-container" style="height: 9px; margin-bottom: 10px;">
-                    <div class="progress-bar" id="goal-progress-bar" style="width: 0%; background-color: var(--success);"></div>
+                <div class="savings-pill-card">
+                    <span>Svago</span>
+                    <strong style="color:var(--warning);" id="plan-wants">€ 0.00</strong>
                 </div>
-                <div class="analytics-report-banner">
-                    <div>🎯</div>
-                    <div id="goal-status-text" style="font-size: 0.78rem;">In attesa di dati...</div>
+                <div class="savings-pill-card">
+                    <span>Risparmio</span>
+                    <strong style="color:var(--success);" id="plan-savings">€ 0.00</strong>
+                </div>
+            </div>
+
+            <h2>🔮 Proiezione Capitale Futuro</h2>
+            <div class="analytics-card-grid" style="margin-bottom: 0;">
+                <div class="analytics-mini-box">
+                    <span>Tra 6 Mesi</span>
+                    <strong style="color:#818cf8;" id="proj-6m">€ 0.00</strong>
+                </div>
+                <div class="analytics-mini-box">
+                    <span>Tra 1 Anno</span>
+                    <strong style="color:#818cf8;" id="proj-1y">€ 0.00</strong>
+                </div>
+                <div class="analytics-mini-box">
+                    <span>Tra 3 Anni</span>
+                    <strong style="color:#818cf8;" id="proj-3y">€ 0.00</strong>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- TAB 6: MOVIMENTI RICORRENTI -->
     <div id="tab-recurring" class="tab-content">
-        <div class="card">
-            <h2 id="recurring-form-title">Nuovo Promemoria Ricorrente</h2>
-            <form id="recurring-form">
-                <input type="hidden" id="r-edit-id" value="">
-                <div class="form-group">
-                    <label>Tipo</label>
-                    <select id="r-type" onchange="onRecurringTypeChange()">
-                        <option value="Uscita">Uscita Ricorrente / Variabile</option>
-                        <option value="Entrata">Entrata Ricorrente</option>
-                        <option value="Giroconto">Giroconto Ricorrente 🔄 </option>
-                    </select>
-                </div>
-                
-                <div id="r-standard-fields">
-                    <div class="form-group">
-                        <label>Conto</label>
-                        <select id="r-account"></select>
-                    </div>
-                    <div class="form-group">
-                        <label>Categoria</label>
-                        <select id="r-category"></select>
-                    </div>
-                </div>
-
-                <div id="r-transfer-fields" style="display:none;">
-                    <div class="form-group">
-                        <label>Conto Origine</label>
-                        <select id="r-from-account"></select>
-                    </div>
-                    <div class="form-group">
-                        <label>Conto Destinazione</label>
-                        <select id="r-to-account"></select>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Frequenza</label>
-                    <select id="r-frequency">
-                        <option value="Mensile">Mensile</option>
-                        <option value="Settimanale">Settimanale</option>
-                        <option value="Trimestrale">Trimestrale</option>
-                        <option value="Semestrale">Semestrale</option>
-                        <option value="Annuale">Annuale</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label>Prossima Scadenza</label>
-                    <input type="date" id="r-next-date" required>
-                </div>
-
-                <div class="form-group">
-                    <label>Importo (€) <span style="font-size:0.65rem; color:var(--text-light);">(Vuoto = variabile)</span></label>
-                    <input type="number" id="r-amount" step="0.01" placeholder="0.00">
-                </div>
-                <div class="form-group">
-                    <label>Descrizione / Nome Tipologia</label>
-                    <input type="text" id="r-desc" placeholder="Es. Stipendio, Affitto..." required>
-                </div>
-                <button type="submit" id="recurring-submit-btn">Crea Tipologia Ricorrente</button>
-            </form>
-        </div>
-
         <div class="card">
             <h2>I tuoi Promemoria Ricorrenti</h2>
             <div class="analytics-report-banner" style="margin-bottom: 12px; font-size: 0.75rem;">
@@ -988,10 +1131,9 @@
         </div>
     </div>
 
-    <!-- TAB 7: ANALISI & REPORT -->
     <div id="tab-analytics" class="tab-content">
         <div class="card">
-            <h2>Periodo di Riferimento</h2>
+            <h2>📅 Seleziona Periodo di Analisi</h2>
             <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px;">
                 <div class="form-group" style="margin-bottom: 0;">
                     <label>Mese</label>
@@ -1010,54 +1152,129 @@
         </div>
 
         <div class="card">
-            <h2>Andamento Periodico</h2>
-            <div class="analytics-card-grid">
+            <h2>📊 Performance del Periodo</h2>
+            <div class="analytics-card-grid" style="margin-bottom: 12px;">
                 <div class="analytics-mini-box"><span>Entrate</span><strong class="value income" id="ana-income">€ 0.00</strong></div>
                 <div class="analytics-mini-box"><span>Uscite</span><strong class="value expense" id="ana-expense">€ 0.00</strong></div>
                 <div class="analytics-mini-box"><span>Risparmio</span><strong class="value" id="ana-savings">€ 0.00</strong></div>
             </div>
 
-            <div class="dashboard-grid" style="margin-bottom: 10px;">
-                <div class="stat-box"><h3>Tasso Risparmio</h3><div class="value patrimony" id="ana-savings-rate">0%</div></div>
+            <div class="dashboard-grid" style="margin-bottom: 0;">
+                <div class="stat-box"><h3>Tasso di Risparmio</h3><div class="value patrimony" id="ana-savings-rate">0%</div></div>
                 <div class="stat-box"><h3>Flusso Netto</h3><div class="value" id="ana-net-flow">€ 0.00</div></div>
             </div>
+        </div>
 
-            <div style="margin-top: 14px; margin-bottom: 14px;">
-                <p style="font-size: 0.72rem; color: var(--text-light); margin-bottom: 6px; font-weight: 600; text-transform: uppercase;">Ripartizione Spese per Categoria</p>
-                <div style="position: relative; height: 200px; width: 100%;">
-                    <canvas id="categoryPieChart"></canvas>
-                </div>
+        <div class="card">
+            <h2>🏷️ Ripartizione Spese per Categoria</h2>
+            <div style="position: relative; height: 220px; width: 100%;">
+                <canvas id="categoryPieChart"></canvas>
             </div>
+        </div>
 
-            <div style="margin-top: 16px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
-                <p style="font-size: 0.72rem; color: var(--text-light); font-weight: 600; text-transform: uppercase;">Andamento Storico (Mesi)</p>
-                <select id="trend-months-select" onchange="renderAnalytics()" style="width: 110px; padding: 5px; font-size: 0.78rem;">
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                <h2>📈 Andamento Storico</h2>
+                <select id="trend-months-select" onchange="renderAnalytics()" style="width: 120px; padding: 4px; font-size: 0.75rem;">
                     <option value="3">Ultimi 3 mesi</option>
                     <option value="6" selected>Ultimi 6 mesi</option>
                     <option value="12">Ultimi 12 mesi</option>
                 </select>
             </div>
             
-            <div style="position: relative; height: 180px; width: 100%;">
+            <div style="position: relative; height: 190px; width: 100%;">
                 <canvas id="trendBarChart"></canvas>
             </div>
 
             <div class="analytics-report-banner" style="margin-top: 14px;">
-                <div>📊</div>
+                <div>💡</div>
                 <div id="analytics-summary-text">Estratto conto in caricamento...</div>
             </div>
         </div>
 
         <div class="card">
-            <h2>Consigli Strategici</h2>
+            <h2>🧠 Smart Advisor Finanziario</h2>
             <div class="advice-box" style="margin-top: 0;">
-                <h3>💡 Smart Advisor Finanziario</h3>
+                <h3>Consiglio Strategico Personalizzato</h3>
                 <p id="ana-financial-advice">Analisi in corso...</p>
             </div>
         </div>
     </div>
 
+    <div class="fab-container">
+        <div class="fab-menu" id="fab-menu">
+            <button class="fab-item" onclick="openQuickModal('transaction')" title="Nuova Transazione">
+                <span>💳</span> <span class="fab-label">Transazione</span>
+            </button>
+            <button class="fab-item" onclick="openQuickModal('category')" title="Nuova Categoria">
+                <span>🏷️</span> <span class="fab-label">Categoria</span>
+            </button>
+            <button class="fab-item" onclick="openQuickModal('recurring')" title="Nuova Ricorrente">
+                <span>🔄</span> <span class="fab-label">Ricorrente</span>
+            </button>
+        </div>
+        <button class="fab-main" id="fab-main-btn" onclick="toggleFabMenu()">+</button>
+    </div>
+
+    <div class="sidebar-overlay" id="fab-modal-overlay" onclick="closeQuickModal()"></div>
+    <div class="fab-modal" id="fab-modal">
+        <div class="fab-modal-header">
+            <h3 id="fab-modal-title">Crea Nuovo</h3>
+            <button class="sidebar-close" onclick="closeQuickModal()">✕</button>
+        </div>
+        <div class="fab-modal-body" id="fab-modal-content"></div>
+    </div>
+
     <script>
+        let globalReg = null;
+
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').then(reg => {
+                    globalReg = reg;
+                    
+                    reg.onupdatefound = () => {
+                        const installingWorker = reg.installing;
+                        if (installingWorker) {
+                            installingWorker.onstatechange = () => {
+                                if (installingWorker.state === 'installed') {
+                                    if (navigator.serviceWorker.controller) {
+                                        document.getElementById('update-banner').classList.add('show');
+                                    }
+                                }
+                            };
+                        }
+                    };
+                }).catch(err => console.log('Registrazione Service Worker fallita:', err));
+            });
+        }
+
+        function applyAppUpdate() {
+            if (globalReg && globalReg.waiting) {
+                globalReg.waiting.postMessage({ type: 'SKIP_WAITING' });
+            }
+            window.location.reload();
+        }
+
+        function forceAppUpdate() {
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(registrations => {
+                    for(let registration of registrations) {
+                        registration.unregister();
+                    }
+                });
+            }
+            if ('caches' in window) {
+                caches.keys().then(names => {
+                    names.forEach(name => {
+                        caches.delete(name);
+                    });
+                });
+            }
+            alert("Cache pulita con successo! L'app verrà ricaricata con l'ultima versione.");
+            window.location.reload(true);
+        }
+
         let data = JSON.parse(localStorage.getItem('smart_budget_data_autosync')) || {
             categories: {
                 Uscita: [
@@ -1092,8 +1309,6 @@
         let currentTheme = localStorage.getItem('smart_budget_theme') || 'dark';
         document.body.setAttribute('data-theme', currentTheme);
         document.getElementById('theme-toggle-icon').textContent = currentTheme === 'dark' ? '☀️' : '🌙';
-
-        document.getElementById('r-next-date').value = new Date().toISOString().slice(0, 10);
 
         let pieChartInstance = null;
         let barChartInstance = null;
@@ -1182,14 +1397,23 @@
             renderAnalytics();
         }
 
+        // DOWNLOAD BACKUP JSON DIRETTO E AUTOMATICO
         function exportBackupJSON() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
-            const dlAnchor = document.createElement('a');
-            dlAnchor.setAttribute("href", dataStr);
-            dlAnchor.setAttribute("download", `smartbudget_backup_${new Date().toISOString().slice(0,10)}.json`);
-            document.body.appendChild(dlAnchor);
-            dlAnchor.click();
-            dlAnchor.remove();
+            const dataStr = JSON.stringify(data, null, 2);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `smart_budget_backup_${new Date().toISOString().slice(0,10)}.json`;
+            
+            document.body.appendChild(link);
+            link.click();
+            
+            setTimeout(() => {
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            }, 100);
         }
 
         function exportTransactionsCSV() {
@@ -1236,7 +1460,7 @@
                 btn.textContent = '✕ Chiudi';
             } else {
                 form.style.display = 'none';
-                btn.textContent = '✏️ Modifica';
+                btn.textContent = '✏️ Configura';
             }
         }
 
@@ -1251,40 +1475,87 @@
         }
 
         function updateSavingsPlanUI() {
-            const salary = savingsSettings.salary;
+            const salary = savingsSettings.salary || 0;
             const rule = savingsSettings.rule;
 
             let needs = 0, wants = 0, savingsPerMonth = 0;
-            if (rule === '50-30-20') { needs = salary * 0.50; wants = salary * 0.30; savingsPerMonth = salary * 0.20; }
-            else if (rule === '60-20-10-10') { needs = salary * 0.60; wants = salary * 0.20; savingsPerMonth = salary * 0.20; }
-            else if (rule === 'custom-20') { savingsPerMonth = salary * 0.20; needs = salary * 0.55; wants = salary * 0.25; }
-            else if (rule === 'custom-30') { savingsPerMonth = salary * 0.30; needs = salary * 0.50; wants = salary * 0.20; }
+            
+            if (rule === '50-30-20') { 
+                needs = salary * 0.50; 
+                wants = salary * 0.30; 
+                savingsPerMonth = salary * 0.20; 
+            } else if (rule === '60-20-10-10') { 
+                needs = salary * 0.60; 
+                wants = salary * 0.20; 
+                savingsPerMonth = salary * 0.20; 
+            } else if (rule === 'custom-20') { 
+                savingsPerMonth = salary * 0.20; 
+                needs = salary * 0.55; 
+                wants = salary * 0.25; 
+            } else if (rule === 'custom-30') { 
+                savingsPerMonth = salary * 0.30; 
+                needs = salary * 0.50; 
+                wants = salary * 0.20; 
+            }
 
             document.getElementById('plan-needs').textContent = `€ ${needs.toFixed(2)}`;
             document.getElementById('plan-wants').textContent = `€ ${wants.toFixed(2)}`;
             document.getElementById('plan-savings').textContent = `€ ${savingsPerMonth.toFixed(2)}`;
 
-            let totalSavedActual = 0;
-            data.transactions.forEach(t => {
-                if (t.type === 'Entrata') totalSavedActual += t.amount;
-                else if (t.type === 'Uscita') totalSavedActual -= t.amount;
-            });
+            let totalSavedActual = data.accounts.reduce((sum, acc) => sum + acc.balance, 0);
             if(totalSavedActual < 0) totalSavedActual = 0;
 
-            const target = savingsSettings.target;
-            const months = savingsSettings.months;
+            const target = savingsSettings.target || 1;
             const percentage = target > 0 ? (totalSavedActual / target) * 100 : 0;
 
-            document.getElementById('goal-current-saved').textContent = `€ ${totalSavedActual.toFixed(2)}`;
-            document.getElementById('goal-target-label').textContent = `€ ${target.toFixed(2)}`;
+            document.getElementById('goal-current-saved').textContent = hideAccounts ? "€ ••••••" : `€ ${totalSavedActual.toFixed(2)}`;
+            document.getElementById('goal-target-label').textContent = hideAccounts ? "€ ••••••" : `€ ${target.toFixed(2)}`;
+            document.getElementById('goal-percentage-label').textContent = `${percentage.toFixed(1)}%`;
             document.getElementById('goal-progress-bar').style.width = `${Math.min(percentage, 100)}%`;
 
-            let statusMsg = `Sei al <strong>${percentage.toFixed(1)}%</strong> dell'obiettivo di <strong>€ ${target.toFixed(2)}</strong>.`;
-            if (months > 0 && target > 0) {
-                let requiredMonthly = target / months;
-                statusMsg += `<br>Stima: <strong>€ ${requiredMonthly.toFixed(2)}/mese</strong>.`;
+            // Le proiezioni future continuano a funzionare indipendentemente dal raggiungimento del target
+            document.getElementById('proj-6m').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (savingsPerMonth * 6)).toFixed(2)}`;
+            document.getElementById('proj-1y').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (savingsPerMonth * 12)).toFixed(2)}`;
+            document.getElementById('proj-3y').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (savingsPerMonth * 36)).toFixed(2)}`;
+
+            const slider = document.getElementById('sim-range-input');
+            if (slider && savingsPerMonth > 0 && slider.value == 360) {
+                slider.value = Math.round(savingsPerMonth);
             }
-            document.getElementById('goal-status-text').innerHTML = statusMsg;
+            updateSavingsSimulation();
+        }
+
+        function updateSavingsSimulation() {
+            const simVal = parseFloat(document.getElementById('sim-range-input').value) || 0;
+            document.getElementById('sim-savings-val').textContent = `€ ${simVal.toFixed(0)} / mese`;
+
+            let totalSavedActual = data.accounts.reduce((sum, acc) => sum + acc.balance, 0);
+            if(totalSavedActual < 0) totalSavedActual = 0;
+            
+            const target = savingsSettings.target;
+            const remaining = target - totalSavedActual;
+
+            const resultTextEl = document.getElementById('sim-result-text');
+            if (!resultTextEl) return;
+
+            if (simVal <= 0) {
+                resultTextEl.innerHTML = `⚠️ Seleziona un accantonamento mensile maggiore di zero.`;
+            } else if (remaining <= 0) {
+                resultTextEl.innerHTML = `🎉 <strong>Obiettivo centrato! Hai superato il target di € ${Math.abs(remaining).toFixed(2)}. Il tuo capitale continua a crescere!</strong>`;
+            } else {
+                const monthsNeeded = Math.ceil(remaining / simVal);
+                const years = Math.floor(monthsNeeded / 12);
+                const months = monthsNeeded % 12;
+                
+                let timeString = "";
+                if (years > 0) {
+                    timeString = `circa <strong>${years} anni</strong>${months > 0 ? ` e <strong>${months} mesi</strong>` : ''}`;
+                } else {
+                    timeString = `circa <strong>${monthsNeeded} mesi</strong>`;
+                }
+
+                resultTextEl.innerHTML = `Continuando così, colmerai i restanti <strong>€ ${remaining.toFixed(2)}</strong> in ${timeString}.`;
+            }
         }
 
         function toggleAccountsVisibility() {
@@ -1327,91 +1598,6 @@
             }
         }
 
-        function onTransactionTypeChange() {
-            const type = document.getElementById('t-type').value;
-            const standardFields = document.getElementById('standard-transaction-fields');
-            const transferFields = document.getElementById('transfer-transaction-fields');
-
-            if (type === 'Giroconto') {
-                standardFields.style.display = 'none';
-                transferFields.style.display = 'block';
-                updateTransferSelects('t-transfer-from', 't-transfer-to');
-            } else {
-                standardFields.style.display = 'block';
-                transferFields.style.display = 'none';
-                updateCategorySelect();
-            }
-        }
-
-        function onRecurringTypeChange() {
-            const type = document.getElementById('r-type').value;
-            const stdFields = document.getElementById('r-standard-fields');
-            const trFields = document.getElementById('r-transfer-fields');
-
-            if(type === 'Giroconto') {
-                stdFields.style.display = 'none';
-                trFields.style.display = 'block';
-                updateTransferSelects('r-from-account', 'r-to-account');
-            } else {
-                stdFields.style.display = 'block';
-                trFields.style.display = 'none';
-                updateRecurringCategorySelect();
-            }
-        }
-
-        function updateCategorySelect() {
-            const type = document.getElementById('t-type').value;
-            if(type === 'Giroconto') return;
-            const select = document.getElementById('t-category');
-            select.innerHTML = '';
-            
-            if(data.categories[type]) {
-                data.categories[type].forEach(cat => {
-                    let opt = document.createElement('option');
-                    opt.value = cat.name; opt.textContent = cat.name;
-                    select.appendChild(opt);
-                });
-            }
-        }
-
-        function updateRecurringCategorySelect(selectedCat = '') {
-            const type = document.getElementById('r-type').value;
-            if (type === 'Giroconto') return;
-            const select = document.getElementById('r-category');
-            if (!select) return;
-            select.innerHTML = '';
-
-            if (data.categories[type]) {
-                data.categories[type].forEach(cat => {
-                    let opt = document.createElement('option');
-                    opt.value = cat.name;
-                    opt.textContent = cat.name;
-                    if (cat.name === selectedCat) opt.selected = true;
-                    select.appendChild(opt);
-                });
-            }
-        }
-
-        document.getElementById('category-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const type = document.getElementById('c-type').value;
-            const name = document.getElementById('c-name').value.trim();
-            const limit = parseFloat(document.getElementById('c-limit').value) || 0;
-
-            if(!data.categories[type]) data.categories[type] = [];
-
-            let existing = data.categories[type].find(c => c.name.toLowerCase() === name.toLowerCase());
-            if (existing) {
-                existing.limit = limit;
-            } else {
-                data.categories[type].push({ name, limit });
-            }
-
-            saveData();
-            this.reset();
-            document.getElementById('c-limit').value = "150";
-        });
-
         function editCategory(type, name) {
             let cat = data.categories[type].find(c => c.name === name);
             if (!cat) return;
@@ -1434,36 +1620,12 @@
         }
 
         function updateAccountSelect() {
-            const select = document.getElementById('t-account');
-            const rSelect = document.getElementById('r-account');
             const filterAcc = document.getElementById('filter-account');
-
-            select.innerHTML = ''; rSelect.innerHTML = '';
-            filterAcc.innerHTML = '<option value="ALL">Tutti i Conti</option>';
+            if (filterAcc) filterAcc.innerHTML = '<option value="ALL">Tutti i Conti</option>';
 
             data.accounts.forEach(acc => {
-                let balanceText = hideAccounts ? "€ ••••••" : `€ ${acc.balance.toFixed(2)}`;
-                let label = `${acc.name} (${balanceText})${acc.isMain ? ' ⭐' : ''}`;
-
-                let opt = document.createElement('option'); opt.value = acc.name; opt.textContent = label; select.appendChild(opt);
-                let optR = document.createElement('option'); optR.value = acc.name; optR.textContent = label; rSelect.appendChild(optR);
-                let optFilter = document.createElement('option'); optFilter.value = acc.name; optFilter.textContent = acc.name; filterAcc.appendChild(optFilter);
+                if (filterAcc) { let optFilter = document.createElement('option'); optFilter.value = acc.name; optFilter.textContent = acc.name; filterAcc.appendChild(optFilter); }
             });
-        }
-
-        function updateTransferSelects(fromId, toId) {
-            const fromSelect = document.getElementById(fromId);
-            const toSelect = document.getElementById(toId);
-            if(!fromSelect || !toSelect) return;
-
-            fromSelect.innerHTML = ''; toSelect.innerHTML = '';
-
-            data.accounts.forEach((acc) => {
-                let balanceText = hideAccounts ? "€ ••••••" : `€ ${acc.balance.toFixed(2)}`;
-                let opt1 = document.createElement('option'); opt1.value = acc.name; opt1.textContent = `${acc.name} (${balanceText})`; fromSelect.appendChild(opt1);
-                let opt2 = document.createElement('option'); opt2.value = acc.name; opt2.textContent = `${acc.name} (${balanceText})`; toSelect.appendChild(opt2);
-            });
-            if (data.accounts.length > 1) toSelect.selectedIndex = 1;
         }
 
         function setMainAccount(name) {
@@ -1506,30 +1668,6 @@
             saveData();
         }
 
-        document.getElementById('transaction-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const type = document.getElementById('t-type').value;
-            const amount = parseFloat(document.getElementById('t-amount').value);
-            const desc = document.getElementById('t-desc').value;
-
-            if (type === 'Giroconto') {
-                const fromAccName = document.getElementById('t-transfer-from').value;
-                const toAccName = document.getElementById('t-transfer-to').value;
-                if (fromAccName === toAccName) { alert("Scegli due conti differenti!"); return; }
-                let accFrom = data.accounts.find(acc => acc.name === fromAccName);
-                let accTo = data.accounts.find(acc => acc.name === toAccName);
-                if (accFrom && accTo) { accFrom.balance -= amount; accTo.balance += amount; }
-                data.transactions.unshift({ id: Date.now(), type: 'Giroconto', fromAccount: fromAccName, toAccount: toAccName, amount, desc: desc || `Giroconto ${fromAccName} -> ${toAccName}`, date: new Date().toISOString() });
-            } else {
-                const accountName = document.getElementById('t-account').value;
-                const category = document.getElementById('t-category').value;
-                let account = data.accounts.find(acc => acc.name === accountName);
-                if(account) { if(type === 'Entrata') account.balance += amount; else account.balance -= amount; }
-                data.transactions.unshift({ id: Date.now(), type, accountName, amount, category, desc: desc || category, date: new Date().toISOString() });
-            }
-            saveData(); this.reset(); document.getElementById('t-type').value = 'Uscita'; onTransactionTypeChange();
-        });
-
         function deleteTransaction(id) {
             let t = data.transactions.find(item => item.id === id);
             if(t) {
@@ -1545,91 +1683,6 @@
             }
             data.transactions = data.transactions.filter(item => item.id !== id);
             saveData();
-        }
-
-        document.getElementById('recurring-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const editId = document.getElementById('r-edit-id').value;
-            const type = document.getElementById('r-type').value;
-            const amount = parseFloat(document.getElementById('r-amount').value) || 0;
-            const desc = document.getElementById('r-desc').value;
-            const frequency = document.getElementById('r-frequency').value;
-            const nextDate = document.getElementById('r-next-date').value;
-
-            if(!data.recurring) data.recurring = [];
-
-            if (editId) {
-                let item = data.recurring.find(r => r.id == editId);
-                if (item) {
-                    item.type = type;
-                    item.amount = amount;
-                    item.desc = desc;
-                    item.frequency = frequency;
-                    item.nextDate = nextDate;
-                    if (type === 'Giroconto') {
-                        item.fromAccount = document.getElementById('r-from-account').value;
-                        item.toAccount = document.getElementById('r-to-account').value;
-                        delete item.accountName;
-                        delete item.category;
-                    } else {
-                        item.accountName = document.getElementById('r-account').value;
-                        item.category = document.getElementById('r-category').value;
-                        delete item.fromAccount;
-                        delete item.toAccount;
-                    }
-                }
-            } else {
-                let item = { id: Date.now(), type, amount, desc, frequency, nextDate };
-                if(type === 'Giroconto') {
-                    item.fromAccount = document.getElementById('r-from-account').value;
-                    item.toAccount = document.getElementById('r-to-account').value;
-                    if(item.fromAccount === item.toAccount) { alert("Scegli due conti differenti!"); return; }
-                } else {
-                    item.accountName = document.getElementById('r-account').value;
-                    item.category = document.getElementById('r-category').value;
-                }
-                data.recurring.push(item);
-            }
-
-            saveData();
-            resetRecurringForm();
-        });
-
-        function resetRecurringForm() {
-            document.getElementById('recurring-form').reset();
-            document.getElementById('r-edit-id').value = '';
-            document.getElementById('r-amount').value = '';
-            document.getElementById('r-next-date').value = new Date().toISOString().slice(0, 10);
-            document.getElementById('recurring-form-title').textContent = "Nuovo Promemoria Ricorrente";
-            document.getElementById('recurring-submit-btn').textContent = "Crea Tipologia Ricorrente";
-            onRecurringTypeChange();
-        }
-
-        function editRecurring(id) {
-            let r = data.recurring.find(item => item.id == id);
-            if (!r) return;
-
-            document.getElementById('r-edit-id').value = r.id;
-            document.getElementById('r-type').value = r.type;
-            onRecurringTypeChange();
-
-            if (r.type === 'Giroconto') {
-                document.getElementById('r-from-account').value = r.fromAccount;
-                document.getElementById('r-to-account').value = r.toAccount;
-            } else {
-                document.getElementById('r-account').value = r.accountName;
-                updateRecurringCategorySelect(r.category);
-            }
-
-            document.getElementById('r-frequency').value = r.frequency || 'Mensile';
-            document.getElementById('r-next-date').value = r.nextDate || new Date().toISOString().slice(0, 10);
-            document.getElementById('r-amount').value = (r.amount && r.amount > 0) ? r.amount : '';
-            document.getElementById('r-desc').value = r.desc;
-
-            document.getElementById('recurring-form-title').textContent = "Modifica Promemoria Ricorrente";
-            document.getElementById('recurring-submit-btn').textContent = "Salva Modifiche";
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function deleteRecurring(id) {
@@ -1696,6 +1749,307 @@
             section.classList.toggle('open');
         }
 
+        function toggleFabMenu() {
+            const container = document.querySelector('.fab-container');
+            container.classList.toggle('active');
+        }
+
+        function closeQuickModal() {
+            document.getElementById('fab-modal').classList.remove('active');
+            document.getElementById('fab-modal-overlay').classList.remove('active');
+            document.querySelector('.fab-container').classList.remove('active');
+        }
+
+        function openQuickModal(type) {
+            const modal = document.getElementById('fab-modal');
+            const overlay = document.getElementById('fab-modal-overlay');
+            const titleEl = document.getElementById('fab-modal-title');
+            const contentEl = document.getElementById('fab-modal-content');
+
+            document.querySelector('.fab-container').classList.remove('active');
+            contentEl.innerHTML = '';
+
+            if (type === 'transaction') {
+                titleEl.textContent = "💳 Registra Nuova Transazione";
+                contentEl.innerHTML = `
+                    <form id="quick-transaction-form" onsubmit="handleQuickSubmit(event, 'transaction')">
+                        <div class="form-group">
+                            <label>Tipo di Operazione</label>
+                            <select id="q-t-type" onchange="onQuickTransactionTypeChange()">
+                                <option value="Uscita">Uscita</option>
+                                <option value="Entrata">Entrata</option>
+                                <option value="Giroconto">Giroconto 🔄</option>
+                            </select>
+                        </div>
+                        <div id="q-standard-fields">
+                            <div class="form-group">
+                                <label>Conto</label>
+                                <select id="q-t-account"></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Categoria</label>
+                                <select id="q-t-category"></select>
+                            </div>
+                        </div>
+                        <div id="q-transfer-fields" style="display: none;">
+                            <div class="form-group">
+                                <label>Conto Origine</label>
+                                <select id="q-t-from"></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Conto Destinazione</label>
+                                <select id="q-t-to"></select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Importo (€)</label>
+                            <input type="number" id="q-t-amount" step="0.01" placeholder="0.00" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Descrizione</label>
+                            <input type="text" id="q-t-desc" placeholder="Nota operazione...">
+                        </div>
+                        <button type="submit">Salva Transazione</button>
+                    </form>
+                `;
+                populateQuickTransactionSelects();
+            } else if (type === 'category') {
+                titleEl.textContent = "🏷️ Crea Nuova Categoria";
+                contentEl.innerHTML = `
+                    <form id="quick-category-form" onsubmit="handleQuickSubmit(event, 'category')">
+                        <div class="form-group">
+                            <label>Tipo</label>
+                            <select id="q-c-type">
+                                <option value="Uscita">Uscita</option>
+                                <option value="Entrata">Entrata</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Nome Categoria</label>
+                            <input type="text" id="q-c-name" placeholder="Es. Palestra, Libri..." required>
+                        </div>
+                        <div class="form-group">
+                            <label>Limite Budget Mensile (€)</label>
+                            <input type="number" id="q-c-limit" value="150" step="10">
+                        </div>
+                        <button type="submit">Crea Categoria</button>
+                    </form>
+                `;
+            } else if (type === 'recurring') {
+                titleEl.textContent = "🔄 Nuovo Promemoria Ricorrente";
+                contentEl.innerHTML = `
+                    <form id="quick-recurring-form" onsubmit="handleQuickSubmit(event, 'recurring')">
+                        <div class="form-group">
+                            <label>Tipo</label>
+                            <select id="q-r-type" onchange="onQuickRecurringTypeChange()">
+                                <option value="Uscita">Uscita Ricorrente</option>
+                                <option value="Entrata">Entrata Ricorrente</option>
+                                <option value="Giroconto">Giroconto Ricorrente 🔄</option>
+                            </select>
+                        </div>
+                        <div id="q-r-standard-fields">
+                            <div class="form-group">
+                                <label>Conto</label>
+                                <select id="q-r-account"></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Categoria</label>
+                                <select id="q-r-category"></select>
+                            </div>
+                        </div>
+                        <div id="q-r-transfer-fields" style="display:none;">
+                            <div class="form-group">
+                                <label>Conto Origine</label>
+                                <select id="q-r-from-account"></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Conto Destinazione</label>
+                                <select id="q-r-to-account"></select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Frequenza</label>
+                            <select id="q-r-frequency">
+                                <option value="Mensile">Mensile</option>
+                                <option value="Settimanale">Settimanale</option>
+                                <option value="Trimestrale">Trimestrale</option>
+                                <option value="Semestrale">Semestrale</option>
+                                <option value="Annuale">Annuale</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Prossima Scadenza</label>
+                            <input type="date" id="q-r-date" value="${new Date().toISOString().slice(0, 10)}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Importo (€) <span style="font-size:0.65rem; color:var(--text-light);">(Vuoto = variabile)</span></label>
+                            <input type="number" id="q-r-amount" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label>Descrizione</label>
+                            <input type="text" id="q-r-desc" placeholder="Es. Affitto, Stipendio..." required>
+                        </div>
+                        <button type="submit">Crea Ricorrente</button>
+                    </form>
+                `;
+                populateQuickRecurringSelects();
+            }
+
+            modal.classList.add('active');
+            overlay.classList.add('active');
+        }
+
+        function populateQuickTransactionSelects() {
+            const accSelect = document.getElementById('q-t-account');
+            if(!accSelect) return;
+            data.accounts.forEach(acc => {
+                let opt = document.createElement('option');
+                opt.value = acc.name;
+                opt.textContent = acc.name;
+                accSelect.appendChild(opt);
+            });
+            updateQuickCategorySelect();
+        }
+
+        function onQuickTransactionTypeChange() {
+            const type = document.getElementById('q-t-type').value;
+            const std = document.getElementById('q-standard-fields');
+            const tr = document.getElementById('q-transfer-fields');
+            if (type === 'Giroconto') {
+                std.style.display = 'none';
+                tr.style.display = 'block';
+                const fromSel = document.getElementById('q-t-from');
+                const toSel = document.getElementById('q-t-to');
+                fromSel.innerHTML = ''; toSel.innerHTML = '';
+                data.accounts.forEach(acc => {
+                    fromSel.innerHTML += `<option value="${acc.name}">${acc.name}</option>`;
+                    toSel.innerHTML += `<option value="${acc.name}">${acc.name}</option>`;
+                });
+            } else {
+                std.style.display = 'block';
+                tr.style.display = 'none';
+                updateQuickCategorySelect();
+            }
+        }
+
+        function updateQuickCategorySelect() {
+            const type = document.getElementById('q-t-type').value;
+            if (type === 'Giroconto') return;
+            const catSelect = document.getElementById('q-t-category');
+            if (!catSelect) return;
+            catSelect.innerHTML = '';
+            if (data.categories[type]) {
+                data.categories[type].forEach(c => {
+                    catSelect.innerHTML += `<option value="${c.name}">${c.name}</option>`;
+                });
+            }
+        }
+
+        function populateQuickRecurringSelects() {
+            const accSelect = document.getElementById('q-r-account');
+            if(!accSelect) return;
+            data.accounts.forEach(acc => {
+                accSelect.innerHTML += `<option value="${acc.name}">${acc.name}</option>`;
+            });
+            updateQuickRecurringCategorySelect();
+        }
+
+        function updateQuickRecurringCategorySelect() {
+            const type = document.getElementById('q-r-type').value;
+            if (type === 'Giroconto') return;
+            const catSelect = document.getElementById('q-r-category');
+            if (!catSelect) return;
+            catSelect.innerHTML = '';
+            if (data.categories[type]) {
+                data.categories[type].forEach(c => {
+                    catSelect.innerHTML += `<option value="${c.name}">${c.name}</option>`;
+                });
+            }
+        }
+
+        function onQuickRecurringTypeChange() {
+            const type = document.getElementById('q-r-type').value;
+            const std = document.getElementById('q-r-standard-fields');
+            const tr = document.getElementById('q-r-transfer-fields');
+            if (type === 'Giroconto') {
+                std.style.display = 'none';
+                tr.style.display = 'block';
+                const fromSel = document.getElementById('q-r-from-account');
+                const toSel = document.getElementById('q-r-to-account');
+                fromSel.innerHTML = ''; toSel.innerHTML = '';
+                data.accounts.forEach(acc => {
+                    fromSel.innerHTML += `<option value="${acc.name}">${acc.name}</option>`;
+                    toSel.innerHTML += `<option value="${acc.name}">${acc.name}</option>`;
+                });
+            } else {
+                std.style.display = 'block';
+                tr.style.display = 'none';
+                updateQuickRecurringCategorySelect();
+            }
+        }
+
+        function handleQuickSubmit(event, formType) {
+            event.preventDefault();
+            if (formType === 'transaction') {
+                const type = document.getElementById('q-t-type').value;
+                const amount = parseFloat(document.getElementById('q-t-amount').value);
+                const desc = document.getElementById('q-t-desc').value;
+
+                if (type === 'Giroconto') {
+                    const from = document.getElementById('q-t-from').value;
+                    const to = document.getElementById('q-t-to').value;
+                    if (from === to) { alert("Scegli conti differenti!"); return; }
+                    let accFrom = data.accounts.find(a => a.name === from);
+                    let accTo = data.accounts.find(a => a.name === to);
+                    if (accFrom && accTo) { accFrom.balance -= amount; accTo.balance += amount; }
+                    data.transactions.unshift({ id: Date.now(), type: 'Giroconto', fromAccount: from, toAccount: to, amount, desc: desc || 'Giroconto', date: new Date().toISOString() });
+                } else {
+                    const accountName = document.getElementById('q-t-account').value;
+                    const category = document.getElementById('q-t-category').value;
+                    let account = data.accounts.find(a => a.name === accountName);
+                    if (account) {
+                        if (type === 'Entrata') account.balance += amount;
+                        else account.balance -= amount;
+                    }
+                    data.transactions.unshift({ id: Date.now(), type, accountName, amount, category, desc: desc || category, date: new Date().toISOString() });
+                }
+            } else if (formType === 'category') {
+                const type = document.getElementById('q-c-type').value;
+                const name = document.getElementById('q-c-name').value.trim();
+                const limit = parseFloat(document.getElementById('q-c-limit').value) || 0;
+                if (!data.categories[type]) data.categories[type] = [];
+                let existing = data.categories[type].find(c => c.name.toLowerCase() === name.toLowerCase());
+                if (!existing) {
+                    data.categories[type].push({ name, limit });
+                } else {
+                    alert("Esiste già una categoria con questo nome!");
+                    return;
+                }
+            } else if (formType === 'recurring') {
+                const type = document.getElementById('q-r-type').value;
+                const frequency = document.getElementById('q-r-frequency').value;
+                const nextDate = document.getElementById('q-r-date').value;
+                const amount = parseFloat(document.getElementById('q-r-amount').value) || 0;
+                const desc = document.getElementById('q-r-desc').value;
+
+                if (!data.recurring) data.recurring = [];
+                let newItem = { id: Date.now(), type, frequency, nextDate, amount, desc };
+
+                if (type === 'Giroconto') {
+                    newItem.fromAccount = document.getElementById('q-r-from-account').value;
+                    newItem.toAccount = document.getElementById('q-r-to-account').value;
+                    if (newItem.fromAccount === newItem.toAccount) { alert("Scegli conti differenti!"); return; }
+                } else {
+                    newItem.accountName = document.getElementById('q-r-account').value;
+                    newItem.category = document.getElementById('q-r-category').value;
+                }
+                data.recurring.push(newItem);
+            }
+
+            saveData();
+            closeQuickModal();
+        }
+
         function renderAnalytics() {
             initAnalyticsSelectors();
             const targetMonth = parseInt(document.getElementById('analytics-month').value);
@@ -1722,11 +2076,18 @@
             document.getElementById('ana-savings-rate').textContent = `${savingsRate.toFixed(1)}%`;
             document.getElementById('ana-net-flow').textContent = `€ ${savings.toFixed(2)}`;
 
-            document.getElementById('analytics-summary-text').innerHTML = `Entrate <strong>€ ${periodIncome.toFixed(2)}</strong> | Uscite <strong>€ ${periodExpense.toFixed(2)}</strong>.`;
+            document.getElementById('analytics-summary-text').innerHTML = `Nel periodo selezionato hai registrato entrate per <strong>€ ${periodIncome.toFixed(2)}</strong> e uscite per <strong>€ ${periodExpense.toFixed(2)}</strong>.`;
 
-            let advice = "Ottima gestione finanziaria!";
-            if (savingsRate < 0) advice = "⚠️ Attenzione: Risparmio negativo questo mese.";
-            else if (savingsRate >= 20) advice = `🌟 Ottimo tasso di risparmio (${savingsRate.toFixed(1)}%)!`;
+            let advice = "Gestione stabile.";
+            if (periodIncome === 0 && periodExpense === 0) {
+                advice = "Nessuna transazione registrata in questo mese. Inizia ad aggiungere i movimenti per visualizzare l'analisi completa.";
+            } else if (savingsRate < 0) {
+                advice = "⚠️ Attenzione: Le uscite superano le entrate in questo periodo. Controlla le categorie di spesa più elevate.";
+            } else if (savingsRate >= 20) {
+                advice = `🌟 Eccellente! Stai mantenendo un tasso di risparmio del ${savingsRate.toFixed(1)}%, superiore alla soglia raccomandata del 20%.`;
+            } else {
+                advice = `👍 Gestione regolare. Il tasso di risparmio del ${savingsRate.toFixed(1)}% può essere incrementato ottimizzando le spese superflue.`;
+            }
             document.getElementById('ana-financial-advice').innerHTML = advice;
 
             renderCharts(categoryBreakdown, targetYear, targetMonth);
@@ -1819,22 +2180,27 @@
             const eyeTransBtn = document.getElementById('eye-trans-btn');
 
             if (hideAccounts) {
-                netWorthEl.textContent = "€ ••••••";
+                if(netWorthEl) netWorthEl.textContent = "€ ••••••";
                 if(eyeBtn) eyeBtn.textContent = "🙈"; if(eyeAccBtn) eyeAccBtn.textContent = "🙈"; if(eyeTransBtn) eyeTransBtn.textContent = "🙈";
             } else {
-                netWorthEl.textContent = `€ ${totalNetWorth.toFixed(2)}`;
+                if(netWorthEl) netWorthEl.textContent = `€ ${totalNetWorth.toFixed(2)}`;
                 if(eyeBtn) eyeBtn.textContent = "👁️"; if(eyeAccBtn) eyeAccBtn.textContent = "👁️"; if(eyeTransBtn) eyeTransBtn.textContent = "👁️";
             }
 
-            document.getElementById('savings-salary').value = savingsSettings.salary;
-            document.getElementById('savings-rule').value = savingsSettings.rule;
-            document.getElementById('goal-target').value = savingsSettings.target;
-            document.getElementById('goal-months').value = savingsSettings.months;
+            const salInput = document.getElementById('savings-salary');
+            const ruleInput = document.getElementById('savings-rule');
+            const targetInput = document.getElementById('goal-target');
+            const monthsInput = document.getElementById('goal-months');
+
+            if(salInput) salInput.value = savingsSettings.salary;
+            if(ruleInput) ruleInput.value = savingsSettings.rule;
+            if(targetInput) targetInput.value = savingsSettings.target;
+            if(monthsInput) monthsInput.value = savingsSettings.months;
             updateSavingsPlanUI();
 
             const now = new Date();
             let monthlyIncome = 0, monthlyExpense = 0, categoryExpenses = {};
-            data.categories["Uscita"].forEach(c => categoryExpenses[c.name] = 0);
+            if(data.categories["Uscita"]) data.categories["Uscita"].forEach(c => categoryExpenses[c.name] = 0);
 
             data.transactions.forEach(t => {
                 let tDate = new Date(t.date);
@@ -1845,9 +2211,12 @@
             });
 
             let monthlyFlow = monthlyIncome - monthlyExpense;
-            document.getElementById('monthly-income').textContent = `€ ${monthlyIncome.toFixed(2)}`;
-            document.getElementById('monthly-expense').textContent = `€ ${monthlyExpense.toFixed(2)}`;
-            document.getElementById('monthly-flow').textContent = `€ ${monthlyFlow.toFixed(2)}`;
+            const mIncEl = document.getElementById('monthly-income');
+            const mExpEl = document.getElementById('monthly-expense');
+            const mFlowEl = document.getElementById('monthly-flow');
+            if(mIncEl) mIncEl.textContent = `€ ${monthlyIncome.toFixed(2)}`;
+            if(mExpEl) mExpEl.textContent = `€ ${monthlyExpense.toFixed(2)}`;
+            if(mFlowEl) mFlowEl.textContent = `€ ${monthlyFlow.toFixed(2)}`;
 
             let adviceText = "Gestione stabile.";
             let savingsRateMonth = monthlyIncome > 0 ? ((monthlyIncome - monthlyExpense) / monthlyIncome) * 100 : 0;
@@ -1858,21 +2227,24 @@
             } else if (savingsRateMonth >= 20) {
                 adviceText = `🌟 Risparmiato il ${savingsRateMonth.toFixed(1)}% questo mese.`;
             }
-            document.getElementById('advice-text').innerHTML = adviceText;
+            const adviceEl = document.getElementById('advice-text');
+            if(adviceEl) adviceEl.innerHTML = adviceText;
 
             let budgetContainer = document.getElementById('budget-alerts-container');
-            budgetContainer.innerHTML = '';
-            data.categories["Uscita"].forEach(cat => {
-                let spent = categoryExpenses[cat.name] || 0;
-                let limit = cat.limit;
-                let percentage = limit > 0 ? (spent / limit) * 100 : 0;
-                let barColor = percentage >= 100 ? 'var(--danger)' : (percentage >= 80 ? 'var(--warning)' : 'var(--success)');
-                budgetContainer.innerHTML += `
-                    <div class="budget-item">
-                        <div class="budget-info"><span><strong>${cat.name}</strong></span><span>€ ${spent.toFixed(2)} / € ${limit.toFixed(2)}</span></div>
-                        <div class="progress-bar-container"><div class="progress-bar" style="width: ${Math.min(percentage, 100)}%; background-color: ${barColor};"></div></div>
-                    </div>`;
-            });
+            if(budgetContainer && data.categories["Uscita"]) {
+                budgetContainer.innerHTML = '';
+                data.categories["Uscita"].forEach(cat => {
+                    let spent = categoryExpenses[cat.name] || 0;
+                    let limit = cat.limit;
+                    let percentage = limit > 0 ? (spent / limit) * 100 : 0;
+                    let barColor = percentage >= 100 ? 'var(--danger)' : (percentage >= 80 ? 'var(--warning)' : 'var(--success)');
+                    budgetContainer.innerHTML += `
+                        <div class="budget-item">
+                            <div class="budget-info"><span><strong>${cat.name}</strong></span><span>€ ${spent.toFixed(2)} / € ${limit.toFixed(2)}</span></div>
+                            <div class="progress-bar-container"><div class="progress-bar" style="width: ${Math.min(percentage, 100)}%; background-color: ${barColor};"></div></div>
+                        </div>`;
+                });
+            }
 
             let catManagerList = document.getElementById('category-list-manager');
             if (catManagerList) {
@@ -1898,143 +2270,143 @@
             }
 
             let tList = document.getElementById('transaction-list');
-            tList.innerHTML = '';
-            let filterType = document.getElementById('filter-type').value;
-            let filterAcc = document.getElementById('filter-account').value;
-            let searchText = document.getElementById('search-transaction').value.toLowerCase();
-            let dateFrom = document.getElementById('filter-date-from').value;
-            let dateTo = document.getElementById('filter-date-to').value;
+            if(tList) {
+                tList.innerHTML = '';
+                let filterType = document.getElementById('filter-type').value;
+                let filterAcc = document.getElementById('filter-account').value;
+                let searchText = document.getElementById('search-transaction').value.toLowerCase();
+                let dateFrom = document.getElementById('filter-date-from').value;
+                let dateTo = document.getElementById('filter-date-to').value;
 
-            let filtered = data.transactions.filter(t => {
-                let matchType = filterType === 'ALL' || t.type === filterType;
-                let matchAcc = filterAcc === 'ALL' || t.accountName === filterAcc || t.fromAccount === filterAcc || t.toAccount === filterAcc;
-                let matchSearch = !searchText || t.desc.toLowerCase().includes(searchText) || (t.category && t.category.toLowerCase().includes(searchText));
-                let tDateOnly = t.date.slice(0, 10);
-                let matchDateFrom = !dateFrom || tDateOnly >= dateFrom;
-                let matchDateTo = !dateTo || tDateOnly <= dateTo;
-                return matchType && matchAcc && matchSearch && matchDateFrom && matchDateTo;
-            });
-
-            if(filtered.length === 0) tList.innerHTML = '<p style="color:var(--text-light); text-align:center; padding: 10px 0; font-size:0.8rem;">Nessun movimento.</p>';
-            filtered.slice(0, 40).forEach(t => {
-                let d = new Date(t.date).toLocaleDateString();
-                let isGiroconto = t.type === 'Giroconto', isEntrata = t.type === 'Entrata';
-                let badgeClass = isGiroconto ? 'giroconto' : (isEntrata ? 'entrata' : 'uscita');
-                let badgeSymbol = isGiroconto ? '🔄' : (isEntrata ? '+' : '-');
-                let metaText = isGiroconto ? `Da <strong>${t.fromAccount}</strong> a <strong>${t.toAccount}</strong>` : `<span class="t-tag">${t.category}</span> • ${t.accountName}`;
-
-                tList.innerHTML += `
-                    <div class="transaction-card">
-                        <div class="transaction-left">
-                            <div class="transaction-badge ${badgeClass}">${badgeSymbol}</div>
-                            <div class="transaction-details"><span class="t-desc">${t.desc}</span><span class="t-meta">${metaText} • ${d}</span></div>
-                        </div>
-                        <div class="transaction-right">
-                            <span class="transaction-amount ${badgeClass}">${isGiroconto?'🔄 ':(isEntrata?'+':'-')}€ ${t.amount.toFixed(2)}</span>
-                            <button class="btn-danger" onclick="deleteTransaction(${t.id})" style="padding:3px 6px!important; font-size:0.68rem!important;">Elimina</button>
-                        </div>
-                    </div>`;
-            });
-
-            let accList = document.getElementById('account-list');
-            accList.innerHTML = '';
-            data.accounts.forEach((acc, index) => {
-                let displayBalance = hideAccounts ? "€ ••••••" : `€ ${acc.balance.toFixed(2)}`;
-                accList.innerHTML += `
-                    <div class="account-card-item">
-                        <div class="account-header-row">
-                            <div class="account-name-area" onclick="setMainAccount('${acc.name}')" style="cursor:pointer;">
-                                <span>${acc.name}</span>${acc.isMain ? '<span class="main-badge">⭐</span>' : '<span class="normal-badge">⭐</span>'}
-                            </div>
-                            <div class="account-balance-area">${displayBalance}</div>
-                        </div>
-                        <div class="account-actions-row">
-                            <div class="account-move-group">
-                                <button class="btn-move" onclick="moveAccount(${index}, -1)" ${index === 0 ? 'disabled style="opacity:0.3;"' : ''}>▲</button>
-                                <button class="btn-move" onclick="moveAccount(${index}, 1)" ${index === data.accounts.length - 1 ? 'disabled style="opacity:0.3;"' : ''}>▼</button>
-                            </div>
-                            <div class="account-mgmt-group">
-                                <button class="btn-edit" onclick="editAccount('${acc.name}')" style="padding:4px 8px!important;">Modifica</button>
-                                <button class="btn-danger" onclick="deleteAccount('${acc.name}')" style="padding:4px 8px!important;">Elimina</button>
-                            </div>
-                        </div>
-                    </div>`;
-            });
-
-            // RENDERING LISTA RICORRENTI FISARMONICA ESPANDIBILE
-            let rList = document.getElementById('recurring-list');
-            rList.innerHTML = (!data.recurring || data.recurring.length === 0) ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0; font-size:0.8rem;">Nessun promemoria ricorrente.</p>' : '';
-            
-            const recurringBadge = document.getElementById('recurring-badge');
-            if (data.recurring && data.recurring.length > 0) {
-                recurringBadge.style.display = 'inline-block';
-            } else {
-                recurringBadge.style.display = 'none';
-            }
-
-            if(data.recurring && data.recurring.length > 0) {
-                let grouped = {};
-                data.recurring.forEach(r => {
-                    let groupKey = r.type === 'Giroconto' ? '🔄 Giroconti Ricorrenti' : (r.category || 'Altre Uscite');
-                    if (!grouped[groupKey]) grouped[groupKey] = [];
-                    grouped[groupKey].push(r);
+                let filtered = data.transactions.filter(t => {
+                    let matchType = filterType === 'ALL' || t.type === filterType;
+                    let matchAcc = filterAcc === 'ALL' || t.accountName === filterAcc || t.fromAccount === filterAcc || t.toAccount === filterAcc;
+                    let matchSearch = !searchText || t.desc.toLowerCase().includes(searchText) || (t.category && t.category.toLowerCase().includes(searchText));
+                    let tDateOnly = t.date.slice(0, 10);
+                    let matchDateFrom = !dateFrom || tDateOnly >= dateFrom;
+                    let matchDateTo = !dateTo || tDateOnly <= dateTo;
+                    return matchType && matchAcc && matchSearch && matchDateFrom && matchDateTo;
                 });
 
-                for (let catName in grouped) {
-                    let itemsCount = grouped[catName].length;
-                    let sectionHtml = `
-                        <div class="recurring-category-section">
-                            <div class="recurring-category-header" onclick="toggleRecurringGroup(this)">
-                                <span>📂 ${catName} (${itemsCount})</span>
-                                <span class="toggle-icon">►</span>
-                            </div>
-                            <div class="recurring-category-body">
-                    `;
+                if(filtered.length === 0) tList.innerHTML = '<p style="color:var(--text-light); text-align:center; padding: 10px 0; font-size:0.8rem;">Nessun movimento.</p>';
+                filtered.slice(0, 40).forEach(t => {
+                    let d = new Date(t.date).toLocaleDateString();
+                    let isGiroconto = t.type === 'Giroconto', isEntrata = t.type === 'Entrata';
+                    let badgeClass = isGiroconto ? 'giroconto' : (isEntrata ? 'entrata' : 'uscita');
+                    let badgeSymbol = isGiroconto ? '🔄' : (isEntrata ? '+' : '-');
+                    let metaText = isGiroconto ? `Da <strong>${t.fromAccount}</strong> a <strong>${t.toAccount}</strong>` : `<span class="t-tag">${t.category}</span> • ${t.accountName}`;
 
-                    grouped[catName].forEach(r => {
-                        let infoText = r.type === 'Giroconto' ? `${r.fromAccount} ➡️ ${r.toAccount}` : `${r.accountName}`;
-                        let freqLabel = r.frequency || 'Mensile';
-                        let nextDateFormatted = r.nextDate ? new Date(r.nextDate).toLocaleDateString() : 'Non impostata';
-                        
-                        let displayAmt = r.amount > 0 ? `€ ${r.amount.toFixed(2)}` : `Variabile`;
-                        let amtClass = r.amount > 0 ? 'recurring-compact-amount' : 'recurring-compact-amount variable';
+                    tList.innerHTML += `
+                        <div class="transaction-card">
+                            <div class="transaction-left">
+                                <div class="transaction-badge ${badgeClass}">${badgeSymbol}</div>
+                                <div class="transaction-details"><span class="t-desc">${t.desc}</span><span class="t-meta">${metaText} • ${d}</span></div>
+                            </div>
+                            <div class="transaction-right">
+                                <span class="transaction-amount ${badgeClass}">${isGiroconto?'🔄 ':(isEntrata?'+':'-')}€ ${t.amount.toFixed(2)}</span>
+                                <button class="btn-danger" onclick="deleteTransaction(${t.id})" style="padding:3px 6px!important; font-size:0.68rem!important;">Elimina</button>
+                            </div>
+                        </div>`;
+                });
+            }
+
+            let accList = document.getElementById('account-list');
+            if(accList) {
+                accList.innerHTML = '';
+                data.accounts.forEach((acc, index) => {
+                    let displayBalance = hideAccounts ? "€ ••••••" : `€ ${acc.balance.toFixed(2)}`;
+                    accList.innerHTML += `
+                        <div class="account-card-item">
+                            <div class="account-header-row">
+                                <div class="account-name-area" onclick="setMainAccount('${acc.name}')" style="cursor:pointer;">
+                                    <span>${acc.name}</span>${acc.isMain ? '<span class="main-badge">⭐</span>' : '<span class="normal-badge">⭐</span>'}
+                                </div>
+                                <div class="account-balance-area">${displayBalance}</div>
+                            </div>
+                            <div class="account-actions-row">
+                                <div class="account-move-group">
+                                    <button class="btn-move" onclick="moveAccount(${index}, -1)" ${index === 0 ? 'disabled style="opacity:0.3;"' : ''}>▲</button>
+                                    <button class="btn-move" onclick="moveAccount(${index}, 1)" ${index === data.accounts.length - 1 ? 'disabled style="opacity:0.3;"' : ''}>▼</button>
+                                </div>
+                                <div class="account-mgmt-group">
+                                    <button class="btn-edit" onclick="editAccount('${acc.name}')" style="padding:4px 8px!important;">Modifica</button>
+                                    <button class="btn-danger" onclick="deleteAccount('${acc.name}')" style="padding:4px 8px!important;">Elimina</button>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+            }
+
+            let rList = document.getElementById('recurring-list');
+            if(rList) {
+                rList.innerHTML = (!data.recurring || data.recurring.length === 0) ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0; font-size:0.8rem;">Nessun promemoria ricorrente.</p>' : '';
+                
+                const recurringBadge = document.getElementById('recurring-badge');
+                if (recurringBadge) {
+                    if (data.recurring && data.recurring.length > 0) {
+                        recurringBadge.style.display = 'inline-block';
+                    } else {
+                        recurringBadge.style.display = 'none';
+                    }
+                }
+
+                if(data.recurring && data.recurring.length > 0) {
+                    let grouped = {};
+                    data.recurring.forEach(r => {
+                        let groupKey = r.type === 'Giroconto' ? '🔄 Giroconti Ricorrenti' : (r.category || 'Altre Uscite');
+                        if (!grouped[groupKey]) grouped[groupKey] = [];
+                        grouped[groupKey].push(r);
+                    });
+
+                    for (let catName in grouped) {
+                        let itemsCount = grouped[catName].length;
+                        let sectionHtml = `
+                            <div class="recurring-category-section">
+                                <div class="recurring-category-header" onclick="toggleRecurringGroup(this)">
+                                    <span>📂 ${catName} (${itemsCount})</span>
+                                    <span class="toggle-icon">►</span>
+                                </div>
+                                <div class="recurring-category-body">
+                        `;
+
+                        grouped[catName].forEach(r => {
+                            let infoText = r.type === 'Giroconto' ? `${r.fromAccount} ➡️ ${r.toAccount}` : `${r.accountName}`;
+                            let freqLabel = r.frequency || 'Mensile';
+                            let nextDateFormatted = r.nextDate ? new Date(r.nextDate).toLocaleDateString() : 'Non impostata';
+                            
+                            let displayAmt = r.amount > 0 ? `€ ${r.amount.toFixed(2)}` : `Variabile`;
+                            let amtClass = r.amount > 0 ? 'recurring-compact-amount' : 'recurring-compact-amount variable';
+
+                            sectionHtml += `
+                                <div class="recurring-compact-item">
+                                    <div class="recurring-compact-info">
+                                        <span class="recurring-compact-title">${r.desc}</span>
+                                        <span class="recurring-compact-meta">🔄 ${freqLabel} • Scad. <strong>${nextDateFormatted}</strong> • ${infoText}</span>
+                                    </div>
+                                    <div class="recurring-compact-right">
+                                        <span class="${amtClass}">${displayAmt}</span>
+                                        <div class="recurring-compact-actions">
+                                            <button class="btn-secondary" onclick="executeRecurring(${r.id})" style="background:rgba(16,185,129,0.15)!important; color:var(--success)!important; border:1px solid rgba(16,185,129,0.3)!important; font-weight:700;">▶️ Applica</button>
+                                            <button class="btn-danger" onclick="deleteRecurring(${r.id})">🗑️</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
 
                         sectionHtml += `
-                            <div class="recurring-compact-item">
-                                <div class="recurring-compact-info">
-                                    <span class="recurring-compact-title">${r.desc}</span>
-                                    <span class="recurring-compact-meta">🔄 ${freqLabel} • Scad. <strong>${nextDateFormatted}</strong> • ${infoText}</span>
-                                </div>
-                                <div class="recurring-compact-right">
-                                    <span class="${amtClass}">${displayAmt}</span>
-                                    <div class="recurring-compact-actions">
-                                        <button class="btn-edit" onclick="editRecurring(${r.id})">✏️</button>
-                                        <button class="btn-secondary" onclick="executeRecurring(${r.id})" style="background:rgba(16,185,129,0.15)!important; color:var(--success)!important; border:1px solid rgba(16,185,129,0.3)!important; font-weight:700;">▶️</button>
-                                        <button class="btn-danger" onclick="deleteRecurring(${r.id})">🗑️</button>
-                                    </div>
                                 </div>
                             </div>
                         `;
-                    });
-
-                    sectionHtml += `
-                            </div>
-                        </div>
-                    `;
-                    rList.innerHTML += sectionHtml;
+                        rList.innerHTML += sectionHtml;
+                    }
                 }
             }
 
             updateAccountSelect();
-            if (document.getElementById('t-type').value === 'Giroconto') updateTransferSelects('t-transfer-from', 't-transfer-to');
-            if (document.getElementById('r-type').value === 'Giroconto') updateTransferSelects('r-from-account', 'r-to-account');
-            else updateRecurringCategorySelect();
-            
             renderAnalytics();
         }
 
-        updateCategorySelect();
-        updateRecurringCategorySelect();
         renderApp();
         checkAppSecurityLock();
     </script>
