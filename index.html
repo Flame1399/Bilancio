@@ -1397,30 +1397,10 @@
             renderAnalytics();
         }
 
-        // METODO DI BACKUP JSON ROBUSTO E UNIVERSALE PER PWA MOBILE
+        // SISTEMA DI BACKUP SICURO E COMPATIBILE CON TUTTI I DISPOSITIVI (MOBILE / PWA)
         function exportBackupJSON() {
-            try {
-                const dataStr = JSON.stringify(data, null, 2);
-                const blob = new Blob([dataStr], { type: 'application/json;charset=utf-8' });
-                const fileName = `smartbudget_backup_${new Date().toISOString().slice(0,10)}.json`;
-
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const dlAnchor = document.createElement('a');
-                    dlAnchor.href = e.target.result;
-                    dlAnchor.download = fileName;
-                    dlAnchor.style.display = 'none';
-                    document.body.appendChild(dlAnchor);
-                    dlAnchor.click();
-                    setTimeout(() => {
-                        document.body.removeChild(dlAnchor);
-                    }, 1000);
-                };
-                reader.readAsDataURL(blob);
-            } catch (err) {
-                const dataStr = JSON.stringify(data, null, 2);
-                prompt("Copia il codice JSON del backup e salvalo in un file .json:", dataStr);
-            }
+            const dataStr = JSON.stringify(data, null, 2);
+            prompt("Ecco il codice del tuo backup JSON. Copialo e salvalo in un file di testo (es. backup.json):", dataStr);
         }
 
         function exportTransactionsCSV() {
