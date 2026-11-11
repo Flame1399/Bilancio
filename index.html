@@ -1397,10 +1397,23 @@
             renderAnalytics();
         }
 
-        // SISTEMA DI BACKUP SICURO E COMPATIBILE CON TUTTI I DISPOSITIVI (MOBILE / PWA)
+        // DOWNLOAD BACKUP JSON DIRETTO E AUTOMATICO
         function exportBackupJSON() {
             const dataStr = JSON.stringify(data, null, 2);
-            prompt("Ecco il codice del tuo backup JSON. Copialo e salvalo in un file di testo (es. backup.json):", dataStr);
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `smart_budget_backup_${new Date().toISOString().slice(0,10)}.json`;
+            
+            document.body.appendChild(link);
+            link.click();
+            
+            setTimeout(() => {
+                document.body.removeChild(link);
+                URL.revokeObjectURL(url);
+            }, 100);
         }
 
         function exportTransactionsCSV() {
@@ -1462,14 +1475,28 @@
         }
 
         function updateSavingsPlanUI() {
-            const salary = savingsSettings.salary;
+            const salary = savingsSettings.salary || 0;
             const rule = savingsSettings.rule;
 
             let needs = 0, wants = 0, savingsPerMonth = 0;
-            if (rule === '50-30-20') { needs = salary * 0.50; wants = salary * 0.30; savingsPerMonth = salary * 0.20; }
-            else if (rule === '60-20-10-10') { needs = salary * 0.60; wants = salary * 0.20; savingsPerMonth = salary * 0.20; }
-            else if (rule === 'custom-20') { savingsPerMonth = salary * 0.20; needs = salary * 0.55; wants = salary * 0.25; }
-            else if (rule === 'custom-30') { savingsPerMonth = salary * 0.30; needs = salary * 0.50; wants = salary * 0.20; }
+            
+            if (rule === '50-30-20') { 
+                needs = salary * 0.50; 
+                wants = salary * 0.30; 
+                savingsPerMonth = salary * 0.20; 
+            } else if (rule === '60-20-10-10') { 
+                needs = salary * 0.60; 
+                wants = salary * 0.20; 
+                savingsPerMonth = salary * 0.20; 
+            } else if (rule === 'custom-20') { 
+                savingsPerMonth = salary * 0.20; 
+                needs = salary * 0.55; 
+                wants = salary * 0.25; 
+            } else if (rule === 'custom-30') { 
+                savingsPerMonth = salary * 0.30; 
+                needs = salary * 0.50; 
+                wants = salary * 0.20; 
+            }
 
             document.getElementById('plan-needs').textContent = `€ ${needs.toFixed(2)}`;
             document.getElementById('plan-wants').textContent = `€ ${wants.toFixed(2)}`;
@@ -1478,12 +1505,12 @@
             let totalSavedActual = data.accounts.reduce((sum, acc) => sum + acc.balance, 0);
             if(totalSavedActual < 0) totalSavedActual = 0;
 
-            const target = savingsSettings.target;
+            const target = savingsSettings.target || 1;
             const percentage = target > 0 ? (totalSavedActual / target) * 100 : 0;
 
             document.getElementById('goal-current-saved').textContent = hideAccounts ? "€ ••••••" : `€ ${totalSavedActual.toFixed(2)}`;
             document.getElementById('goal-target-label').textContent = hideAccounts ? "€ ••••••" : `€ ${target.toFixed(2)}`;
-            document.getElementById('goal-percentage-label').textContent = `${Math.min(percentage, 100).toFixed(1)}%`;
+            document.getElementById('goal-percentage-label').textContent = `${percentage.toFixed(1)}%`;
             document.getElementById('goal-progress-bar').style.width = `${Math.min(percentage, 100)}%`;
 
             document.getElementById('proj-6m').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (savingsPerMonth * 6)).toFixed(2)}`;
@@ -1491,7 +1518,9 @@
             document.getElementById('proj-3y').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (savingsPerMonth * 36)).toFixed(2)}`;
 
             const slider = document.getElementById('sim-range-input');
-            if (slider && savingsPerMonth > 0) slider.value = Math.round(savingsPerMonth);
+            if (slider && savingsPerMonth > 0 && slider.value == 360) {
+                slider.value = Math.round(savingsPerMonth);
+            }
             updateSavingsSimulation();
         }
 
@@ -1505,11 +1534,26 @@
             const target = savingsSettings.target;
             const remaining = target - totalSavedActual;
 
+            const resultTextEl = document.getElementById('sim-result-text');
+            if (!resultTextEl) return;
+
             if (remaining <= 0) {
-                document.getElementById('sim-result-text').innerHTML = `🎉 <strong>Obiettivo già raggiunto!</strong>`;
-            } else if (simVal > 0) {
+                resultTextEl.innerHTML = `🎉 <strong>Obiettivo centrato! Hai superato il target di € ${Math.abs(remaining).toFixed(2)}.</strong>`;
+            } else if (simVal <= 0) {
+                resultTextEl.innerHTML = `⚠️ Seleziona un accantonamento mensile maggiore di zero.`;
+            } else {
                 const monthsNeeded = Math.ceil(remaining / simVal);
-                document.getElementById('sim-result-text').innerHTML = `Raggiungerai l'obiettivo rimanente di <strong>€ ${remaining.toFixed(2)}</strong> in circa <strong>${monthsNeeded} mesi</strong>.`;
+                const years = Math.floor(monthsNeeded / 12);
+                const months = monthsNeeded % 12;
+                
+                let timeString = "";
+                if (years > 0) {
+                    timeString = `circa <strong>${years} anni</strong>${months > 0 ? ` e <strong>${months} mesi</strong>` : ''}`;
+                } else {
+                    timeString = `circa <strong>${monthsNeeded} mesi</strong>`;
+                }
+
+                resultTextEl.innerHTML = `Continuando così, colmerai i restanti <strong>€ ${remaining.toFixed(2)}</strong> in ${timeString}.`;
             }
         }
 
