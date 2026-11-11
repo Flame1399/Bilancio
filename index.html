@@ -346,7 +346,7 @@
 
         input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
 
-        button:not(.eye-toggle-btn):not(.menu-btn):not(.sidebar-close):not(.theme-btn) {
+        button:not(.eye-toggle-btn):not(.menu-btn):not(.sidebar-close):not(.theme-btn):not(.fab-main):not(.fab-item) {
             width: 100%;
             padding: 11px;
             background-color: var(--primary);
@@ -358,7 +358,7 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        button:not(.eye-toggle-btn):not(.menu-btn):not(.sidebar-close):not(.theme-btn):hover { background-color: var(--primary-hover); }
+        button:not(.eye-toggle-btn):not(.menu-btn):not(.sidebar-close):not(.theme-btn):not(.fab-main):not(.fab-item):hover { background-color: var(--primary-hover); }
 
         .btn-secondary { background: rgba(255, 255, 255, 0.05) !important; border: 1px solid var(--card-border) !important; color: var(--text) !important; }
         .btn-secondary:hover { background: rgba(255, 255, 255, 0.1) !important; }
@@ -600,6 +600,123 @@
         .tab-content { display: none; }
         .tab-content.active { display: block; animation: fadeIn 0.25s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* STILI FAB & MODALE */
+        .fab-container {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            z-index: 997;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .fab-main {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            font-size: 2rem;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s;
+        }
+
+        .fab-main:hover {
+            background: var(--primary-hover);
+            transform: scale(1.05);
+        }
+
+        .fab-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 12px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .fab-container.active .fab-menu {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .fab-container.active .fab-main {
+            transform: rotate(45deg);
+        }
+
+        .fab-item {
+            background: var(--card-bg) !important;
+            color: var(--text) !important;
+            border: 1px solid var(--card-border) !important;
+            padding: 8px 14px !important;
+            border-radius: var(--radius-md) !important;
+            font-size: 0.85rem !important;
+            font-weight: 700 !important;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            width: auto !important;
+            white-space: nowrap;
+            transition: transform 0.2s;
+        }
+
+        .fab-item:hover {
+            border-color: var(--primary) !important;
+            transform: translateX(-4px);
+        }
+
+        .fab-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.95);
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            width: 90%;
+            max-width: 420px;
+            border-radius: var(--radius-lg);
+            z-index: 999;
+            padding: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s ease;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .fab-modal.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .fab-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .fab-modal-header h3 {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--text);
+        }
 
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
@@ -1057,6 +1174,31 @@
         </div>
     </div>
 
+    <!-- FLOATING ACTION BUTTON (FAB) & MODALE RAPIDO -->
+    <div class="fab-container">
+        <div class="fab-menu" id="fab-menu">
+            <button class="fab-item" onclick="openQuickModal('transaction')" title="Nuova Transazione">
+                <span>💳</span> <span class="fab-label">Transazione</span>
+            </button>
+            <button class="fab-item" onclick="openQuickModal('category')" title="Nuova Categoria">
+                <span>🏷️</span> <span class="fab-label">Categoria</span>
+            </button>
+            <button class="fab-item" onclick="openQuickModal('recurring')" title="Nuova Ricorrente">
+                <span>🔄</span> <span class="fab-label">Ricorrente</span>
+            </button>
+        </div>
+        <button class="fab-main" id="fab-main-btn" onclick="toggleFabMenu()">+</button>
+    </div>
+
+    <div class="sidebar-overlay" id="fab-modal-overlay" onclick="closeQuickModal()"></div>
+    <div class="fab-modal" id="fab-modal">
+        <div class="fab-modal-header">
+            <h3 id="fab-modal-title">Crea Nuovo</h3>
+            <button class="sidebar-close" onclick="closeQuickModal()">✕</button>
+        </div>
+        <div class="fab-modal-body" id="fab-modal-content"></div>
+    </div>
+
     <script>
         let data = JSON.parse(localStorage.getItem('smart_budget_data_autosync')) || {
             categories: {
@@ -1360,9 +1502,10 @@
         }
 
         function updateCategorySelect() {
+            const select = document.getElementById('t-category');
+            if (!select) return;
             const type = document.getElementById('t-type').value;
             if(type === 'Giroconto') return;
-            const select = document.getElementById('t-category');
             select.innerHTML = '';
             
             if(data.categories[type]) {
@@ -1438,16 +1581,17 @@
             const rSelect = document.getElementById('r-account');
             const filterAcc = document.getElementById('filter-account');
 
-            select.innerHTML = ''; rSelect.innerHTML = '';
-            filterAcc.innerHTML = '<option value="ALL">Tutti i Conti</option>';
+            if (select) select.innerHTML = ''; 
+            if (rSelect) rSelect.innerHTML = '';
+            if (filterAcc) filterAcc.innerHTML = '<option value="ALL">Tutti i Conti</option>';
 
             data.accounts.forEach(acc => {
                 let balanceText = hideAccounts ? "€ ••••••" : `€ ${acc.balance.toFixed(2)}`;
                 let label = `${acc.name} (${balanceText})${acc.isMain ? ' ⭐' : ''}`;
 
-                let opt = document.createElement('option'); opt.value = acc.name; opt.textContent = label; select.appendChild(opt);
-                let optR = document.createElement('option'); optR.value = acc.name; optR.textContent = label; rSelect.appendChild(optR);
-                let optFilter = document.createElement('option'); optFilter.value = acc.name; optFilter.textContent = acc.name; filterAcc.appendChild(optFilter);
+                if (select) { let opt = document.createElement('option'); opt.value = acc.name; opt.textContent = label; select.appendChild(opt); }
+                if (rSelect) { let optR = document.createElement('option'); optR.value = acc.name; optR.textContent = label; rSelect.appendChild(optR); }
+                if (filterAcc) { let optFilter = document.createElement('option'); optFilter.value = acc.name; optFilter.textContent = acc.name; filterAcc.appendChild(optFilter); }
             });
         }
 
@@ -1696,6 +1840,261 @@
             section.classList.toggle('open');
         }
 
+        /* LOGICA FAB & MODALE RAPIDO */
+        function toggleFabMenu() {
+            const container = document.querySelector('.fab-container');
+            container.classList.toggle('active');
+        }
+
+        function closeQuickModal() {
+            document.getElementById('fab-modal').classList.remove('active');
+            document.getElementById('fab-modal-overlay').classList.remove('active');
+            document.querySelector('.fab-container').classList.remove('active');
+        }
+
+        function openQuickModal(type) {
+            const modal = document.getElementById('fab-modal');
+            const overlay = document.getElementById('fab-modal-overlay');
+            const titleEl = document.getElementById('fab-modal-title');
+            const contentEl = document.getElementById('fab-modal-content');
+
+            document.querySelector('.fab-container').classList.remove('active');
+            contentEl.innerHTML = '';
+
+            if (type === 'transaction') {
+                titleEl.textContent = "💳 Registra Nuova Transazione";
+                contentEl.innerHTML = `
+                    <form id="quick-transaction-form" onsubmit="handleQuickSubmit(event, 'transaction')">
+                        <div class="form-group">
+                            <label>Tipo di Operazione</label>
+                            <select id="q-t-type" onchange="onQuickTransactionTypeChange()">
+                                <option value="Uscita">Uscita</option>
+                                <option value="Entrata">Entrata</option>
+                                <option value="Giroconto">Giroconto 🔄</option>
+                            </select>
+                        </div>
+                        <div id="q-standard-fields">
+                            <div class="form-group">
+                                <label>Conto</label>
+                                <select id="q-t-account"></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Categoria</label>
+                                <select id="q-t-category"></select>
+                            </div>
+                        </div>
+                        <div id="q-transfer-fields" style="display: none;">
+                            <div class="form-group">
+                                <label>Conto Origine</label>
+                                <select id="q-t-from"></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Conto Destinazione</label>
+                                <select id="q-t-to"></select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Importo (€)</label>
+                            <input type="number" id="q-t-amount" step="0.01" placeholder="0.00" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Descrizione</label>
+                            <input type="text" id="q-t-desc" placeholder="Nota operazione...">
+                        </div>
+                        <button type="submit">Salva Transazione</button>
+                    </form>
+                `;
+                populateQuickTransactionSelects();
+            } else if (type === 'category') {
+                titleEl.textContent = "🏷️ Crea Nuova Categoria";
+                contentEl.innerHTML = `
+                    <form id="quick-category-form" onsubmit="handleQuickSubmit(event, 'category')">
+                        <div class="form-group">
+                            <label>Tipo</label>
+                            <select id="q-c-type">
+                                <option value="Uscita">Uscita</option>
+                                <option value="Entrata">Entrata</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Nome Categoria</label>
+                            <input type="text" id="q-c-name" placeholder="Es. Palestra, Libri..." required>
+                        </div>
+                        <div class="form-group">
+                            <label>Limite Budget Mensile (€)</label>
+                            <input type="number" id="q-c-limit" value="150" step="10">
+                        </div>
+                        <button type="submit">Crea Categoria</button>
+                    </form>
+                `;
+            } else if (type === 'recurring') {
+                titleEl.textContent = "🔄 Nuovo Promemoria Ricorrente";
+                contentEl.innerHTML = `
+                    <form id="quick-recurring-form" onsubmit="handleQuickSubmit(event, 'recurring')">
+                        <div class="form-group">
+                            <label>Tipo</label>
+                            <select id="q-r-type" onchange="onQuickRecurringTypeChange()">
+                                <option value="Uscita">Uscita Ricorrente</option>
+                                <option value="Entrata">Entrata Ricorrente</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Conto</label>
+                            <select id="q-r-account"></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Categoria</label>
+                            <select id="q-r-category"></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Frequenza</label>
+                            <select id="q-r-frequency">
+                                <option value="Mensile">Mensile</option>
+                                <option value="Settimanale">Settimanale</option>
+                                <option value="Annuale">Annuale</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Prossima Scadenza</label>
+                            <input type="date" id="q-r-date" value="${new Date().toISOString().slice(0, 10)}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Importo (€)</label>
+                            <input type="number" id="q-r-amount" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label>Descrizione</label>
+                            <input type="text" id="q-r-desc" placeholder="Es. Abbonamento..." required>
+                        </div>
+                        <button type="submit">Crea Ricorrente</button>
+                    </form>
+                `;
+                populateQuickRecurringSelects();
+            }
+
+            modal.classList.add('active');
+            overlay.classList.add('active');
+        }
+
+        function populateQuickTransactionSelects() {
+            const accSelect = document.getElementById('q-t-account');
+            if(!accSelect) return;
+            data.accounts.forEach(acc => {
+                let opt = document.createElement('option');
+                opt.value = acc.name;
+                opt.textContent = acc.name;
+                accSelect.appendChild(opt);
+            });
+            updateQuickCategorySelect();
+        }
+
+        function onQuickTransactionTypeChange() {
+            const type = document.getElementById('q-t-type').value;
+            const std = document.getElementById('q-standard-fields');
+            const tr = document.getElementById('q-transfer-fields');
+            if (type === 'Giroconto') {
+                std.style.display = 'none';
+                tr.style.display = 'block';
+                const fromSel = document.getElementById('q-t-from');
+                const toSel = document.getElementById('q-t-to');
+                fromSel.innerHTML = ''; toSel.innerHTML = '';
+                data.accounts.forEach(acc => {
+                    fromSel.innerHTML += `<option value="${acc.name}">${acc.name}</option>`;
+                    toSel.innerHTML += `<option value="${acc.name}">${acc.name}</option>`;
+                });
+            } else {
+                std.style.display = 'block';
+                tr.style.display = 'none';
+                updateQuickCategorySelect();
+            }
+        }
+
+        function updateQuickCategorySelect() {
+            const type = document.getElementById('q-t-type').value;
+            if (type === 'Giroconto') return;
+            const catSelect = document.getElementById('q-t-category');
+            if (!catSelect) return;
+            catSelect.innerHTML = '';
+            if (data.categories[type]) {
+                data.categories[type].forEach(c => {
+                    catSelect.innerHTML += `<option value="${c.name}">${c.name}</option>`;
+                });
+            }
+        }
+
+        function populateQuickRecurringSelects() {
+            const accSelect = document.getElementById('q-r-account');
+            if(!accSelect) return;
+            data.accounts.forEach(acc => {
+                accSelect.innerHTML += `<option value="${acc.name}">${acc.name}</option>`;
+            });
+            updateQuickRecurringCategorySelect();
+        }
+
+        function updateQuickRecurringCategorySelect() {
+            const type = document.getElementById('q-r-type').value;
+            const catSelect = document.getElementById('q-r-category');
+            if (!catSelect) return;
+            catSelect.innerHTML = '';
+            if (data.categories[type]) {
+                data.categories[type].forEach(c => {
+                    catSelect.innerHTML += `<option value="${c.name}">${c.name}</option>`;
+                });
+            }
+        }
+
+        function onQuickRecurringTypeChange() {
+            updateQuickRecurringCategorySelect();
+        }
+
+        function handleQuickSubmit(event, formType) {
+            event.preventDefault();
+            if (formType === 'transaction') {
+                const type = document.getElementById('q-t-type').value;
+                const amount = parseFloat(document.getElementById('q-t-amount').value);
+                const desc = document.getElementById('q-t-desc').value;
+
+                if (type === 'Giroconto') {
+                    const from = document.getElementById('q-t-from').value;
+                    const to = document.getElementById('q-t-to').value;
+                    if (from === to) { alert("Scegli conti differenti!"); return; }
+                    let accFrom = data.accounts.find(a => a.name === from);
+                    let accTo = data.accounts.find(a => a.name === to);
+                    if (accFrom && accTo) { accFrom.balance -= amount; accTo.balance += amount; }
+                    data.transactions.unshift({ id: Date.now(), type: 'Giroconto', fromAccount: from, toAccount: to, amount, desc: desc || 'Giroconto', date: new Date().toISOString() });
+                } else {
+                    const accountName = document.getElementById('q-t-account').value;
+                    const category = document.getElementById('q-t-category').value;
+                    let account = data.accounts.find(a => a.name === accountName);
+                    if (account) {
+                        if (type === 'Entrata') account.balance += amount;
+                        else account.balance -= amount;
+                    }
+                    data.transactions.unshift({ id: Date.now(), type, accountName, amount, category, desc: desc || category, date: new Date().toISOString() });
+                }
+            } else if (formType === 'category') {
+                const type = document.getElementById('q-c-type').value;
+                const name = document.getElementById('q-c-name').value.trim();
+                const limit = parseFloat(document.getElementById('q-c-limit').value) || 0;
+                if (!data.categories[type]) data.categories[type] = [];
+                data.categories[type].push({ name, limit });
+            } else if (formType === 'recurring') {
+                const type = document.getElementById('q-r-type').value;
+                const accountName = document.getElementById('q-r-account').value;
+                const category = document.getElementById('q-r-category').value;
+                const frequency = document.getElementById('q-r-frequency').value;
+                const nextDate = document.getElementById('q-r-date').value;
+                const amount = parseFloat(document.getElementById('q-r-amount').value) || 0;
+                const desc = document.getElementById('q-r-desc').value;
+
+                if (!data.recurring) data.recurring = [];
+                data.recurring.push({ id: Date.now(), type, accountName, category, frequency, nextDate, amount, desc });
+            }
+
+            saveData();
+            closeQuickModal();
+        }
+
         function renderAnalytics() {
             initAnalyticsSelectors();
             const targetMonth = parseInt(document.getElementById('analytics-month').value);
@@ -1819,22 +2218,27 @@
             const eyeTransBtn = document.getElementById('eye-trans-btn');
 
             if (hideAccounts) {
-                netWorthEl.textContent = "€ ••••••";
+                if(netWorthEl) netWorthEl.textContent = "€ ••••••";
                 if(eyeBtn) eyeBtn.textContent = "🙈"; if(eyeAccBtn) eyeAccBtn.textContent = "🙈"; if(eyeTransBtn) eyeTransBtn.textContent = "🙈";
             } else {
-                netWorthEl.textContent = `€ ${totalNetWorth.toFixed(2)}`;
+                if(netWorthEl) netWorthEl.textContent = `€ ${totalNetWorth.toFixed(2)}`;
                 if(eyeBtn) eyeBtn.textContent = "👁️"; if(eyeAccBtn) eyeAccBtn.textContent = "👁️"; if(eyeTransBtn) eyeTransBtn.textContent = "👁️";
             }
 
-            document.getElementById('savings-salary').value = savingsSettings.salary;
-            document.getElementById('savings-rule').value = savingsSettings.rule;
-            document.getElementById('goal-target').value = savingsSettings.target;
-            document.getElementById('goal-months').value = savingsSettings.months;
+            const salInput = document.getElementById('savings-salary');
+            const ruleInput = document.getElementById('savings-rule');
+            const targetInput = document.getElementById('goal-target');
+            const monthsInput = document.getElementById('goal-months');
+
+            if(salInput) salInput.value = savingsSettings.salary;
+            if(ruleInput) ruleInput.value = savingsSettings.rule;
+            if(targetInput) targetInput.value = savingsSettings.target;
+            if(monthsInput) monthsInput.value = savingsSettings.months;
             updateSavingsPlanUI();
 
             const now = new Date();
             let monthlyIncome = 0, monthlyExpense = 0, categoryExpenses = {};
-            data.categories["Uscita"].forEach(c => categoryExpenses[c.name] = 0);
+            if(data.categories["Uscita"]) data.categories["Uscita"].forEach(c => categoryExpenses[c.name] = 0);
 
             data.transactions.forEach(t => {
                 let tDate = new Date(t.date);
@@ -1845,9 +2249,12 @@
             });
 
             let monthlyFlow = monthlyIncome - monthlyExpense;
-            document.getElementById('monthly-income').textContent = `€ ${monthlyIncome.toFixed(2)}`;
-            document.getElementById('monthly-expense').textContent = `€ ${monthlyExpense.toFixed(2)}`;
-            document.getElementById('monthly-flow').textContent = `€ ${monthlyFlow.toFixed(2)}`;
+            const mIncEl = document.getElementById('monthly-income');
+            const mExpEl = document.getElementById('monthly-expense');
+            const mFlowEl = document.getElementById('monthly-flow');
+            if(mIncEl) mIncEl.textContent = `€ ${monthlyIncome.toFixed(2)}`;
+            if(mExpEl) mExpEl.textContent = `€ ${monthlyExpense.toFixed(2)}`;
+            if(mFlowEl) mFlowEl.textContent = `€ ${monthlyFlow.toFixed(2)}`;
 
             let adviceText = "Gestione stabile.";
             let savingsRateMonth = monthlyIncome > 0 ? ((monthlyIncome - monthlyExpense) / monthlyIncome) * 100 : 0;
@@ -1858,21 +2265,24 @@
             } else if (savingsRateMonth >= 20) {
                 adviceText = `🌟 Risparmiato il ${savingsRateMonth.toFixed(1)}% questo mese.`;
             }
-            document.getElementById('advice-text').innerHTML = adviceText;
+            const adviceEl = document.getElementById('advice-text');
+            if(adviceEl) adviceEl.innerHTML = adviceText;
 
             let budgetContainer = document.getElementById('budget-alerts-container');
-            budgetContainer.innerHTML = '';
-            data.categories["Uscita"].forEach(cat => {
-                let spent = categoryExpenses[cat.name] || 0;
-                let limit = cat.limit;
-                let percentage = limit > 0 ? (spent / limit) * 100 : 0;
-                let barColor = percentage >= 100 ? 'var(--danger)' : (percentage >= 80 ? 'var(--warning)' : 'var(--success)');
-                budgetContainer.innerHTML += `
-                    <div class="budget-item">
-                        <div class="budget-info"><span><strong>${cat.name}</strong></span><span>€ ${spent.toFixed(2)} / € ${limit.toFixed(2)}</span></div>
-                        <div class="progress-bar-container"><div class="progress-bar" style="width: ${Math.min(percentage, 100)}%; background-color: ${barColor};"></div></div>
-                    </div>`;
-            });
+            if(budgetContainer && data.categories["Uscita"]) {
+                budgetContainer.innerHTML = '';
+                data.categories["Uscita"].forEach(cat => {
+                    let spent = categoryExpenses[cat.name] || 0;
+                    let limit = cat.limit;
+                    let percentage = limit > 0 ? (spent / limit) * 100 : 0;
+                    let barColor = percentage >= 100 ? 'var(--danger)' : (percentage >= 80 ? 'var(--warning)' : 'var(--success)');
+                    budgetContainer.innerHTML += `
+                        <div class="budget-item">
+                            <div class="budget-info"><span><strong>${cat.name}</strong></span><span>€ ${spent.toFixed(2)} / € ${limit.toFixed(2)}</span></div>
+                            <div class="progress-bar-container"><div class="progress-bar" style="width: ${Math.min(percentage, 100)}%; background-color: ${barColor};"></div></div>
+                        </div>`;
+                });
+            }
 
             let catManagerList = document.getElementById('category-list-manager');
             if (catManagerList) {
@@ -1898,136 +2308,143 @@
             }
 
             let tList = document.getElementById('transaction-list');
-            tList.innerHTML = '';
-            let filterType = document.getElementById('filter-type').value;
-            let filterAcc = document.getElementById('filter-account').value;
-            let searchText = document.getElementById('search-transaction').value.toLowerCase();
-            let dateFrom = document.getElementById('filter-date-from').value;
-            let dateTo = document.getElementById('filter-date-to').value;
+            if(tList) {
+                tList.innerHTML = '';
+                let filterType = document.getElementById('filter-type').value;
+                let filterAcc = document.getElementById('filter-account').value;
+                let searchText = document.getElementById('search-transaction').value.toLowerCase();
+                let dateFrom = document.getElementById('filter-date-from').value;
+                let dateTo = document.getElementById('filter-date-to').value;
 
-            let filtered = data.transactions.filter(t => {
-                let matchType = filterType === 'ALL' || t.type === filterType;
-                let matchAcc = filterAcc === 'ALL' || t.accountName === filterAcc || t.fromAccount === filterAcc || t.toAccount === filterAcc;
-                let matchSearch = !searchText || t.desc.toLowerCase().includes(searchText) || (t.category && t.category.toLowerCase().includes(searchText));
-                let tDateOnly = t.date.slice(0, 10);
-                let matchDateFrom = !dateFrom || tDateOnly >= dateFrom;
-                let matchDateTo = !dateTo || tDateOnly <= dateTo;
-                return matchType && matchAcc && matchSearch && matchDateFrom && matchDateTo;
-            });
-
-            if(filtered.length === 0) tList.innerHTML = '<p style="color:var(--text-light); text-align:center; padding: 10px 0; font-size:0.8rem;">Nessun movimento.</p>';
-            filtered.slice(0, 40).forEach(t => {
-                let d = new Date(t.date).toLocaleDateString();
-                let isGiroconto = t.type === 'Giroconto', isEntrata = t.type === 'Entrata';
-                let badgeClass = isGiroconto ? 'giroconto' : (isEntrata ? 'entrata' : 'uscita');
-                let badgeSymbol = isGiroconto ? '🔄' : (isEntrata ? '+' : '-');
-                let metaText = isGiroconto ? `Da <strong>${t.fromAccount}</strong> a <strong>${t.toAccount}</strong>` : `<span class="t-tag">${t.category}</span> • ${t.accountName}`;
-
-                tList.innerHTML += `
-                    <div class="transaction-card">
-                        <div class="transaction-left">
-                            <div class="transaction-badge ${badgeClass}">${badgeSymbol}</div>
-                            <div class="transaction-details"><span class="t-desc">${t.desc}</span><span class="t-meta">${metaText} • ${d}</span></div>
-                        </div>
-                        <div class="transaction-right">
-                            <span class="transaction-amount ${badgeClass}">${isGiroconto?'🔄 ':(isEntrata?'+':'-')}€ ${t.amount.toFixed(2)}</span>
-                            <button class="btn-danger" onclick="deleteTransaction(${t.id})" style="padding:3px 6px!important; font-size:0.68rem!important;">Elimina</button>
-                        </div>
-                    </div>`;
-            });
-
-            let accList = document.getElementById('account-list');
-            accList.innerHTML = '';
-            data.accounts.forEach((acc, index) => {
-                let displayBalance = hideAccounts ? "€ ••••••" : `€ ${acc.balance.toFixed(2)}`;
-                accList.innerHTML += `
-                    <div class="account-card-item">
-                        <div class="account-header-row">
-                            <div class="account-name-area" onclick="setMainAccount('${acc.name}')" style="cursor:pointer;">
-                                <span>${acc.name}</span>${acc.isMain ? '<span class="main-badge">⭐</span>' : '<span class="normal-badge">⭐</span>'}
-                            </div>
-                            <div class="account-balance-area">${displayBalance}</div>
-                        </div>
-                        <div class="account-actions-row">
-                            <div class="account-move-group">
-                                <button class="btn-move" onclick="moveAccount(${index}, -1)" ${index === 0 ? 'disabled style="opacity:0.3;"' : ''}>▲</button>
-                                <button class="btn-move" onclick="moveAccount(${index}, 1)" ${index === data.accounts.length - 1 ? 'disabled style="opacity:0.3;"' : ''}>▼</button>
-                            </div>
-                            <div class="account-mgmt-group">
-                                <button class="btn-edit" onclick="editAccount('${acc.name}')" style="padding:4px 8px!important;">Modifica</button>
-                                <button class="btn-danger" onclick="deleteAccount('${acc.name}')" style="padding:4px 8px!important;">Elimina</button>
-                            </div>
-                        </div>
-                    </div>`;
-            });
-
-            // RENDERING LISTA RICORRENTI FISARMONICA ESPANDIBILE
-            let rList = document.getElementById('recurring-list');
-            rList.innerHTML = (!data.recurring || data.recurring.length === 0) ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0; font-size:0.8rem;">Nessun promemoria ricorrente.</p>' : '';
-            
-            const recurringBadge = document.getElementById('recurring-badge');
-            if (data.recurring && data.recurring.length > 0) {
-                recurringBadge.style.display = 'inline-block';
-            } else {
-                recurringBadge.style.display = 'none';
-            }
-
-            if(data.recurring && data.recurring.length > 0) {
-                let grouped = {};
-                data.recurring.forEach(r => {
-                    let groupKey = r.type === 'Giroconto' ? '🔄 Giroconti Ricorrenti' : (r.category || 'Altre Uscite');
-                    if (!grouped[groupKey]) grouped[groupKey] = [];
-                    grouped[groupKey].push(r);
+                let filtered = data.transactions.filter(t => {
+                    let matchType = filterType === 'ALL' || t.type === filterType;
+                    let matchAcc = filterAcc === 'ALL' || t.accountName === filterAcc || t.fromAccount === filterAcc || t.toAccount === filterAcc;
+                    let matchSearch = !searchText || t.desc.toLowerCase().includes(searchText) || (t.category && t.category.toLowerCase().includes(searchText));
+                    let tDateOnly = t.date.slice(0, 10);
+                    let matchDateFrom = !dateFrom || tDateOnly >= dateFrom;
+                    let matchDateTo = !dateTo || tDateOnly <= dateTo;
+                    return matchType && matchAcc && matchSearch && matchDateFrom && matchDateTo;
                 });
 
-                for (let catName in grouped) {
-                    let itemsCount = grouped[catName].length;
-                    let sectionHtml = `
-                        <div class="recurring-category-section">
-                            <div class="recurring-category-header" onclick="toggleRecurringGroup(this)">
-                                <span>📂 ${catName} (${itemsCount})</span>
-                                <span class="toggle-icon">►</span>
-                            </div>
-                            <div class="recurring-category-body">
-                    `;
+                if(filtered.length === 0) tList.innerHTML = '<p style="color:var(--text-light); text-align:center; padding: 10px 0; font-size:0.8rem;">Nessun movimento.</p>';
+                filtered.slice(0, 40).forEach(t => {
+                    let d = new Date(t.date).toLocaleDateString();
+                    let isGiroconto = t.type === 'Giroconto', isEntrata = t.type === 'Entrata';
+                    let badgeClass = isGiroconto ? 'giroconto' : (isEntrata ? 'entrata' : 'uscita');
+                    let badgeSymbol = isGiroconto ? '🔄' : (isEntrata ? '+' : '-');
+                    let metaText = isGiroconto ? `Da <strong>${t.fromAccount}</strong> a <strong>${t.toAccount}</strong>` : `<span class="t-tag">${t.category}</span> • ${t.accountName}`;
 
-                    grouped[catName].forEach(r => {
-                        let infoText = r.type === 'Giroconto' ? `${r.fromAccount} ➡️ ${r.toAccount}` : `${r.accountName}`;
-                        let freqLabel = r.frequency || 'Mensile';
-                        let nextDateFormatted = r.nextDate ? new Date(r.nextDate).toLocaleDateString() : 'Non impostata';
-                        
-                        let displayAmt = r.amount > 0 ? `€ ${r.amount.toFixed(2)}` : `Variabile`;
-                        let amtClass = r.amount > 0 ? 'recurring-compact-amount' : 'recurring-compact-amount variable';
+                    tList.innerHTML += `
+                        <div class="transaction-card">
+                            <div class="transaction-left">
+                                <div class="transaction-badge ${badgeClass}">${badgeSymbol}</div>
+                                <div class="transaction-details"><span class="t-desc">${t.desc}</span><span class="t-meta">${metaText} • ${d}</span></div>
+                            </div>
+                            <div class="transaction-right">
+                                <span class="transaction-amount ${badgeClass}">${isGiroconto?'🔄 ':(isEntrata?'+':'-')}€ ${t.amount.toFixed(2)}</span>
+                                <button class="btn-danger" onclick="deleteTransaction(${t.id})" style="padding:3px 6px!important; font-size:0.68rem!important;">Elimina</button>
+                            </div>
+                        </div>`;
+                });
+            }
+
+            let accList = document.getElementById('account-list');
+            if(accList) {
+                accList.innerHTML = '';
+                data.accounts.forEach((acc, index) => {
+                    let displayBalance = hideAccounts ? "€ ••••••" : `€ ${acc.balance.toFixed(2)}`;
+                    accList.innerHTML += `
+                        <div class="account-card-item">
+                            <div class="account-header-row">
+                                <div class="account-name-area" onclick="setMainAccount('${acc.name}')" style="cursor:pointer;">
+                                    <span>${acc.name}</span>${acc.isMain ? '<span class="main-badge">⭐</span>' : '<span class="normal-badge">⭐</span>'}
+                                </div>
+                                <div class="account-balance-area">${displayBalance}</div>
+                            </div>
+                            <div class="account-actions-row">
+                                <div class="account-move-group">
+                                    <button class="btn-move" onclick="moveAccount(${index}, -1)" ${index === 0 ? 'disabled style="opacity:0.3;"' : ''}>▲</button>
+                                    <button class="btn-move" onclick="moveAccount(${index}, 1)" ${index === data.accounts.length - 1 ? 'disabled style="opacity:0.3;"' : ''}>▼</button>
+                                </div>
+                                <div class="account-mgmt-group">
+                                    <button class="btn-edit" onclick="editAccount('${acc.name}')" style="padding:4px 8px!important;">Modifica</button>
+                                    <button class="btn-danger" onclick="deleteAccount('${acc.name}')" style="padding:4px 8px!important;">Elimina</button>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+            }
+
+            let rList = document.getElementById('recurring-list');
+            if(rList) {
+                rList.innerHTML = (!data.recurring || data.recurring.length === 0) ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0; font-size:0.8rem;">Nessun promemoria ricorrente.</p>' : '';
+                
+                const recurringBadge = document.getElementById('recurring-badge');
+                if (recurringBadge) {
+                    if (data.recurring && data.recurring.length > 0) {
+                        recurringBadge.style.display = 'inline-block';
+                    } else {
+                        recurringBadge.style.display = 'none';
+                    }
+                }
+
+                if(data.recurring && data.recurring.length > 0) {
+                    let grouped = {};
+                    data.recurring.forEach(r => {
+                        let groupKey = r.type === 'Giroconto' ? '🔄 Giroconti Ricorrenti' : (r.category || 'Altre Uscite');
+                        if (!grouped[groupKey]) grouped[groupKey] = [];
+                        grouped[groupKey].push(r);
+                    });
+
+                    for (let catName in grouped) {
+                        let itemsCount = grouped[catName].length;
+                        let sectionHtml = `
+                            <div class="recurring-category-section">
+                                <div class="recurring-category-header" onclick="toggleRecurringGroup(this)">
+                                    <span>📂 ${catName} (${itemsCount})</span>
+                                    <span class="toggle-icon">►</span>
+                                </div>
+                                <div class="recurring-category-body">
+                        `;
+
+                        grouped[catName].forEach(r => {
+                            let infoText = r.type === 'Giroconto' ? `${r.fromAccount} ➡️ ${r.toAccount}` : `${r.accountName}`;
+                            let freqLabel = r.frequency || 'Mensile';
+                            let nextDateFormatted = r.nextDate ? new Date(r.nextDate).toLocaleDateString() : 'Non impostata';
+                            
+                            let displayAmt = r.amount > 0 ? `€ ${r.amount.toFixed(2)}` : `Variabile`;
+                            let amtClass = r.amount > 0 ? 'recurring-compact-amount' : 'recurring-compact-amount variable';
+
+                            sectionHtml += `
+                                <div class="recurring-compact-item">
+                                    <div class="recurring-compact-info">
+                                        <span class="recurring-compact-title">${r.desc}</span>
+                                        <span class="recurring-compact-meta">🔄 ${freqLabel} • Scad. <strong>${nextDateFormatted}</strong> • ${infoText}</span>
+                                    </div>
+                                    <div class="recurring-compact-right">
+                                        <span class="${amtClass}">${displayAmt}</span>
+                                        <div class="recurring-compact-actions">
+                                            <button class="btn-edit" onclick="editRecurring(${r.id})">✏️</button>
+                                            <button class="btn-secondary" onclick="executeRecurring(${r.id})" style="background:rgba(16,185,129,0.15)!important; color:var(--success)!important; border:1px solid rgba(16,185,129,0.3)!important; font-weight:700;">▶️</button>
+                                            <button class="btn-danger" onclick="deleteRecurring(${r.id})">🗑️</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
 
                         sectionHtml += `
-                            <div class="recurring-compact-item">
-                                <div class="recurring-compact-info">
-                                    <span class="recurring-compact-title">${r.desc}</span>
-                                    <span class="recurring-compact-meta">🔄 ${freqLabel} • Scad. <strong>${nextDateFormatted}</strong> • ${infoText}</span>
-                                </div>
-                                <div class="recurring-compact-right">
-                                    <span class="${amtClass}">${displayAmt}</span>
-                                    <div class="recurring-compact-actions">
-                                        <button class="btn-edit" onclick="editRecurring(${r.id})">✏️</button>
-                                        <button class="btn-secondary" onclick="executeRecurring(${r.id})" style="background:rgba(16,185,129,0.15)!important; color:var(--success)!important; border:1px solid rgba(16,185,129,0.3)!important; font-weight:700;">▶️</button>
-                                        <button class="btn-danger" onclick="deleteRecurring(${r.id})">🗑️</button>
-                                    </div>
                                 </div>
                             </div>
                         `;
-                    });
-
-                    sectionHtml += `
-                            </div>
-                        </div>
-                    `;
-                    rList.innerHTML += sectionHtml;
+                        rList.innerHTML += sectionHtml;
+                    }
                 }
             }
 
             updateAccountSelect();
-            if (document.getElementById('t-type').value === 'Giroconto') updateTransferSelects('t-transfer-from', 't-transfer-to');
-            if (document.getElementById('r-type').value === 'Giroconto') updateTransferSelects('r-from-account', 'r-to-account');
+            if (document.getElementById('t-type') && document.getElementById('t-type').value === 'Giroconto') updateTransferSelects('t-transfer-from', 't-transfer-to');
+            if (document.getElementById('r-type') && document.getElementById('r-type').value === 'Giroconto') updateTransferSelects('r-from-account', 'r-to-account');
             else updateRecurringCategorySelect();
             
             renderAnalytics();
