@@ -475,13 +475,13 @@
             <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
         </div>
         <div class="sidebar-nav">
-            <button class="nav-item active" onclick="switchTab('dashboard', this)">📊 Dashboard</button>
-            <button class="nav-item" onclick="switchTab('transactions', this)">💳 Transazioni</button>
-            <button class="nav-item" onclick="switchTab('patrimony', this)">💰 Patrimonio</button>
-            <button class="nav-item" onclick="switchTab('categories', this)">🏷️ Categorie</button>
-            <button class="nav-item" onclick="switchTab('savings', this)">🎯 Obiettivi & Risparmio</button>
-            <button class="nav-item" onclick="switchTab('recurring', this)">🔄 Ricorrenti <span id="recurring-badge" style="display:none; background:var(--warning); color:#000; font-size:0.58rem; padding:1px 4px; border-radius:6px; font-weight:800; margin-left:auto;">PROMEMORIA</span></button>
-            <button class="nav-item" onclick="switchTab('analytics', this)">📈 Analisi & Report</button>
+            <button class="nav-item active" onclick="switchTab('dashboard', this, true)">📊 Dashboard</button>
+            <button class="nav-item" onclick="switchTab('transactions', this, true)">💳 Transazioni</button>
+            <button class="nav-item" onclick="switchTab('patrimony', this, true)">💰 Patrimonio</button>
+            <button class="nav-item" onclick="switchTab('categories', this, true)">🏷️ Categorie</button>
+            <button class="nav-item" onclick="switchTab('savings', this, true)">🎯 Obiettivi & Risparmio</button>
+            <button class="nav-item" onclick="switchTab('recurring', this, true)">🔄 Ricorrenti <span id="recurring-badge" style="display:none; background:var(--warning); color:#000; font-size:0.58rem; padding:1px 4px; border-radius:6px; font-weight:800; margin-left:auto;">PROMEMORIA</span></button>
+            <button class="nav-item" onclick="switchTab('analytics', this, true)">📈 Analisi & Report</button>
         </div>
 
         <div class="sidebar-section-title">Sicurezza & Notifiche</div>
@@ -580,9 +580,10 @@
     </div>
 
     <div id="tab-patrimony" class="tab-content">
-        <div class="card">
+        <div class="card" id="account-form-card">
             <h2 id="account-form-title">Aggiungi / Crea Conto</h2>
             <form id="account-form">
+                <input type="hidden" id="acc-original-name" value="">
                 <div class="form-group">
                     <label>Nome Conto / Investimento</label>
                     <input type="text" id="acc-name" placeholder="Es. Conto Corrente, Conto Deposito" required>
@@ -591,7 +592,10 @@
                     <label>Saldo Iniziale / Attuale (€)</label>
                     <input type="number" id="acc-balance" step="0.01" placeholder="0.00" required>
                 </div>
-                <button type="submit" id="account-submit-btn">Salva Conto</button>
+                <div style="display:flex; gap:8px;">
+                    <button type="submit" id="account-submit-btn">Salva Conto</button>
+                    <button type="button" class="btn-secondary" id="account-cancel-btn" onclick="cancelEditAccount()" style="display:none; width:auto; padding:0 16px;">Annulla</button>
+                </div>
             </form>
         </div>
 
@@ -725,7 +729,7 @@
         <div class="card">
             <h2>I tuoi Promemoria Ricorrenti</h2>
             <div class="analytics-report-banner" style="margin-bottom: 12px; font-size: 0.75rem;">
-                💡 Clicca su **"▶️ Applica"** per registrare ufficialmente l'operazione e aggiornare la scadenza.
+                💡 Clicca su <strong>"▶️ Applica"</strong> per registrare l'operazione oppure su <strong>"✏️"</strong> per modificarla.
             </div>
             <div id="recurring-list"></div>
         </div>
@@ -839,6 +843,7 @@
 
     <script>
         let globalReg = null;
+        let pendingNotificationItemId = null;
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -933,6 +938,11 @@
                 setTimeout(() => document.getElementById('p1').focus(), 300);
             } else {
                 document.getElementById('app-lock-screen').style.display = 'none';
+                if (pendingNotificationItemId) {
+                    const idToOpen = pendingNotificationItemId;
+                    pendingNotificationItemId = null;
+                    openRecurringByNotification(idToOpen);
+                }
             }
             checkRecurringNotifications();
         }
@@ -945,7 +955,11 @@
             Notification.requestPermission().then(permission => {
                 if (permission === "granted") {
                     showToast("Notifiche push attivate con successo! 🔔");
-                    new Notification("SmartBudget", { body: "Le notifiche per le tue scadenze ricorrenti sono attive!" });
+                    if (globalReg && globalReg.showNotification) {
+                        globalReg.showNotification("SmartBudget", { body: "Le notifiche per le tue scadenze ricorrenti sono attive!" });
+                    } else {
+                        new Notification("SmartBudget", { body: "Le notifiche per le tue scadenze ricorrenti sono attive!" });
+                    }
                 } else {
                     showToast("Permesso notifiche negato.");
                 }
@@ -961,12 +975,17 @@
                         if (globalReg && globalReg.showNotification) {
                             globalReg.showNotification("SmartBudget - Promemoria Scadenza", {
                                 body: `Oggi scade l'operazione ricorrente: "${r.desc}"`,
+                                tag: `rec-${r.id}`,
                                 data: { id: r.id }
                             });
                         } else {
-                            new Notification("SmartBudget - Promemoria Scadenza", {
+                            const n = new Notification("SmartBudget - Promemoria Scadenza", {
                                 body: `Oggi scade l'operazione ricorrente: "${r.desc}"`
                             });
+                            n.onclick = () => {
+                                window.focus();
+                                openRecurringByNotification(r.id);
+                            };
                         }
                     }
                 });
@@ -978,13 +997,14 @@
                 showToast("Imposta prima un PIN dal menu laterale!");
                 return;
             }
-            toggleSidebar();
+            closeSidebar();
             document.getElementById('app-lock-screen').style.display = 'flex';
             clearPinFields();
             setTimeout(() => document.getElementById('p1').focus(), 300);
         }
 
         function configureSecurityPIN() {
+            closeSidebar();
             openCustomPrompt("Imposta PIN di sicurezza (4 cifre)", "Inserisci le 4 cifre del PIN (lascia vuoto per disattivare):", (val) => {
                 if (val === "") {
                     localStorage.removeItem('smart_budget_security_pin');
@@ -1019,6 +1039,11 @@
             if ((p1 + p2 + p3 + p4) === userSecurityPin) {
                 document.getElementById('app-lock-screen').style.display = 'none';
                 clearPinFields();
+                if (pendingNotificationItemId) {
+                    const idToOpen = pendingNotificationItemId;
+                    pendingNotificationItemId = null;
+                    openRecurringByNotification(idToOpen);
+                }
             } else {
                 showToast("PIN non corretto!");
                 clearPinFields();
@@ -1318,14 +1343,22 @@
             document.getElementById('sidebar-overlay').classList.toggle('active');
         }
 
-        function switchTab(tabId, btnElement) {
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('sidebar-overlay').classList.remove('active');
+        }
+
+        function switchTab(tabId, btnElement, fromSidebar = false) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            document.getElementById('tab-' + tabId).classList.add('active');
-            btnElement.classList.add('active');
-            toggleSidebar();
-            if(tabId === 'analytics') renderAnalytics();
-            else if(tabId === 'savings') updateSavingsPlanUI();
+            const targetTab = document.getElementById('tab-' + tabId);
+            if (targetTab) targetTab.classList.add('active');
+            if (btnElement) btnElement.classList.add('active');
+            
+            if (fromSidebar) closeSidebar();
+            
+            if (tabId === 'analytics') renderAnalytics();
+            else if (tabId === 'savings') updateSavingsPlanUI();
         }
 
         function initAnalyticsSelectors() {
@@ -1422,24 +1455,64 @@
         function editAccount(name) {
             let account = data.accounts.find(acc => acc.name === name);
             if(account) {
+                // Assicura che la tab patrimonio sia attiva senza aprire il menu laterale
+                switchTab('patrimony', document.querySelector('.sidebar-nav button:nth-child(3)'), false);
+                closeSidebar();
+                
+                document.getElementById('acc-original-name').value = account.name;
                 document.getElementById('acc-name').value = account.name;
                 document.getElementById('acc-balance').value = account.balance;
-                document.getElementById('account-form-title').textContent = "Modifica Conto";
+                document.getElementById('account-form-title').textContent = `Modifica Conto: ${account.name}`;
                 document.getElementById('account-submit-btn').textContent = "Aggiorna Conto";
-                switchTab('patrimony', document.querySelector('.sidebar-nav button:nth-child(3)'));
+                document.getElementById('account-cancel-btn').style.display = "inline-block";
+                
+                const formCard = document.getElementById('account-form-card');
+                if (formCard) formCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                setTimeout(() => document.getElementById('acc-name').focus(), 250);
             }
+        }
+
+        function cancelEditAccount() {
+            document.getElementById('account-form').reset();
+            document.getElementById('acc-original-name').value = "";
+            document.getElementById('account-form-title').textContent = "Aggiungi / Crea Conto";
+            document.getElementById('account-submit-btn').textContent = "Salva Conto";
+            document.getElementById('account-cancel-btn').style.display = "none";
         }
 
         document.getElementById('account-form').addEventListener('submit', function(e) {
             e.preventDefault();
+            const originalName = document.getElementById('acc-original-name').value.trim();
             const name = document.getElementById('acc-name').value.trim();
             const balance = parseFloat(document.getElementById('acc-balance').value);
-            let existing = data.accounts.find(acc => acc.name.toLowerCase() === name.toLowerCase());
-            if (existing) existing.balance = balance;
-            else data.accounts.push({ name, balance, isMain: data.accounts.length === 0 });
-            saveData(); this.reset();
-            document.getElementById('account-form-title').textContent = "Aggiungi / Crea Conto";
-            document.getElementById('account-submit-btn').textContent = "Salva Conto";
+            
+            if (originalName) {
+                let existing = data.accounts.find(acc => acc.name === originalName);
+                if (existing) {
+                    existing.name = name;
+                    existing.balance = balance;
+                    // Aggiorna eventuali transazioni e ricorrenti collegate al vecchio nome del conto
+                    data.transactions.forEach(t => {
+                        if (t.accountName === originalName) t.accountName = name;
+                        if (t.fromAccount === originalName) t.fromAccount = name;
+                        if (t.toAccount === originalName) t.toAccount = name;
+                    });
+                    if (data.recurring) {
+                        data.recurring.forEach(r => {
+                            if (r.accountName === originalName) r.accountName = name;
+                            if (r.fromAccount === originalName) r.fromAccount = name;
+                            if (r.toAccount === originalName) r.toAccount = name;
+                        });
+                    }
+                }
+            } else {
+                let existing = data.accounts.find(acc => acc.name.toLowerCase() === name.toLowerCase());
+                if (existing) existing.balance = balance;
+                else data.accounts.push({ name, balance, isMain: data.accounts.length === 0 });
+            }
+            
+            saveData();
+            cancelEditAccount();
             showToast("Conto salvato con successo!");
         });
 
@@ -1576,6 +1649,126 @@
                 window._customPromptCallback(val);
                 window._customPromptCallback = null;
             }
+        }
+
+        function openEditRecurringModal(id) {
+            const r = data.recurring.find(item => item.id === id);
+            if (!r) return;
+
+            const modal = document.getElementById('fab-modal');
+            const overlay = document.getElementById('fab-modal-overlay');
+            const titleEl = document.getElementById('fab-modal-title');
+            const contentEl = document.getElementById('fab-modal-content');
+            document.getElementById('fab-container').classList.remove('active');
+
+            titleEl.textContent = "✏️ Modifica Promemoria Ricorrente";
+            contentEl.innerHTML = `
+                <form id="edit-recurring-form" onsubmit="handleEditRecurringSubmit(event, ${r.id})">
+                    <div class="form-group">
+                        <label>Tipo</label>
+                        <select id="q-r-type" onchange="onQuickRecurringTypeChange()">
+                            <option value="Uscita" ${r.type === 'Uscita' ? 'selected' : ''}>Uscita Ricorrente</option>
+                            <option value="Entrata" ${r.type === 'Entrata' ? 'selected' : ''}>Entrata Ricorrente</option>
+                            <option value="Giroconto" ${r.type === 'Giroconto' ? 'selected' : ''}>Giroconto Ricorrente 🔄</option>
+                        </select>
+                    </div>
+                    <div id="q-r-standard-fields">
+                        <div class="form-group">
+                            <label>Conto</label>
+                            <select id="q-r-account"></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Categoria</label>
+                            <select id="q-r-category"></select>
+                        </div>
+                    </div>
+                    <div id="q-r-transfer-fields" style="display:none;">
+                        <div class="form-group">
+                            <label>Conto Origine</label>
+                            <select id="q-r-from-account"></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Conto Destinazione</label>
+                            <select id="q-r-to-account"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Frequenza</label>
+                        <select id="q-r-frequency">
+                            <option value="Giornaliera" ${r.frequency === 'Giornaliera' ? 'selected' : ''}>Giornaliera</option>
+                            <option value="Settimanale" ${r.frequency === 'Settimanale' ? 'selected' : ''}>Settimanale</option>
+                            <option value="Mensile" ${(!r.frequency || r.frequency === 'Mensile') ? 'selected' : ''}>Mensile</option>
+                            <option value="Trimestrale" ${r.frequency === 'Trimestrale' ? 'selected' : ''}>Trimestrale</option>
+                            <option value="Semestrale" ${r.frequency === 'Semestrale' ? 'selected' : ''}>Semestrale</option>
+                            <option value="Annuale" ${r.frequency === 'Annuale' ? 'selected' : ''}>Annuale</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Prossima Scadenza</label>
+                        <input type="date" id="q-r-date" value="${r.nextDate || new Date().toISOString().slice(0, 10)}" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Importo (€) <span style="font-size:0.65rem; color:var(--text-light);">(Vuoto = variabile)</span></label>
+                        <input type="number" id="q-r-amount" step="0.01" value="${r.amount > 0 ? r.amount : ''}" placeholder="0.00">
+                    </div>
+                    <div class="form-group">
+                        <label>Descrizione</label>
+                        <input type="text" id="q-r-desc" value="${r.desc}" required>
+                    </div>
+                    <button type="submit">Salva Modifiche</button>
+                </form>
+            `;
+
+            populateQuickRecurringSelects();
+            onQuickRecurringTypeChange();
+
+            if (r.type === 'Giroconto') {
+                document.getElementById('q-r-from-account').value = r.fromAccount;
+                document.getElementById('q-r-to-account').value = r.toAccount;
+            } else {
+                document.getElementById('q-r-account').value = r.accountName;
+                document.getElementById('q-r-category').value = r.category;
+            }
+
+            modal.classList.add('active');
+            overlay.classList.add('active');
+        }
+
+        function handleEditRecurringSubmit(event, id) {
+            event.preventDefault();
+            const r = data.recurring.find(item => item.id === id);
+            if (!r) return;
+
+            const type = document.getElementById('q-r-type').value;
+            const frequency = document.getElementById('q-r-frequency').value;
+            const nextDate = document.getElementById('q-r-date').value;
+            const amount = parseFloat(document.getElementById('q-r-amount').value) || 0;
+            const desc = document.getElementById('q-r-desc').value.trim();
+
+            if (type === 'Giroconto') {
+                const fromAcc = document.getElementById('q-r-from-account').value;
+                const toAcc = document.getElementById('q-r-to-account').value;
+                if (fromAcc === toAcc) { showToast("Scegli conti differenti!"); return; }
+                r.fromAccount = fromAcc;
+                r.toAccount = toAcc;
+                delete r.accountName;
+                delete r.category;
+            } else {
+                r.accountName = document.getElementById('q-r-account').value;
+                r.category = document.getElementById('q-r-category').value;
+                delete r.fromAccount;
+                delete r.toAccount;
+            }
+
+            r.type = type;
+            r.frequency = frequency;
+            r.nextDate = nextDate;
+            r.amount = amount;
+            r.desc = desc;
+
+            saveData();
+            closeQuickModal();
+            showToast("Promemoria aggiornato!");
         }
 
         function openQuickModal(type) {
@@ -1794,6 +1987,7 @@
         function populateQuickRecurringSelects() {
             const accSelect = document.getElementById('q-r-account');
             if(!accSelect) return;
+            accSelect.innerHTML = '';
             data.accounts.forEach(acc => { accSelect.innerHTML += `<option value="${acc.name}">${acc.name}</option>`; });
             updateQuickRecurringCategorySelect();
         }
@@ -1896,7 +2090,7 @@
             const searchInput = document.getElementById('search-transaction');
             if (searchInput) {
                 searchInput.value = tag;
-                switchTab('transactions', document.querySelector('.sidebar-nav button:nth-child(2)'));
+                switchTab('transactions', document.querySelector('.sidebar-nav button:nth-child(2)'), false);
                 renderApp();
             }
         }
@@ -2190,8 +2384,8 @@
                                     <button class="btn-move" onclick="moveAccount(${index}, 1)" ${index === data.accounts.length - 1 ? 'disabled style="opacity:0.3;"' : ''}>▼</button>
                                 </div>
                                 <div class="account-mgmt-group">
-                                    <button class="btn-edit" onclick="editAccount('${acc.name}')">Modifica</button>
-                                    <button class="btn-danger" onclick="deleteAccount('${acc.name}')">Elimina</button>
+                                    <button class="btn-edit" onclick="editAccount('${acc.name.replace(/'/g, "\\'")}')">Modifica</button>
+                                    <button class="btn-danger" onclick="deleteAccount('${acc.name.replace(/'/g, "\\'")}')">Elimina</button>
                                 </div>
                             </div>
                         </div>`;
@@ -2237,7 +2431,8 @@
                                         <span class="${amtClass}">${displayAmt}</span>
                                         <div class="recurring-compact-actions">
                                             <button class="btn-secondary" onclick="executeRecurring(${r.id})" style="background:rgba(16,185,129,0.15)!important; color:var(--success)!important; font-weight:700;">▶️ Applica</button>
-                                            <button class="btn-danger" onclick="deleteRecurring(${r.id})">🗑️</button>
+                                            <button class="btn-edit" onclick="openEditRecurringModal(${r.id})" title="Modifica">✏️</button>
+                                            <button class="btn-danger" onclick="deleteRecurring(${r.id})" title="Elimina">🗑️</button>
                                         </div>
                                     </div>
                                 </div>
@@ -2257,23 +2452,42 @@
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.addEventListener('message', event => {
                 if (event.data && event.data.action === 'open_recurring_item') {
-                    openRecurringByNotification(event.data.id);
+                    if (userSecurityPin && document.getElementById('app-lock-screen').style.display !== 'none') {
+                        pendingNotificationItemId = event.data.id;
+                    } else {
+                        openRecurringByNotification(event.data.id);
+                    }
                 }
             });
         }
 
         function openRecurringByNotification(itemId) {
-            switchTab('recurring', document.querySelector('.sidebar-nav button:nth-child(6)'));
+            // 1. Cambia scheda su Ricorrenti senza aprire la barra laterale
+            switchTab('recurring', document.querySelector('.sidebar-nav button:nth-child(6)'), false);
+            closeSidebar();
+
             if (itemId) {
                 setTimeout(() => {
-                    let targetElement = document.getElementById(`recurring-item-${itemId}`);
+                    const targetElement = document.getElementById(`recurring-item-${itemId}`);
                     if (targetElement) {
+                        // 2. Apri la cartella/categoria che contiene l'elemento
+                        const parentSection = targetElement.closest('.recurring-category-section');
+                        if (parentSection) {
+                            parentSection.classList.add('open');
+                        }
+                        
+                        // 3. Scorri sull'elemento e mettilo in evidenza
                         targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        targetElement.style.transition = "background 0.5s";
-                        targetElement.style.background = "rgba(99, 102, 241, 0.3)";
-                        setTimeout(() => targetElement.style.background = "", 1500);
+                        targetElement.style.transition = "background 0.5s, border-color 0.5s";
+                        targetElement.style.background = "rgba(99, 102, 241, 0.35)";
+                        targetElement.style.borderColor = "var(--primary)";
+                        
+                        setTimeout(() => {
+                            targetElement.style.background = "";
+                            targetElement.style.borderColor = "";
+                        }, 2500);
                     }
-                }, 300);
+                }, 250);
             }
         }
 
@@ -2281,7 +2495,13 @@
             const urlParams = new URLSearchParams(window.location.search);
             const openId = urlParams.get('open_recurring');
             if (openId) {
-                setTimeout(() => openRecurringByNotification(openId), 500);
+                // Pulisci il parametro dall'URL per evitare riaperture al refresh manuale
+                window.history.replaceState({}, document.title, window.location.pathname);
+                if (userSecurityPin) {
+                    pendingNotificationItemId = openId;
+                } else {
+                    setTimeout(() => openRecurringByNotification(openId), 350);
+                }
             }
         });
 
