@@ -14,24 +14,24 @@
             --warning: #f59e0b;
             --info: #3b82f6;
             --bg: #070a14;
-            --card-bg: rgba(19, 28, 46, 0.75);
+            --card-bg: rgba(19, 28, 46, 0.85);
             --card-border: rgba(255, 255, 255, 0.08);
             --text: #f8fafc;
             --text-light: #94a3b8;
-            --input-bg: rgba(11, 17, 30, 0.85);
-            --radius-lg: 22px;
-            --radius-md: 14px;
+            --input-bg: rgba(11, 17, 30, 0.9);
+            --radius-lg: 20px;
+            --radius-md: 12px;
             --radius-sm: 8px;
-            --blur: blur(14px);
+            --blur: blur(16px);
         }
 
         [data-theme="light"] {
-            --bg: #e2e8f0;
-            --card-bg: rgba(255, 255, 255, 0.85);
+            --bg: #f1f5f9;
+            --card-bg: rgba(255, 255, 255, 0.9);
             --card-border: rgba(0, 0, 0, 0.06);
             --text: #0f172a;
             --text-light: #64748b;
-            --input-bg: rgba(248, 250, 252, 0.9);
+            --input-bg: rgba(248, 250, 252, 0.95);
         }
 
         * {
@@ -40,44 +40,42 @@
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation; /* SOLUZIONE DEFINITIVA PER I TOCCHI SU iOS */
+            touch-action: manipulation;
         }
 
         html, body {
             background-color: var(--bg);
             color: var(--text);
             width: 100%;
-            height: 100%;
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
             overflow-x: hidden;
-            position: relative;
         }
 
         body {
             max-width: 600px;
             margin: 0 auto;
-            padding: 12px;
-            padding-bottom: calc(180px + env(safe-area-inset-bottom, 40px));
-            min-height: 100vh;
-            min-height: -webkit-fill-available;
+            padding: 14px;
+            padding-bottom: calc(140px + env(safe-area-inset-bottom, 30px));
             transition: background 0.3s, color 0.3s;
         }
 
         #toast-container {
             position: fixed;
-            top: 20px;
+            top: calc(16px + env(safe-area-inset-top, 0px));
             left: 50%;
             transform: translateX(-50%) translateY(-100px);
             background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
             color: white;
-            padding: 12px 20px;
+            padding: 10px 18px;
             border-radius: var(--radius-md);
             box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
-            z-index: 30000;
-            font-size: 0.85rem;
+            z-index: 40000;
+            font-size: 0.82rem;
             font-weight: 700;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             pointer-events: none;
         }
@@ -92,10 +90,10 @@
             max-width: 420px;
             background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
             color: white;
-            padding: 14px 18px;
+            padding: 12px 16px;
             border-radius: var(--radius-lg);
             box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
-            z-index: 20000;
+            z-index: 30000;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -103,14 +101,14 @@
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
         #update-banner.show { transform: translateX(-50%) translateY(0); }
-        .update-banner-text { font-size: 0.82rem; font-weight: 700; line-height: 1.3; }
+        .update-banner-text { font-size: 0.8rem; font-weight: 700; }
         .update-banner-btn {
             background: white !important;
             color: var(--primary) !important;
             border: none !important;
             padding: 6px 12px !important;
             border-radius: var(--radius-sm) !important;
-            font-size: 0.78rem !important;
+            font-size: 0.75rem !important;
             font-weight: 800 !important;
             cursor: pointer;
             width: auto !important;
@@ -120,7 +118,7 @@
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
             background: var(--bg);
-            z-index: 10000;
+            z-index: 25000;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             padding: 20px; text-align: center;
             backdrop-filter: var(--blur);
@@ -130,33 +128,33 @@
             background: var(--card-bg);
             border: 1px solid var(--card-border);
             backdrop-filter: var(--blur);
-            padding: 30px 24px;
+            padding: 28px 20px;
             border-radius: var(--radius-lg);
-            width: 100%; max-width: 340px;
+            width: 100%; max-width: 330px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.4);
         }
 
-        .lock-icon { font-size: 3rem; margin-bottom: 12px; }
-        .pin-inputs { display: flex; justify-content: center; gap: 10px; margin: 20px 0; }
+        .lock-icon { font-size: 2.8rem; margin-bottom: 10px; }
+        .pin-inputs { display: flex; justify-content: center; gap: 10px; margin: 18px 0; }
         .pin-digit {
-            width: 45px; height: 50px; text-align: center; font-size: 1.4rem; font-weight: 800;
+            width: 44px; height: 48px; text-align: center; font-size: 1.3rem; font-weight: 800;
             border-radius: var(--radius-md); border: 1px solid var(--card-border);
             background: var(--input-bg); color: var(--text);
         }
 
         header {
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 20px; padding-top: calc(8px + env(safe-area-inset-top, 0px)); position: relative;
+            margin-bottom: 18px; padding-top: calc(6px + env(safe-area-inset-top, 0px)); position: relative;
         }
         .header-title-area { text-align: center; flex-grow: 1; }
         header h1 {
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             font-weight: 800; letter-spacing: -0.5px;
         }
         .app-version-tag {
-            font-size: 0.65rem;
+            font-size: 0.62rem;
             color: var(--text-light);
             font-weight: 700;
             background: rgba(99, 102, 241, 0.1);
@@ -179,15 +177,17 @@
 
         .sidebar-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(8px);
-            z-index: 998; opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease;
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(6px);
+            z-index: 10000; opacity: 0; visibility: hidden; transition: opacity 0.25s ease, visibility 0.25s ease;
+            pointer-events: none;
         }
-        .sidebar-overlay.active { opacity: 1; visibility: visible; }
+        .sidebar-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
 
         .sidebar {
             position: fixed; top: 0; left: -280px; width: 280px; height: 100%;
             background: var(--card-bg); border-right: 1px solid var(--card-border); backdrop-filter: var(--blur);
-            z-index: 999; display: flex; flex-direction: column; padding: calc(24px + env(safe-area-inset-top, 0px)) 16px calc(24px + env(safe-area-inset-bottom, 20px)) 16px;
+            z-index: 10001; display: flex; flex-direction: column; 
+            padding: calc(20px + env(safe-area-inset-top, 0px)) 16px calc(20px + env(safe-area-inset-bottom, 20px)) 16px;
             transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 10px 0 30px rgba(0,0,0,0.3);
             overflow-y: auto;
             -webkit-overflow-scrolling: touch;
@@ -195,10 +195,10 @@
         .sidebar.active { left: 0; }
         .sidebar-header {
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--card-border);
+            margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid var(--card-border);
         }
         .sidebar-header h3 {
-            font-size: 1.1rem; font-weight: 800;
+            font-size: 1.05rem; font-weight: 800;
             background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
@@ -207,255 +207,270 @@
             width: 32px; height: 32px; border-radius: var(--radius-sm);
             display: flex; align-items: center; justify-content: center;
         }
-        .sidebar-nav { display: flex; flex-direction: column; gap: 6px; }
+        .sidebar-nav { display: flex; flex-direction: column; gap: 4px; }
         .nav-item {
-            background: none; border: none; color: var(--text-light); font-size: 0.95rem; font-weight: 500;
-            text-align: left; padding: 12px 14px; border-radius: var(--radius-md); cursor: pointer;
-            transition: all 0.2s ease; display: flex; align-items: center; gap: 12px;
+            background: none; border: none; color: var(--text-light); font-size: 0.92rem; font-weight: 500;
+            text-align: left; padding: 11px 12px; border-radius: var(--radius-md); cursor: pointer;
+            transition: all 0.2s ease; display: flex; align-items: center; gap: 10px;
         }
-        .nav-item:hover { background: rgba(255, 255, 255, 0.04); color: var(--text); transform: translateX(4px); }
+        .nav-item:hover { background: rgba(255, 255, 255, 0.04); color: var(--text); }
         .nav-item.active { color: #818cf8; font-weight: 700; background: rgba(99, 102, 241, 0.12); border: 1px solid rgba(99, 102, 241, 0.25); }
 
         .sidebar-section-title {
-            font-size: 0.7rem; color: var(--text-light); text-transform: uppercase;
-            letter-spacing: 0.8px; margin: 20px 0 8px 6px; font-weight: 700;
+            font-size: 0.68rem; color: var(--text-light); text-transform: uppercase;
+            letter-spacing: 0.8px; margin: 16px 0 6px 4px; font-weight: 700;
         }
 
         .card {
             background: var(--card-bg);
             border-radius: var(--radius-lg);
-            padding: 16px; margin-bottom: 16px;
-            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.2);
+            padding: 15px; margin-bottom: 14px;
+            box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.15);
             border: 1px solid var(--card-border);
             backdrop-filter: var(--blur);
             width: 100%; overflow: hidden;
-            transition: transform 0.2s ease;
         }
-        .card:hover { border-color: rgba(99, 102, 241, 0.2); }
 
-        .dashboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 14px; }
         .stat-box {
-            background: var(--card-bg); padding: 14px 10px; border-radius: var(--radius-md);
+            background: var(--card-bg); padding: 12px 10px; border-radius: var(--radius-md);
             border: 1px solid var(--card-border); text-align: center; position: relative;
             backdrop-filter: var(--blur);
         }
         .stat-box h3 {
-            font-size: 0.65rem; color: var(--text-light); text-transform: uppercase;
-            letter-spacing: 0.5px; margin-bottom: 6px; font-weight: 600;
+            font-size: 0.62rem; color: var(--text-light); text-transform: uppercase;
+            letter-spacing: 0.5px; margin-bottom: 4px; font-weight: 600;
             display: flex; align-items: center; justify-content: center; gap: 4px;
         }
 
         button.eye-toggle-btn {
             all: unset; display: inline-flex; align-items: center; justify-content: center;
-            cursor: pointer; font-size: 0.85rem; padding: 2px 5px; border-radius: var(--radius-sm);
+            cursor: pointer; font-size: 0.8rem; padding: 2px 4px; border-radius: var(--radius-sm);
             background: rgba(255, 255, 255, 0.05); border: 1px solid var(--card-border);
-            transition: background 0.2s; width: auto !important;
         }
-        button.eye-toggle-btn:hover { background: rgba(255, 255, 255, 0.1); }
 
-        .stat-box .value { font-size: 1.15rem; font-weight: 800; letter-spacing: -0.3px; }
+        .stat-box .value { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.3px; }
         .value.income { color: var(--success); }
         .value.expense { color: var(--danger); }
         .value.patrimony { color: #818cf8; }
 
         h2 {
-            font-size: 0.98rem; margin-bottom: 12px; color: var(--text);
+            font-size: 0.95rem; margin-bottom: 10px; color: var(--text);
             display: flex; justify-content: space-between; align-items: center; font-weight: 700;
         }
 
-        .form-group { margin-bottom: 12px; width: 100%; display: flex; flex-direction: column; }
+        .form-group { margin-bottom: 10px; width: 100%; display: flex; flex-direction: column; }
         label {
             display: flex; justify-content: space-between; align-items: center;
-            font-size: 0.78rem; color: var(--text-light); margin-bottom: 4px; font-weight: 500;
+            font-size: 0.75rem; color: var(--text-light); margin-bottom: 3px; font-weight: 500;
         }
         input, select {
-            width: 100%; max-width: 100%; height: 42px; padding: 0 12px;
+            width: 100%; height: 40px; padding: 0 12px;
             border: 1px solid var(--card-border); border-radius: var(--radius-md);
-            font-size: 0.9rem; background: var(--input-bg); color: var(--text);
-            outline: none; box-sizing: border-box; line-height: 40px; backdrop-filter: var(--blur);
+            font-size: 0.88rem; background: var(--input-bg); color: var(--text);
+            outline: none; box-sizing: border-box; backdrop-filter: var(--blur);
             -webkit-appearance: none; appearance: none;
         }
-        input[type="date"] { display: block; min-height: 42px; }
+        input[type="date"] { display: block; min-height: 40px; }
         input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
 
         button:not(.eye-toggle-btn):not(.menu-btn):not(.sidebar-close):not(.theme-btn):not(.fab-main):not(.fab-item):not(.update-banner-btn) {
-            width: 100%; padding: 11px; background-color: var(--primary); color: white;
-            border: none; border-radius: var(--radius-md); font-size: 0.9rem; font-weight: 700;
-            cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            width: 100%; padding: 10px; background-color: var(--primary); color: white;
+            border: none; border-radius: var(--radius-md); font-size: 0.88rem; font-weight: 700;
+            cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
             pointer-events: auto;
         }
         button:not(.eye-toggle-btn):not(.menu-btn):not(.sidebar-close):not(.theme-btn):not(.fab-main):not(.fab-item):not(.update-banner-btn):hover {
-            background-color: var(--primary-hover); transform: translateY(-1px);
+            background-color: var(--primary-hover);
         }
 
         .btn-secondary { background: rgba(255, 255, 255, 0.05) !important; border: 1px solid var(--card-border) !important; color: var(--text) !important; box-shadow: none !important; }
-        .btn-secondary:hover { background: rgba(255, 255, 255, 0.1) !important; }
+        .btn-secondary:hover { background: rgba(255, 255, 255, 0.08) !important; }
 
         .btn-danger {
             background-color: rgba(239, 68, 68, 0.12) !important; color: var(--danger) !important;
-            padding: 6px 8px !important; font-size: 0.72rem !important; width: auto !important;
+            padding: 5px 8px !important; font-size: 0.7rem !important; width: auto !important;
             border-radius: var(--radius-sm) !important; border: 1px solid rgba(239, 68, 68, 0.25) !important;
             font-weight: 600; box-shadow: none !important;
         }
         .btn-edit {
             background-color: rgba(99, 102, 241, 0.12) !important; color: #818cf8 !important;
-            padding: 6px 8px !important; font-size: 0.72rem !important; width: auto !important;
+            padding: 5px 8px !important; font-size: 0.7rem !important; width: auto !important;
             border-radius: var(--radius-sm) !important; border: 1px solid rgba(99, 102, 241, 0.25) !important;
             font-weight: 600; box-shadow: none !important;
         }
         .btn-move {
             background: rgba(255, 255, 255, 0.05) !important; border: 1px solid var(--card-border) !important;
-            color: var(--text-light) !important; font-size: 0.75rem !important; padding: 4px 6px !important;
+            color: var(--text-light) !important; font-size: 0.72rem !important; padding: 4px 6px !important;
             border-radius: var(--radius-sm) !important; width: auto !important; box-shadow: none !important;
         }
 
         .account-card-item {
             background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md);
-            padding: 12px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 6px;
+            padding: 10px 12px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 6px;
         }
         .account-header-row { display: flex; justify-content: space-between; align-items: center; }
-        .account-name-area { display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 0.9rem; }
-        .account-balance-area { font-weight: 800; color: #818cf8; font-size: 0.98rem; }
+        .account-name-area { display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 0.88rem; }
+        .account-balance-area { font-weight: 800; color: #818cf8; font-size: 0.95rem; }
         .account-actions-row { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--card-border); padding-top: 6px; }
         .account-move-group, .account-mgmt-group { display: flex; gap: 4px; }
 
         .category-card-item {
             background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md);
-            padding: 10px 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
+            padding: 9px 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
         }
-        .category-name-area { font-weight: 700; font-size: 0.85rem; display: flex; flex-direction: column; gap: 2px; }
+        .category-name-area { font-weight: 700; font-size: 0.82rem; display: flex; flex-direction: column; gap: 2px; }
         .category-actions { display: flex; gap: 6px; align-items: center; }
 
-        .main-badge { font-size: 0.65rem; background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 4px; border-radius: 4px; }
-        .normal-badge { font-size: 0.65rem; background: rgba(255, 255, 255, 0.05); color: var(--text-light); border: 1px solid var(--card-border); padding: 2px 4px; border-radius: 4px; cursor: pointer; }
+        .main-badge { font-size: 0.62rem; background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); padding: 1px 4px; border-radius: 4px; }
+        .normal-badge { font-size: 0.62rem; background: rgba(255, 255, 255, 0.05); color: var(--text-light); border: 1px solid var(--card-border); padding: 1px 4px; border-radius: 4px; cursor: pointer; }
 
-        .budget-item { margin-bottom: 12px; padding-bottom: 10px; border-bottom: 1px solid var(--card-border); }
+        .budget-item { margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--card-border); }
         .budget-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
-        .budget-info { display: flex; justify-content: space-between; font-size: 0.78rem; margin-bottom: 4px; }
-        .progress-bar-container { width: 100%; background: var(--input-bg); border-radius: 6px; height: 7px; overflow: hidden; border: 1px solid var(--card-border); }
+        .budget-info { display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 3px; }
+        .progress-bar-container { width: 100%; background: var(--input-bg); border-radius: 6px; height: 6px; overflow: hidden; border: 1px solid var(--card-border); }
         .progress-bar { height: 100%; width: 0%; transition: width 0.5s ease; border-radius: 6px; }
 
-        .advice-box { background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: var(--radius-md); padding: 12px; margin-top: 10px; }
-        .advice-box h3 { font-size: 0.82rem; color: #818cf8; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; font-weight: 700; }
-        .advice-box p { font-size: 0.78rem; color: var(--text-light); line-height: 1.4; }
+        .advice-box { background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.2); border-radius: var(--radius-md); padding: 10px 12px; margin-top: 8px; }
+        .advice-box h3 { font-size: 0.78rem; color: #818cf8; margin-bottom: 3px; display: flex; align-items: center; gap: 6px; font-weight: 700; }
+        .advice-box p { font-size: 0.75rem; color: var(--text-light); line-height: 1.35; }
 
-        .transaction-list { max-height: 450px; overflow-y: auto; padding-right: 2px; -webkit-overflow-scrolling: touch; }
-        .transaction-card { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .transaction-list { max-height: 420px; overflow-y: auto; padding-right: 2px; -webkit-overflow-scrolling: touch; }
+        .transaction-card { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 9px 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         .transaction-left { display: flex; align-items: flex-start; gap: 8px; overflow: hidden; }
-        .transaction-badge { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; flex-shrink: 0; }
+        .transaction-badge { width: 28px; height: 28px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.8rem; flex-shrink: 0; }
         .transaction-badge.entrata { background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
         .transaction-badge.uscita { background: rgba(239, 68, 68, 0.15); color: var(--danger); border: 1px solid rgba(239, 68, 68, 0.3); }
         .transaction-badge.giroconto { background: rgba(59, 130, 246, 0.15); color: var(--info); border: 1px solid rgba(59, 130, 246, 0.3); }
 
         .transaction-details { display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
-        .transaction-details .t-desc { font-weight: 700; color: var(--text); font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .transaction-details .t-meta { font-size: 0.68rem; color: var(--text-light); display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
-        .t-tag { background: rgba(99, 102, 241, 0.15); color: #818cf8; padding: 1px 5px; border-radius: 4px; border: 1px solid rgba(99, 102, 241, 0.3); font-size: 0.65rem; font-weight: 700; cursor: pointer; }
+        .transaction-details .t-desc { font-weight: 700; color: var(--text); font-size: 0.82rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .transaction-details .t-meta { font-size: 0.65rem; color: var(--text-light); display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+        .t-tag { background: rgba(99, 102, 241, 0.15); color: #818cf8; padding: 1px 4px; border-radius: 4px; border: 1px solid rgba(99, 102, 241, 0.3); font-size: 0.62rem; font-weight: 700; cursor: pointer; }
         .t-tag:hover { background: rgba(99, 102, 241, 0.3); }
 
         .transaction-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; margin-left: 6px; }
-        .transaction-amount { font-weight: 800; font-size: 0.85rem; }
+        .transaction-amount { font-weight: 800; font-size: 0.82rem; }
         .transaction-amount.entrata { color: var(--success); }
         .transaction-amount.uscita { color: var(--danger); }
         .transaction-amount.giroconto { color: var(--info); }
 
         .recurring-category-section {
-            margin-bottom: 12px; border: 1px solid var(--card-border); border-radius: var(--radius-md); overflow: hidden; background: var(--input-bg);
+            margin-bottom: 10px; border: 1px solid var(--card-border); border-radius: var(--radius-md); overflow: hidden; background: var(--input-bg);
             -webkit-overflow-scrolling: touch;
         }
         .recurring-category-header {
-            font-size: 0.85rem; color: var(--primary); font-weight: 800; padding: 14px 12px; background: rgba(255, 255, 255, 0.02);
-            display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; transition: background 0.2s ease;
+            font-size: 0.82rem; color: var(--primary); font-weight: 800; padding: 12px; background: rgba(255, 255, 255, 0.02);
+            display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;
         }
-        .recurring-category-header:hover { background: rgba(255, 255, 255, 0.05); }
-        .recurring-category-header .toggle-icon { font-size: 0.75rem; transition: transform 0.2s ease; color: var(--text-light); }
-        .recurring-category-body { display: none; padding: 10px; border-top: 1px solid var(--card-border); background: var(--card-bg); }
+        .recurring-category-header .toggle-icon { font-size: 0.72rem; transition: transform 0.2s ease; color: var(--text-light); }
+        .recurring-category-body { display: none; padding: 8px 10px 10px 10px; border-top: 1px solid var(--card-border); background: var(--card-bg); }
         .recurring-category-section.open .recurring-category-body { display: flex; flex-direction: column; gap: 8px; }
         .recurring-category-section.open .toggle-icon { transform: rotate(90deg); }
 
         .recurring-compact-item {
             background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-sm);
-            padding: 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px;
+            padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px;
         }
         .recurring-compact-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex-grow: 1; }
-        .recurring-compact-title { font-weight: 700; color: var(--text); font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .recurring-compact-meta { font-size: 0.68rem; color: var(--text-light); display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
-        .recurring-compact-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
-        .recurring-compact-amount { font-weight: 800; font-size: 0.85rem; color: #818cf8; white-space: nowrap; }
-        .recurring-compact-amount.variable { color: var(--warning); font-size: 0.72rem; }
-        .recurring-compact-actions { display: flex; gap: 6px; align-items: center; }
-        .recurring-compact-actions button { width: auto !important; padding: 5px 8px !important; font-size: 0.72rem !important; border-radius: var(--radius-sm) !important; cursor: pointer; pointer-events: auto; }
+        .recurring-compact-title { font-weight: 700; color: var(--text); font-size: 0.82rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .recurring-compact-meta { font-size: 0.65rem; color: var(--text-light); display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+        .recurring-compact-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+        .recurring-compact-amount { font-weight: 800; font-size: 0.82rem; color: #818cf8; white-space: nowrap; }
+        .recurring-compact-amount.variable { color: var(--warning); font-size: 0.7rem; }
+        .recurring-compact-actions { display: flex; gap: 4px; align-items: center; }
+        .recurring-compact-actions button { width: auto !important; padding: 4px 6px !important; font-size: 0.68rem !important; border-radius: var(--radius-sm) !important; cursor: pointer; pointer-events: auto; }
 
         .savings-hero-box {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.18) 0%, rgba(192, 132, 252, 0.12) 100%);
-            border: 1px solid rgba(99, 102, 241, 0.35); border-radius: var(--radius-md);
-            padding: 18px 14px; text-align: center; margin-bottom: 14px; position: relative;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(192, 132, 252, 0.1) 100%);
+            border: 1px solid rgba(99, 102, 241, 0.3); border-radius: var(--radius-md);
+            padding: 16px 12px; text-align: center; margin-bottom: 12px; position: relative;
         }
-        .savings-hero-title { font-size: 0.7rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.8px; font-weight: 700; margin-bottom: 4px; }
-        .savings-hero-value { font-size: 1.9rem; font-weight: 900; color: var(--success); letter-spacing: -0.5px; }
+        .savings-hero-title { font-size: 0.68rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.8px; font-weight: 700; margin-bottom: 3px; }
+        .savings-hero-value { font-size: 1.8rem; font-weight: 900; color: var(--success); letter-spacing: -0.5px; }
 
-        .savings-grid-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; }
-        .savings-pill-card { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 10px 6px; text-align: center; }
-        .savings-pill-card span { display: block; font-size: 0.63rem; color: var(--text-light); font-weight: 600; text-transform: uppercase; margin-bottom: 2px; }
-        .savings-pill-card strong { font-size: 0.88rem; font-weight: 800; }
+        .savings-grid-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
+        .savings-pill-card { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 8px 4px; text-align: center; }
+        .savings-pill-card span { display: block; font-size: 0.6rem; color: var(--text-light); font-weight: 600; text-transform: uppercase; margin-bottom: 2px; }
+        .savings-pill-card strong { font-size: 0.85rem; font-weight: 800; }
 
         .savings-progress-track {
-            position: relative; width: 100%; background: var(--input-bg); border-radius: 99px; height: 14px; overflow: hidden; border: 1px solid var(--card-border); margin: 12px 0 8px 0;
+            position: relative; width: 100%; background: var(--input-bg); border-radius: 99px; height: 12px; overflow: hidden; border: 1px solid var(--card-border); margin: 10px 0 6px 0;
         }
         .savings-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #10b981 0%, #38bdf8 100%); border-radius: 99px; transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
 
-        .sim-slider-container { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 14px; margin-top: 10px; }
-        .sim-slider-container label { font-size: 0.78rem; font-weight: 700; color: var(--text); margin-bottom: 8px; }
-        .sim-slider { width: 100%; accent-color: var(--primary); cursor: pointer; height: 6px; background: var(--card-border); border-radius: 4px; outline: none; }
+        .sim-slider-container { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 12px; margin-top: 8px; }
+        .sim-slider-container label { font-size: 0.75rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+        .sim-slider { width: 100%; accent-color: var(--primary); cursor: pointer; height: 5px; background: var(--card-border); border-radius: 4px; outline: none; }
 
-        .analytics-card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; }
+        .analytics-card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 8px; }
         .analytics-mini-box { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 8px 2px; text-align: center; overflow: hidden; }
-        .analytics-mini-box span { display: block; font-size: 0.6rem; color: var(--text-light); text-transform: uppercase; font-weight: 600; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .analytics-mini-box strong { font-size: 0.78rem; font-weight: 800; white-space: nowrap; display: block; }
+        .analytics-mini-box span { display: block; font-size: 0.58rem; color: var(--text-light); text-transform: uppercase; font-weight: 600; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .analytics-mini-box strong { font-size: 0.75rem; font-weight: 800; white-space: nowrap; display: block; }
 
-        .analytics-report-banner { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 10px; font-size: 0.78rem; color: var(--text-light); line-height: 1.4; display: flex; align-items: center; gap: 8px; }
+        .analytics-report-banner { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 10px; font-size: 0.75rem; color: var(--text-light); line-height: 1.35; display: flex; align-items: center; gap: 8px; }
 
         .filter-bar { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px; }
-        .date-filter-grid { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 10px; }
+        .date-filter-grid { display: grid; grid-template-columns: 1fr; gap: 6px; margin-bottom: 8px; }
         @media (min-width: 480px) { .date-filter-grid { grid-template-columns: 1fr 1fr; } }
 
         .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.25s ease; }
+        .tab-content.active { display: block; animation: fadeIn 0.2s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-        .fab-container { position: fixed; bottom: calc(24px + env(safe-area-inset-bottom, 20px)); right: 24px; z-index: 997; display: flex; flex-direction: column; align-items: flex-end; }
+        /* CRUCIALE: pointer-events: none sul container per evitare blocchi invisibili dei tocchi sullo schermo */
+        .fab-container {
+            position: fixed;
+            bottom: calc(20px + env(safe-area-inset-bottom, 20px));
+            right: 20px;
+            z-index: 996;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            pointer-events: none;
+        }
         .fab-main {
-            width: 56px; height: 56px; border-radius: 50%; background: var(--primary); color: white; font-size: 2rem; border: none; cursor: pointer;
+            width: 52px; height: 52px; border-radius: 50%; background: var(--primary); color: white; font-size: 1.8rem; border: none; cursor: pointer;
             box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4); display: flex; align-items: center; justify-content: center;
-            transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s;
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s;
             pointer-events: auto;
         }
         .fab-main:hover { background: var(--primary-hover); transform: scale(1.05); }
         .fab-menu {
-            display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; opacity: 0; visibility: hidden; transform: translateY(10px);
-            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; opacity: 0; visibility: hidden; transform: translateY(10px);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
         }
-        .fab-container.active .fab-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+        .fab-container.active .fab-menu { opacity: 1; visibility: visible; transform: translateY(0); pointer-events: auto; }
         .fab-container.active .fab-main { transform: rotate(45deg); }
         .fab-item {
             background: var(--card-bg) !important; color: var(--text) !important; border: 1px solid var(--card-border) !important;
-            backdrop-filter: var(--blur); padding: 8px 14px !important; border-radius: var(--radius-md) !important;
-            font-size: 0.85rem !important; font-weight: 700 !important; cursor: pointer; display: flex; align-items: center; gap: 8px;
+            backdrop-filter: var(--blur); padding: 7px 12px !important; border-radius: var(--radius-md) !important;
+            font-size: 0.82rem !important; font-weight: 700 !important; cursor: pointer; display: flex; align-items: center; gap: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2); width: auto !important; white-space: nowrap; transition: transform 0.2s;
             pointer-events: auto;
         }
         .fab-item:hover { border-color: var(--primary) !important; transform: translateX(-4px); }
 
+        .fab-modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(6px);
+            z-index: 998; opacity: 0; visibility: hidden; transition: all 0.2s ease;
+            pointer-events: none;
+        }
+        .fab-modal-overlay.active { opacity: 1; visibility: visible; pointer-events: auto; }
+
         .fab-modal {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.95);
             background: var(--card-bg); border: 1px solid var(--card-border); backdrop-filter: var(--blur);
-            width: 90%; max-width: 420px; border-radius: var(--radius-lg); z-index: 999; padding: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4); opacity: 0; visibility: hidden; transition: all 0.25s ease; max-height: 85vh; overflow-y: auto;
+            width: 90%; max-width: 400px; border-radius: var(--radius-lg); z-index: 999; padding: 18px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4); opacity: 0; visibility: hidden; transition: all 0.2s ease; max-height: 85vh; overflow-y: auto;
             -webkit-overflow-scrolling: touch;
+            pointer-events: none;
         }
-        .fab-modal.active { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); }
-        .fab-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--card-border); }
-        .fab-modal-header h3 { font-size: 1rem; font-weight: 800; color: var(--text); }
+        .fab-modal.active { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); pointer-events: auto; }
+        .fab-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--card-border); }
+        .fab-modal-header h3 { font-size: 0.95rem; font-weight: 800; color: var(--text); }
 
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: transparent; }
@@ -474,8 +489,8 @@
     <div id="app-lock-screen" style="display: none;">
         <div class="lock-card">
             <div class="lock-icon">🔐</div>
-            <h3 style="font-size: 1.1rem; font-weight: 800; margin-bottom: 6px;">SmartBudget Protezione</h3>
-            <p style="font-size: 0.78rem; color: var(--text-light);">Digita il PIN di 4 cifre per accedere</p>
+            <h3 style="font-size: 1.05rem; font-weight: 800; margin-bottom: 6px;">SmartBudget Protezione</h3>
+            <p style="font-size: 0.75rem; color: var(--text-light);">Digita il PIN di 4 cifre per accedere</p>
             
             <div class="pin-inputs">
                 <input type="password" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="pin-digit" id="p1" oninput="focusNextPin(this, 'p2')">
@@ -490,7 +505,7 @@
         <button class="menu-btn" onclick="toggleSidebar()">☰</button>
         <div class="header-title-area">
             <h1>SmartBudget</h1>
-            <span class="app-version-tag">Versione v1.7 (Aggiornata)</span>
+            <span class="app-version-tag">Versione v1.7 (Ottimizzata)</span>
         </div>
         <div class="header-actions">
             <button class="theme-btn" onclick="toggleTheme()" id="theme-toggle-icon" title="Cambia Tema">☀️</button>
@@ -500,7 +515,7 @@
     <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
-            <h3>SmartBudget <span style="font-size:0.65rem; color:var(--text-light);">v1.7</span></h3>
+            <h3>SmartBudget <span style="font-size:0.62rem; color:var(--text-light);">v1.7</span></h3>
             <button class="sidebar-close" onclick="toggleSidebar()">✕</button>
         </div>
         <div class="sidebar-nav">
@@ -509,23 +524,23 @@
             <button class="nav-item" onclick="switchTab('patrimony', this, true)">💰 Patrimonio</button>
             <button class="nav-item" onclick="switchTab('categories', this, true)">🏷️ Categorie</button>
             <button class="nav-item" onclick="switchTab('savings', this, true)">🎯 Obiettivi & Risparmio</button>
-            <button class="nav-item" onclick="switchTab('recurring', this, true)">🔄 Ricorrenti <span id="recurring-badge" style="display:none; background:var(--warning); color:#000; font-size:0.58rem; padding:1px 4px; border-radius:6px; font-weight:800; margin-left:auto;">PROMEMORIA</span></button>
+            <button class="nav-item" onclick="switchTab('recurring', this, true)">🔄 Ricorrenti <span id="recurring-badge" style="display:none; background:var(--warning); color:#000; font-size:0.55rem; padding:1px 4px; border-radius:6px; font-weight:800; margin-left:auto;">PROMEMORIA</span></button>
             <button class="nav-item" onclick="switchTab('analytics', this, true)">📈 Analisi & Report</button>
         </div>
 
         <div class="sidebar-section-title">Sicurezza & Notifiche</div>
-        <div style="display: flex; flex-direction: column; gap: 8px; padding: 0 4px;">
-            <button class="btn-secondary" onclick="configureSecurityPIN()" style="font-size: 0.8rem; padding: 10px;">🔑 Imposta / Modifica PIN</button>
-            <button class="btn-secondary" onclick="lockAppNow()" style="font-size: 0.8rem; padding: 10px;">🔒 Blocca App Ora</button>
-            <button class="btn-secondary" onclick="requestNotificationPermission()" style="font-size: 0.8rem; padding: 10px; background: rgba(16,185,129,0.15)!important; color: var(--success)!important; border-color: rgba(16,185,129,0.3)!important;">🔔 Attiva Notifiche Push</button>
+        <div style="display: flex; flex-direction: column; gap: 6px; padding: 0 4px;">
+            <button class="btn-secondary" onclick="configureSecurityPIN()" style="font-size: 0.78rem; padding: 9px;">🔑 Imposta / Modifica PIN</button>
+            <button class="btn-secondary" onclick="lockAppNow()" style="font-size: 0.78rem; padding: 9px;">🔒 Blocca App Ora</button>
+            <button class="btn-secondary" onclick="requestNotificationPermission()" style="font-size: 0.78rem; padding: 9px; background: rgba(16,185,129,0.15)!important; color: var(--success)!important; border-color: rgba(16,185,129,0.3)!important;">🔔 Attiva Notifiche Push</button>
         </div>
 
         <div class="sidebar-section-title">Gestione Dati & Backup</div>
-        <div style="display: flex; flex-direction: column; gap: 8px; padding: 0 4px;">
-            <button class="btn-secondary" onclick="exportBackupJSON()" style="font-size: 0.8rem; padding: 10px;">💾 Backup Completo (JSON)</button>
-            <button class="btn-secondary" onclick="exportTransactionsCSV()" style="font-size: 0.8rem; padding: 10px;">📊 Esporta Report (CSV)</button>
-            <button class="btn-secondary" onclick="document.getElementById('import-file-input').click()" style="font-size: 0.8rem; padding: 10px;">📥 Ripristina Backup</button>
-            <button class="btn-secondary" onclick="forceAppUpdate()" style="font-size: 0.8rem; padding: 10px; background: rgba(99, 102, 241, 0.15) !important; color: #818cf8 !important; border-color: rgba(99, 102, 241, 0.3) !important;">🔄 Forza Aggiornamento v1.7</button>
+        <div style="display: flex; flex-direction: column; gap: 6px; padding: 0 4px;">
+            <button class="btn-secondary" onclick="exportBackupJSON()" style="font-size: 0.78rem; padding: 9px;">💾 Backup Completo (JSON)</button>
+            <button class="btn-secondary" onclick="exportTransactionsCSV()" style="font-size: 0.78rem; padding: 9px;">📊 Esporta Report (CSV)</button>
+            <button class="btn-secondary" onclick="document.getElementById('import-file-input').click()" style="font-size: 0.78rem; padding: 9px;">📥 Ripristina Backup</button>
+            <button class="btn-secondary" onclick="forceAppUpdate()" style="font-size: 0.78rem; padding: 9px; background: rgba(99, 102, 241, 0.15) !important; color: #818cf8 !important; border-color: rgba(99, 102, 241, 0.3) !important;">🔄 Forza Aggiornamento</button>
             <input type="file" id="import-file-input" accept=".json" style="display: none;" onchange="importBackupJSON(event)">
         </div>
     </div>
@@ -555,7 +570,7 @@
 
         <div class="card" style="background: linear-gradient(135deg, rgba(99,102,241,0.12) 0%, rgba(16,185,129,0.08) 100%);">
             <h2>🔮 Previsione Chiusura Mese</h2>
-            <p id="end-month-prediction-text" style="font-size: 0.82rem; color: var(--text-light); line-height: 1.4;">
+            <p id="end-month-prediction-text" style="font-size: 0.8rem; color: var(--text-light); line-height: 1.35;">
                 Calcolo della proiezione in corso...
             </p>
         </div>
@@ -589,18 +604,18 @@
                 </select>
             </div>
             
-            <div class="form-group" style="margin-bottom: 8px;">
+            <div class="form-group" style="margin-bottom: 6px;">
                 <input type="text" id="search-transaction" placeholder="🔍 Cerca per testo o #tag..." oninput="renderApp()">
             </div>
 
             <div class="date-filter-grid">
                 <div>
-                    <label style="font-size:0.68rem;">Dal giorno</label>
-                    <input type="date" id="filter-date-from" onchange="renderApp()" style="padding: 7px; font-size: 0.82rem;">
+                    <label style="font-size:0.65rem;">Dal giorno</label>
+                    <input type="date" id="filter-date-from" onchange="renderApp()" style="padding: 6px; font-size: 0.8rem;">
                 </div>
                 <div>
-                    <label style="font-size:0.68rem;">Al giorno</label>
-                    <input type="date" id="filter-date-to" onchange="renderApp()" style="padding: 7px; font-size: 0.82rem;">
+                    <label style="font-size:0.65rem;">Al giorno</label>
+                    <input type="date" id="filter-date-to" onchange="renderApp()" style="padding: 6px; font-size: 0.8rem;">
                 </div>
             </div>
 
@@ -615,7 +630,7 @@
                 <input type="hidden" id="acc-original-name" value="">
                 <div class="form-group">
                     <label>Nome Conto / Investimento</label>
-                    <input type="text" id="acc-name" placeholder="Es. Conto Corrente, Conto Deposito" required>
+                    <input type="text" id="acc-name" placeholder="Es. Conto Corrente, Deposito" required>
                 </div>
                 <div class="form-group">
                     <label>Saldo Iniziale / Attuale (€)</label>
@@ -623,7 +638,7 @@
                 </div>
                 <div style="display:flex; gap:8px;">
                     <button type="submit" id="account-submit-btn">Salva Conto</button>
-                    <button type="button" class="btn-secondary" id="account-cancel-btn" onclick="cancelEditAccount()" style="display:none; width:auto; padding:0 16px;">Annulla</button>
+                    <button type="button" class="btn-secondary" id="account-cancel-btn" onclick="cancelEditAccount()" style="display:none; width:auto; padding:0 14px;">Annulla</button>
                 </div>
             </form>
         </div>
@@ -648,12 +663,12 @@
         <div class="card">
             <h2>
                 <span>🎯 Obiettivi & Salvadanai (Jars)</span>
-                <button class="btn-edit" onclick="openQuickModal('jar')" style="width:auto; padding:4px 10px!important;">+ Nuovo Barattolo</button>
+                <button class="btn-edit" onclick="openQuickModal('jar')" style="width:auto; padding:3px 8px!important;">+ Nuovo</button>
             </h2>
-            <div id="jars-container" style="margin-bottom: 16px;"></div>
+            <div id="jars-container" style="margin-bottom: 12px;"></div>
             
-            <h2 style="font-size:0.85rem; margin-top:14px;">📈 Andamento Storico Barattoli</h2>
-            <div style="position: relative; height: 160px; width: 100%;">
+            <h2 style="font-size:0.82rem; margin-top:12px;">📈 Andamento Storico Barattoli</h2>
+            <div style="position: relative; height: 150px; width: 100%;">
                 <canvas id="jarsTrendChart"></canvas>
             </div>
         </div>
@@ -672,7 +687,7 @@
                     <div class="savings-progress-fill" id="goal-progress-bar"></div>
                 </div>
 
-                <div style="display:flex; justify-content:space-between; font-size:0.75rem; color:var(--text-light); font-weight:600;">
+                <div style="display:flex; justify-content:space-between; font-size:0.72rem; color:var(--text-light); font-weight:600;">
                     <span>Completato: <strong id="goal-percentage-label" style="color:var(--text);">0%</strong></span>
                     <span>Target: <strong id="goal-target-label" style="color:var(--text);">€ 0.00</strong></span>
                 </div>
@@ -685,12 +700,12 @@
                 </label>
                 <input type="range" class="sim-slider" id="sim-range-input" min="50" max="2000" step="50" value="360" oninput="updateSavingsSimulation()">
                 
-                <div style="font-size: 0.72rem; color: var(--text-light); margin-top: 8px; text-align: center;" id="sim-result-text">
+                <div style="font-size: 0.7rem; color: var(--text-light); margin-top: 6px; text-align: center;" id="sim-result-text">
                     Raggiungerai l'obiettivo in circa <strong>16 mesi</strong>.
                 </div>
             </div>
 
-            <div id="savings-plan-edit-form" style="display: none; border-top: 1px solid var(--card-border); padding-top: 14px; margin-top: 14px;">
+            <div id="savings-plan-edit-form" style="display: none; border-top: 1px solid var(--card-border); padding-top: 12px; margin-top: 12px;">
                 <div class="form-group">
                     <label>Stipendio / Entrata Mensile (€)</label>
                     <input type="number" id="savings-salary" placeholder="Es. 1800" oninput="saveSavingsPlanSettings()">
@@ -715,7 +730,7 @@
                     <label>Orizzonte Temporale Desiderato (Mesi)</label>
                     <input type="number" id="goal-months" placeholder="Es. 12" oninput="saveSavingsPlanSettings()">
                 </div>
-                <button class="btn-secondary" onclick="toggleEditSavingsPlan()" style="margin-top:6px;">Salva & Chiudi</button>
+                <button class="btn-secondary" onclick="toggleEditSavingsPlan()" style="margin-top:4px;">Salva & Chiudi</button>
             </div>
         </div>
 
@@ -757,7 +772,7 @@
     <div id="tab-recurring" class="tab-content">
         <div class="card">
             <h2>I tuoi Promemoria Ricorrenti</h2>
-            <div class="analytics-report-banner" style="margin-bottom: 12px; font-size: 0.75rem;">
+            <div class="analytics-report-banner" style="margin-bottom: 10px; font-size: 0.72rem;">
                 💡 Clicca su <strong>"▶️ Applica"</strong> per registrare l'operazione oppure su <strong>"✏️"</strong> per modificarla.
             </div>
             <div id="recurring-list"></div>
@@ -767,7 +782,7 @@
     <div id="tab-analytics" class="tab-content">
         <div class="card">
             <h2>📅 Seleziona Periodo di Analisi</h2>
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 8px;">
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 6px;">
                 <div class="form-group" style="margin-bottom: 0;">
                     <label>Mese</label>
                     <select id="analytics-month" onchange="renderAnalytics()">
@@ -786,7 +801,7 @@
 
         <div class="card">
             <h2>📊 Performance del Periodo</h2>
-            <div class="analytics-card-grid" style="margin-bottom: 12px;">
+            <div class="analytics-card-grid" style="margin-bottom: 10px;">
                 <div class="analytics-mini-box"><span>Entrate</span><strong class="value income" id="ana-income">€ 0.00</strong></div>
                 <div class="analytics-mini-box"><span>Uscite</span><strong class="value expense" id="ana-expense">€ 0.00</strong></div>
                 <div class="analytics-mini-box"><span>Risparmio</span><strong class="value" id="ana-savings">€ 0.00</strong></div>
@@ -800,14 +815,14 @@
 
         <div class="card">
             <h2>🏷️ Ripartizione Spese per Categoria</h2>
-            <div style="position: relative; height: 220px; width: 100%;">
+            <div style="position: relative; height: 200px; width: 100%;">
                 <canvas id="categoryPieChart"></canvas>
             </div>
         </div>
 
         <div class="card">
             <h2>🏷️ Analisi Spese per Hashtag (#tag)</h2>
-            <div class="form-group" style="margin-bottom: 8px;">
+            <div class="form-group" style="margin-bottom: 6px;">
                 <select id="analytics-tag-select" onchange="renderTagAnalytics()">
                     <option value="">Seleziona un #tag...</option>
                 </select>
@@ -818,20 +833,20 @@
         </div>
 
         <div class="card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                 <h2>📈 Andamento Storico</h2>
-                <select id="trend-months-select" onchange="renderAnalytics()" style="width: 120px; padding: 4px; font-size: 0.75rem;">
+                <select id="trend-months-select" onchange="renderAnalytics()" style="width: 110px; padding: 3px; font-size: 0.72rem;">
                     <option value="3">Ultimi 3 mesi</option>
                     <option value="6" selected>Ultimi 6 mesi</option>
                     <option value="12">Ultimi 12 mesi</option>
                 </select>
             </div>
             
-            <div style="position: relative; height: 190px; width: 100%;">
+            <div style="position: relative; height: 180px; width: 100%;">
                 <canvas id="trendBarChart"></canvas>
             </div>
 
-            <div class="analytics-report-banner" style="margin-top: 14px;">
+            <div class="analytics-report-banner" style="margin-top: 12px;">
                 <div>💡</div>
                 <div id="analytics-summary-text">Estratto conto in caricamento...</div>
             </div>
@@ -846,6 +861,7 @@
         </div>
     </div>
 
+    <!-- FAB Container con pointer-events ottimizzato per evitare blocchi invisibili dei tocchi -->
     <div class="fab-container" id="fab-container">
         <div class="fab-menu" id="fab-menu">
             <button class="fab-item" onclick="openQuickModal('transaction')" title="Nuova Transazione">
@@ -861,7 +877,7 @@
         <button class="fab-main" id="fab-main-btn" onclick="toggleFabMenu(event)">+</button>
     </div>
 
-    <div class="sidebar-overlay" id="fab-modal-overlay" onclick="closeQuickModal()"></div>
+    <div class="fab-modal-overlay" id="fab-modal-overlay" onclick="closeQuickModal()"></div>
     <div class="fab-modal" id="fab-modal">
         <div class="fab-modal-header">
             <h3 id="fab-modal-title">Crea Nuovo</h3>
@@ -911,7 +927,7 @@
             const toast = document.getElementById('toast-container');
             toast.textContent = message;
             toast.classList.add('show');
-            setTimeout(() => toast.classList.remove('show'), 2500);
+            setTimeout(() => toast.classList.remove('show'), 2300);
         }
 
         function applyAppUpdate() {
@@ -926,7 +942,7 @@
             if ('caches' in window) {
                 caches.keys().then(names => names.forEach(n => caches.delete(n)));
             }
-            showToast("Versione v1.7 caricata! Riavvio in corso...");
+            showToast("Versione v1.7 ricaricata! Riavvio in corso...");
             setTimeout(() => window.location.reload(true), 1000);
         }
 
@@ -997,7 +1013,7 @@
             }
             Notification.requestPermission().then(permission => {
                 if (permission === "granted") {
-                    showToast("Notifiche push attivate con successo! 🔔");
+                    showToast("Notifiche push attivate! 🔔");
                     if (globalReg && globalReg.showNotification) {
                         globalReg.showNotification("SmartBudget", { body: "Le notifiche per le tue scadenze ricorrenti sono attive!" });
                     } else {
@@ -1271,7 +1287,7 @@
             if (!data.jars) data.jars = [];
             
             if (data.jars.length === 0) {
-                container.innerHTML = '<p style="color:var(--text-light); font-size:0.78rem; text-align:center;">Nessun barattolo attivo.</p>';
+                container.innerHTML = '<p style="color:var(--text-light); font-size:0.75rem; text-align:center;">Nessun barattolo attivo.</p>';
                 if (jarsTrendChartInstance) jarsTrendChartInstance.destroy();
                 return;
             }
@@ -1282,18 +1298,18 @@
                 let pct = jar.target > 0 ? (jar.current / jar.target) * 100 : 0;
                 let displayCurrent = `€ ${jar.current.toFixed(2)}`;
                 container.innerHTML += `
-                    <div style="background:var(--input-bg); border:1px solid var(--card-border); border-radius:var(--radius-md); padding:12px; margin-bottom:8px;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
-                            <span style="font-weight:700; font-size:0.88rem;">🏺 ${jar.name}</span>
+                    <div style="background:var(--input-bg); border:1px solid var(--card-border); border-radius:var(--radius-md); padding:10px 12px; margin-bottom:8px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                            <span style="font-weight:700; font-size:0.85rem;">🏺 ${jar.name}</span>
                             <div style="display:flex; gap:4px;">
-                                <button class="btn-edit" onclick="depositToJar(${jar.id})" style="padding:2px 6px!important; font-size:0.68rem!important;">+ Versa</button>
-                                <button class="btn-danger" onclick="deleteJar(${jar.id})" style="padding:2px 6px!important; font-size:0.68rem!important;">✕</button>
+                                <button class="btn-edit" onclick="depositToJar(${jar.id})" style="padding:2px 6px!important; font-size:0.65rem!important;">+ Versa</button>
+                                <button class="btn-danger" onclick="deleteJar(${jar.id})" style="padding:2px 6px!important; font-size:0.65rem!important;">✕</button>
                             </div>
                         </div>
-                        <div class="savings-progress-track" style="margin:6px 0;">
+                        <div class="savings-progress-track" style="margin:4px 0;">
                             <div class="savings-progress-fill" style="width: ${Math.min(pct, 100)}%;"></div>
                         </div>
-                        <div style="display:flex; justify-content:space-between; font-size:0.72rem; color:var(--text-light);">
+                        <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:var(--text-light);">
                             <span>Accantonato: <strong>${displayCurrent}</strong></span>
                             <span>Target: <strong>€ ${jar.target.toFixed(2)}</strong> (${pct.toFixed(0)}%)</span>
                         </div>
@@ -1348,7 +1364,7 @@
                         x: { ticks: { color: textColor, font: { size: 9 } }, grid: { display: false } },
                         y: { ticks: { color: textColor, font: { size: 9 } }, grid: { color: gridColor } }
                     },
-                    plugins: { legend: { position: 'bottom', labels: { color: textColor, boxWidth: 8, font: { size: 10 } } } }
+                    plugins: { legend: { position: 'bottom', labels: { color: textColor, boxWidth: 8, font: { size: 9 } } } }
                 }
             });
         }
@@ -1712,7 +1728,7 @@
             const contentEl = document.getElementById('fab-modal-content');
             document.getElementById('fab-container').classList.remove('active');
 
-            titleEl.textContent = "✏️ Modifica Promemoria Ricorrente";
+            titleEl.textContent = "✏️ Modifica Promemoria";
             contentEl.innerHTML = `
                 <form id="edit-recurring-form" onsubmit="handleEditRecurringSubmit(event, ${index})">
                     <div class="form-group">
@@ -1759,7 +1775,7 @@
                         <input type="date" id="q-r-date" value="${r.nextDate || new Date().toISOString().slice(0, 10)}" required>
                     </div>
                     <div class="form-group">
-                        <label>Importo (€) <span style="font-size:0.65rem; color:var(--text-light);">(Vuoto = variabile)</span></label>
+                        <label>Importo (€) <span style="font-size:0.62rem; color:var(--text-light);">(Vuoto = variabile)</span></label>
                         <input type="number" id="q-r-amount" step="0.01" value="${r.amount > 0 ? r.amount.toFixed(2) : ''}" placeholder="0.00">
                     </div>
                     <div class="form-group">
@@ -1832,7 +1848,7 @@
             contentEl.innerHTML = '';
 
             if (type === 'transaction') {
-                titleEl.textContent = "💳 Registra Nuova Transazione";
+                titleEl.textContent = "💳 Registra Transazione";
                 contentEl.innerHTML = `
                     <form id="quick-transaction-form" onsubmit="handleQuickSubmit(event, 'transaction')">
                         <div class="form-group">
@@ -1876,7 +1892,7 @@
                 `;
                 populateQuickTransactionSelects();
             } else if (type === 'category') {
-                titleEl.textContent = "🏷️ Crea Nuova Categoria";
+                titleEl.textContent = "🏷️ Nuova Categoria";
                 contentEl.innerHTML = `
                     <form id="quick-category-form" onsubmit="handleQuickSubmit(event, 'category')">
                         <div class="form-group">
@@ -1892,7 +1908,7 @@
                         </div>
                         <div class="form-group">
                             <label>Emoji Icona</label>
-                            <input type="text" id="q-c-emoji" value="🏷️" maxlength="4" style="text-align:center; font-size:1.2rem;">
+                            <input type="text" id="q-c-emoji" value="🏷️" maxlength="4" style="text-align:center; font-size:1.1rem;">
                         </div>
                         <div class="form-group">
                             <label>Limite Budget Mensile (€)</label>
@@ -1902,7 +1918,7 @@
                     </form>
                 `;
             } else if (type === 'recurring') {
-                titleEl.textContent = "🔄 Nuovo Promemoria Ricorrente";
+                titleEl.textContent = "🔄 Nuovo Promemoria";
                 contentEl.innerHTML = `
                     <form id="quick-recurring-form" onsubmit="handleQuickSubmit(event, 'recurring')">
                         <div class="form-group">
@@ -1949,7 +1965,7 @@
                             <input type="date" id="q-r-date" value="${new Date().toISOString().slice(0, 10)}" required>
                         </div>
                         <div class="form-group">
-                            <label>Importo (€) <span style="font-size:0.65rem; color:var(--text-light);">(Vuoto = variabile)</span></label>
+                            <label>Importo (€) <span style="font-size:0.62rem; color:var(--text-light);">(Vuoto = variabile)</span></label>
                             <input type="number" id="q-r-amount" step="0.01" placeholder="0.00">
                         </div>
                         <div class="form-group">
@@ -1961,12 +1977,12 @@
                 `;
                 populateQuickRecurringSelects();
             } else if (type === 'jar') {
-                titleEl.textContent = "🏺 Nuovo Barattolo / Salvadanaio";
+                titleEl.textContent = "🏺 Nuovo Barattolo";
                 contentEl.innerHTML = `
                     <form onsubmit="handleJarSubmit(event)">
                         <div class="form-group">
                             <label>Nome Obiettivo</label>
-                            <input type="text" id="q-jar-name" placeholder="Es. Auto Nuova, Computer" required>
+                            <input type="text" id="q-jar-name" placeholder="Es. Auto Nuova" required>
                         </div>
                         <div class="form-group">
                             <label>Target Finale (€)</label>
@@ -2222,7 +2238,7 @@
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { position: 'bottom', labels: { color: textColor, boxWidth: 10, font: { size: 10 } } } }
+                    plugins: { legend: { position: 'bottom', labels: { color: textColor, boxWidth: 8, font: { size: 9 } } } }
                 }
             });
 
@@ -2261,7 +2277,7 @@
                         x: { ticks: { color: textColor, font: { size: 9 } }, grid: { display: false } },
                         y: { ticks: { color: textColor, font: { size: 9 } }, grid: { color: gridColor } }
                     },
-                    plugins: { legend: { position: 'top', labels: { color: textColor, boxWidth: 8, font: { size: 10 } } } }
+                    plugins: { legend: { position: 'top', labels: { color: textColor, boxWidth: 8, font: { size: 9 } } } }
                 }
             });
         }
@@ -2366,7 +2382,7 @@
                                 <div class="category-card-item">
                                     <div class="category-name-area">
                                         <span>${c.emoji || (type === 'Uscita' ? '🔴' : '🟢')} ${c.name}</span>
-                                        <span style="font-size:0.68rem; color:var(--text-light); font-weight:normal;">${limitText}</span>
+                                        <span style="font-size:0.65rem; color:var(--text-light); font-weight:normal;">${limitText}</span>
                                     </div>
                                     <div class="category-actions">
                                         ${type === 'Uscita' ? `<button class="btn-edit" onclick="editCategory('${type}', '${safeTypeName}')">Modifica</button>` : ''}
@@ -2397,7 +2413,7 @@
                     return matchType && matchAcc && matchSearch && matchDateFrom && matchDateTo;
                 });
 
-                if(filtered.length === 0) tList.innerHTML = '<p style="color:var(--text-light); text-align:center; padding: 10px 0; font-size:0.8rem;">Nessun movimento.</p>';
+                if(filtered.length === 0) tList.innerHTML = '<p style="color:var(--text-light); text-align:center; padding: 10px 0; font-size:0.78rem;">Nessun movimento.</p>';
                 
                 filtered.slice(0, 40).forEach(t => {
                     let d = new Date(t.date).toLocaleDateString();
@@ -2422,7 +2438,7 @@
                             </div>
                             <div class="transaction-right">
                                 <span class="transaction-amount ${badgeClass}">${isGiroconto?'🔄 ':(isEntrata?'+':'-')}€ ${t.amount.toFixed(2)}</span>
-                                <button class="btn-danger" onclick="deleteTransaction(${t.id})" style="padding:3px 6px!important; font-size:0.68rem!important;">Elimina</button>
+                                <button class="btn-danger" onclick="deleteTransaction(${t.id})" style="padding:2px 6px!important; font-size:0.65rem!important;">Elimina</button>
                             </div>
                         </div>`;
                 });
@@ -2459,7 +2475,7 @@
 
             let rList = document.getElementById('recurring-list');
             if(rList) {
-                rList.innerHTML = (!data.recurring || data.recurring.length === 0) ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0; font-size:0.8rem;">Nessun promemoria ricorrente.</p>' : '';
+                rList.innerHTML = (!data.recurring || data.recurring.length === 0) ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0; font-size:0.78rem;">Nessun promemoria ricorrente.</p>' : '';
                 const recurringBadge = document.getElementById('recurring-badge');
                 if (recurringBadge) recurringBadge.style.display = (data.recurring && data.recurring.length > 0) ? 'inline-block' : 'none';
 
