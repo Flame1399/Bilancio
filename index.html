@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no">
     <title>SmartBudget PWA Ultimate Pro</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -40,15 +40,23 @@
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation; /* SOLUZIONE DEFINITIVA PER I TOCCHI SU iOS */
+        }
+
+        html, body {
+            background-color: var(--bg);
+            color: var(--text);
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            position: relative;
         }
 
         body {
-            background-color: var(--bg);
-            color: var(--text);
-            padding: 12px;
             max-width: 600px;
             margin: 0 auto;
-            padding-bottom: calc(160px + env(safe-area-inset-bottom, 30px));
+            padding: 12px;
+            padding-bottom: calc(180px + env(safe-area-inset-bottom, 40px));
             min-height: 100vh;
             min-height: -webkit-fill-available;
             transition: background 0.3s, color 0.3s;
@@ -182,6 +190,7 @@
             z-index: 999; display: flex; flex-direction: column; padding: calc(24px + env(safe-area-inset-top, 0px)) 16px calc(24px + env(safe-area-inset-bottom, 20px)) 16px;
             transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 10px 0 30px rgba(0,0,0,0.3);
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .sidebar.active { left: 0; }
         .sidebar-header {
@@ -264,14 +273,16 @@
             border: 1px solid var(--card-border); border-radius: var(--radius-md);
             font-size: 0.9rem; background: var(--input-bg); color: var(--text);
             outline: none; box-sizing: border-box; line-height: 40px; backdrop-filter: var(--blur);
+            -webkit-appearance: none; appearance: none;
         }
-        input[type="date"] { display: block; -webkit-appearance: none; appearance: none; min-height: 42px; }
+        input[type="date"] { display: block; min-height: 42px; }
         input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15); }
 
         button:not(.eye-toggle-btn):not(.menu-btn):not(.sidebar-close):not(.theme-btn):not(.fab-main):not(.fab-item):not(.update-banner-btn) {
             width: 100%; padding: 11px; background-color: var(--primary); color: white;
             border: none; border-radius: var(--radius-md); font-size: 0.9rem; font-weight: 700;
             cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+            pointer-events: auto;
         }
         button:not(.eye-toggle-btn):not(.menu-btn):not(.sidebar-close):not(.theme-btn):not(.fab-main):not(.fab-item):not(.update-banner-btn):hover {
             background-color: var(--primary-hover); transform: translateY(-1px);
@@ -373,7 +384,7 @@
         .recurring-compact-amount { font-weight: 800; font-size: 0.85rem; color: #818cf8; white-space: nowrap; }
         .recurring-compact-amount.variable { color: var(--warning); font-size: 0.72rem; }
         .recurring-compact-actions { display: flex; gap: 6px; align-items: center; }
-        .recurring-compact-actions button { width: auto !important; padding: 5px 8px !important; font-size: 0.72rem !important; border-radius: var(--radius-sm) !important; cursor: pointer; }
+        .recurring-compact-actions button { width: auto !important; padding: 5px 8px !important; font-size: 0.72rem !important; border-radius: var(--radius-sm) !important; cursor: pointer; pointer-events: auto; }
 
         .savings-hero-box {
             background: linear-gradient(135deg, rgba(99, 102, 241, 0.18) 0%, rgba(192, 132, 252, 0.12) 100%);
@@ -417,6 +428,7 @@
             width: 56px; height: 56px; border-radius: 50%; background: var(--primary); color: white; font-size: 2rem; border: none; cursor: pointer;
             box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4); display: flex; align-items: center; justify-content: center;
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), background 0.2s;
+            pointer-events: auto;
         }
         .fab-main:hover { background: var(--primary-hover); transform: scale(1.05); }
         .fab-menu {
@@ -430,6 +442,7 @@
             backdrop-filter: var(--blur); padding: 8px 14px !important; border-radius: var(--radius-md) !important;
             font-size: 0.85rem !important; font-weight: 700 !important; cursor: pointer; display: flex; align-items: center; gap: 8px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2); width: auto !important; white-space: nowrap; transition: transform 0.2s;
+            pointer-events: auto;
         }
         .fab-item:hover { border-color: var(--primary) !important; transform: translateX(-4px); }
 
