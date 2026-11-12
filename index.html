@@ -1078,8 +1078,8 @@
             const target = parseFloat(savingsSettings.target) || 1;
             const percentage = target > 0 ? (totalSavedActual / target) * 100 : 0;
 
-            // Resta visibile l'accantonato come richiesto
-            document.getElementById('goal-current-saved').textContent = `€ ${totalSavedActual.toFixed(2)}`;
+            // Oscurato in privacy mode come richiesto
+            document.getElementById('goal-current-saved').textContent = hideAccounts ? "€ ••••••" : `€ ${totalSavedActual.toFixed(2)}`;
             document.getElementById('goal-target-label').textContent = `€ ${target.toFixed(2)}`;
             document.getElementById('goal-percentage-label').textContent = `${percentage.toFixed(1)}%`;
             document.getElementById('goal-progress-bar').style.width = `${Math.min(percentage, 100)}%`;
@@ -1092,9 +1092,10 @@
                 slider.value = Math.round(savingsPerMonth);
             }
 
-            document.getElementById('proj-6m').textContent = `€ ${(totalSavedActual + (activeSimSaving * 6)).toFixed(2)}`;
-            document.getElementById('proj-1y').textContent = `€ ${(totalSavedActual + (activeSimSaving * 12)).toFixed(2)}`;
-            document.getElementById('proj-3y').textContent = `€ ${(totalSavedActual + (activeSimSaving * 36)).toFixed(2)}`;
+            // Oscurato in privacy mode come richiesto
+            document.getElementById('proj-6m').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (activeSimSaving * 6)).toFixed(2)}`;
+            document.getElementById('proj-1y').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (activeSimSaving * 12)).toFixed(2)}`;
+            document.getElementById('proj-3y').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (activeSimSaving * 36)).toFixed(2)}`;
 
             updateSavingsSimulation();
             renderJars();
@@ -1126,16 +1127,17 @@
                 const years = Math.floor(monthsNeeded / 12);
                 const months = monthsNeeded % 12;
                 let timeString = years > 0 ? `circa <strong>${years} anni</strong>${months > 0 ? ` e <strong>${months} mesi</strong>` : ''}` : `circa <strong>${monthsNeeded} mesi</strong>`;
-                resultTextEl.innerHTML = `Continuando così, colmerai i restanti <strong>€ ${remaining.toFixed(2)}</strong> in ${timeString}.`;
+                let remainingDisplay = hideAccounts ? "€ ••••••" : `€ ${remaining.toFixed(2)}`;
+                resultTextEl.innerHTML = `Continuando così, colmerai i restanti <strong>${remainingDisplay}</strong> in ${timeString}.`;
             }
 
             let proj6mEl = document.getElementById('proj-6m');
             let proj1yEl = document.getElementById('proj-1y');
             let proj3yEl = document.getElementById('proj-3y');
             if (proj6mEl) {
-                proj6mEl.textContent = `€ ${(totalSavedActual + (simVal * 6)).toFixed(2)}`;
-                proj1yEl.textContent = `€ ${(totalSavedActual + (simVal * 12)).toFixed(2)}`;
-                proj3yEl.textContent = `€ ${(totalSavedActual + (simVal * 36)).toFixed(2)}`;
+                proj6mEl.textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (simVal * 6)).toFixed(2)}`;
+                proj1yEl.textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (simVal * 12)).toFixed(2)}`;
+                proj3yEl.textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (simVal * 36)).toFixed(2)}`;
             }
         }
 
@@ -1152,6 +1154,7 @@
             container.innerHTML = '';
             data.jars.forEach(jar => {
                 let pct = jar.target > 0 ? (jar.current / jar.target) * 100 : 0;
+                let displayCurrent = hideAccounts ? "€ ••••••" : `€ ${jar.current.toFixed(2)}`;
                 container.innerHTML += `
                     <div style="background:var(--input-bg); border:1px solid var(--card-border); border-radius:var(--radius-md); padding:12px; margin-bottom:8px;">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
@@ -1165,7 +1168,7 @@
                             <div class="savings-progress-fill" style="width: ${Math.min(pct, 100)}%;"></div>
                         </div>
                         <div style="display:flex; justify-content:space-between; font-size:0.72rem; color:var(--text-light);">
-                            <span>Accantonato: <strong>€ ${jar.current.toFixed(2)}</strong></span>
+                            <span>Accantonato: <strong>${displayCurrent}</strong></span>
                             <span>Target: <strong>€ ${jar.target.toFixed(2)}</strong> (${pct.toFixed(0)}%)</span>
                         </div>
                     </div>
@@ -1754,7 +1757,6 @@
             document.getElementById('ana-income').textContent = `€ ${periodIncome.toFixed(2)}`;
             document.getElementById('ana-expense').textContent = `€ ${periodExpense.toFixed(2)}`;
             
-            // Visibile anche in privacy mode come richiesto
             let savingsEl = document.getElementById('ana-savings');
             savingsEl.textContent = `€ ${savings.toFixed(2)}`;
             savingsEl.className = `value ${savings >= 0 ? 'income' : 'expense'}`;
@@ -1889,7 +1891,6 @@
 
             const predTextEl = document.getElementById('end-month-prediction-text');
             if (predTextEl) {
-                // Visibile anche in privacy mode come richiesto
                 let displayProjExpense = `€ ${projectedMonthExpense.toFixed(2)}`;
                 let displayProjBalance = `€ ${projectedEndBalance.toFixed(2)}`;
                 predTextEl.innerHTML = `Al ritmo attuale (circa € ${dailyAvgExpense.toFixed(2)}/giorno), chiuderai il mese con una spesa stimata di <strong>${displayProjExpense}</strong> e un flusso netto previsto di <strong style="color:${projectedEndBalance >= 0 ? 'var(--success)' : 'var(--danger)'};">${displayProjBalance}</strong>.`;
