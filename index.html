@@ -187,16 +187,16 @@
         }
         .sidebar-nav { display: flex; flex-direction: column; gap: 6px; }
         .nav-item {
-            background: none; border: none; color: var(--text-light); font-size: 0.92rem; font-weight: 500;
-            text-align: left; padding: 10px 14px; border-radius: var(--radius-md); cursor: pointer;
-            transition: all 0.2s ease; display: flex; align-items: center; gap: 10px;
+            background: none; border: none; color: var(--text-light); font-size: 0.95rem; font-weight: 500;
+            text-align: left; padding: 12px 14px; border-radius: var(--radius-md); cursor: pointer;
+            transition: all 0.2s ease; display: flex; align-items: center; gap: 12px;
         }
         .nav-item:hover { background: rgba(255, 255, 255, 0.04); color: var(--text); transform: translateX(4px); }
         .nav-item.active { color: #818cf8; font-weight: 700; background: rgba(99, 102, 241, 0.12); border: 1px solid rgba(99, 102, 241, 0.25); }
 
         .sidebar-section-title {
             font-size: 0.7rem; color: var(--text-light); text-transform: uppercase;
-            letter-spacing: 0.8px; margin: 18px 0 6px 6px; font-weight: 700;
+            letter-spacing: 0.8px; margin: 20px 0 8px 6px; font-weight: 700;
         }
 
         .card {
@@ -299,7 +299,7 @@
             background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md);
             padding: 10px 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
         }
-        .category-name-area { font-weight: 700; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; }
+        .category-name-area { font-weight: 700; font-size: 0.85rem; display: flex; flex-direction: column; gap: 2px; }
         .category-actions { display: flex; gap: 6px; align-items: center; }
 
         .main-badge { font-size: 0.65rem; background: rgba(16, 185, 129, 0.15); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); padding: 2px 4px; border-radius: 4px; }
@@ -326,7 +326,8 @@
         .transaction-details { display: flex; flex-direction: column; gap: 2px; overflow: hidden; }
         .transaction-details .t-desc { font-weight: 700; color: var(--text); font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .transaction-details .t-meta { font-size: 0.68rem; color: var(--text-light); display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
-        .t-tag { background: rgba(99, 102, 241, 0.15); color: #818cf8; padding: 1px 5px; border-radius: 4px; border: 1px solid rgba(99, 102, 241, 0.3); font-size: 0.65rem; font-weight: 700; }
+        .t-tag { background: rgba(99, 102, 241, 0.15); color: #818cf8; padding: 1px 5px; border-radius: 4px; border: 1px solid rgba(99, 102, 241, 0.3); font-size: 0.65rem; font-weight: 700; cursor: pointer; }
+        .t-tag:hover { background: rgba(99, 102, 241, 0.3); }
 
         .transaction-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; margin-left: 6px; }
         .transaction-amount { font-weight: 800; font-size: 0.85rem; }
@@ -480,15 +481,14 @@
             <button class="nav-item" onclick="switchTab('categories', this)">🏷️ Categorie</button>
             <button class="nav-item" onclick="switchTab('savings', this)">🎯 Obiettivi & Risparmio</button>
             <button class="nav-item" onclick="switchTab('recurring', this)">🔄 Ricorrenti <span id="recurring-badge" style="display:none; background:var(--warning); color:#000; font-size:0.58rem; padding:1px 4px; border-radius:6px; font-weight:800; margin-left:auto;">PROMEMORIA</span></button>
-            <button class="nav-item" onclick="switchTab('tags', this)">🏷️ Analisi per #Tag</button>
             <button class="nav-item" onclick="switchTab('analytics', this)">📈 Analisi & Report</button>
         </div>
 
-        <div class="sidebar-section-title">Notifiche & Sicurezza</div>
+        <div class="sidebar-section-title">Sicurezza & Notifiche</div>
         <div style="display: flex; flex-direction: column; gap: 8px; padding: 0 4px;">
-            <button class="btn-secondary" onclick="requestPushPermission()" style="font-size: 0.8rem; padding: 10px;">🔔 Abilita Notifiche Push</button>
             <button class="btn-secondary" onclick="configureSecurityPIN()" style="font-size: 0.8rem; padding: 10px;">🔑 Imposta / Modifica PIN</button>
             <button class="btn-secondary" onclick="lockAppNow()" style="font-size: 0.8rem; padding: 10px;">🔒 Blocca App Ora</button>
+            <button class="btn-secondary" onclick="requestNotificationPermission()" style="font-size: 0.8rem; padding: 10px; background: rgba(16,185,129,0.15)!important; color: var(--success)!important; border-color: rgba(16,185,129,0.3)!important;">🔔 Attiva Notifiche Push</button>
         </div>
 
         <div class="sidebar-section-title">Gestione Dati & Backup</div>
@@ -618,12 +618,10 @@
                 <button class="btn-edit" onclick="openQuickModal('jar')" style="width:auto; padding:4px 10px!important;">+ Nuovo Barattolo</button>
             </h2>
             <div id="jars-container" style="margin-bottom: 16px;"></div>
-        </div>
-
-        <div class="card">
-            <h2>📊 Grafico Progresso Barattoli</h2>
-            <div style="position: relative; height: 180px; width: 100%;">
-                <canvas id="jarsBarChart"></canvas>
+            
+            <h2 style="font-size:0.85rem; margin-top:14px;">📈 Andamento Storico Barattoli</h2>
+            <div style="position: relative; height: 160px; width: 100%;">
+                <canvas id="jarsTrendChart"></canvas>
             </div>
         </div>
 
@@ -733,16 +731,6 @@
         </div>
     </div>
 
-    <div id="tab-tags" class="tab-content">
-        <div class="card">
-            <h2>🏷️ Analisi Spese per #Tag</h2>
-            <p style="font-size: 0.78rem; color: var(--text-light); margin-bottom: 12px;">
-                Riepilogo automatico di tutte le spese raggruppate per hashtag inseriti nelle descrizioni (es. #vacanza, #auto).
-            </p>
-            <div id="tags-analysis-list"></div>
-        </div>
-    </div>
-
     <div id="tab-analytics" class="tab-content">
         <div class="card">
             <h2>📅 Seleziona Periodo di Analisi</h2>
@@ -781,6 +769,18 @@
             <h2>🏷️ Ripartizione Spese per Categoria</h2>
             <div style="position: relative; height: 220px; width: 100%;">
                 <canvas id="categoryPieChart"></canvas>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🏷️ Analisi Spese per Hashtag (#tag)</h2>
+            <div class="form-group" style="margin-bottom: 8px;">
+                <select id="analytics-tag-select" onchange="renderTagAnalytics()">
+                    <option value="">Seleziona un #tag...</option>
+                </select>
+            </div>
+            <div class="analytics-report-banner" id="tag-analytics-result">
+                Seleziona un hashtag per vedere il totale speso e i dettagli delle transazioni associate.
             </div>
         </div>
 
@@ -860,26 +860,6 @@
             });
         }
 
-        function requestPushPermission() {
-            if (!('Notification' in window)) {
-                showToast("Il tuo browser non supporta le notifiche.");
-                return;
-            }
-            Notification.requestPermission().then(permission => {
-                if (permission === 'granted') {
-                    showToast("Notifiche push attivate con successo! 🔔");
-                    if (globalReg && globalReg.showNotification) {
-                        globalReg.showNotification("SmartBudget Pro", {
-                            body: "Le notifiche per i promemoria ricorrenti sono attive.",
-                            icon: "./icon.png"
-                        });
-                    }
-                } else {
-                    showToast("Permesso notifiche negato.");
-                }
-            });
-        }
-
         function showToast(message) {
             const toast = document.getElementById('toast-container');
             toast.textContent = message;
@@ -911,10 +891,10 @@
                     { name: "Bollette & Utenze", limit: 150, emoji: "⚡" },
                     { name: "Trasporti / Auto", limit: 150, emoji: "🚗" },
                     { name: "Svago & Ristoranti", limit: 120, emoji: "🍕" },
-                    { name: "Salute & Sport", limit: 80, emoji: "💪" }
+                    { name: "Salute & Sport", limit: 80, emoji: "💊" }
                 ],
                 Entrata: [
-                    { name: "Stipendio", limit: 0, emoji: "💼" },
+                    { name: "Stipendio", limit: 0, emoji: "💰" },
                     { name: "Investimenti / Extra", limit: 0, emoji: "📈" }
                 ]
             },
@@ -924,19 +904,10 @@
             ],
             recurring: [],
             jars: [
-                { id: 1, name: "Fondo Emergenza", target: 3000, current: 800 },
-                { id: 2, name: "Vacanza Estiva", target: 1200, current: 350 }
+                { id: 1, name: "Fondo Emergenza", target: 3000, current: 800, history: [{ date: new Date().toISOString().slice(0,7), amount: 800 }] },
+                { id: 2, name: "Vacanza Estiva", target: 1200, current: 350, history: [{ date: new Date().toISOString().slice(0,7), amount: 350 }] }
             ]
         };
-
-        // Assicura che le categorie esistenti abbiano l'emoji
-        ['Uscita', 'Entrata'].forEach(type => {
-            if (data.categories[type]) {
-                data.categories[type].forEach(c => {
-                    if (!c.emoji) c.emoji = type === 'Uscita' ? '🏷️' : '💰';
-                });
-            }
-        });
 
         let savingsSettings = JSON.parse(localStorage.getItem('smart_budget_savings_settings')) || {
             salary: 1800,
@@ -953,7 +924,7 @@
 
         let pieChartInstance = null;
         let barChartInstance = null;
-        let jarsChartInstance = null;
+        let jarsTrendChartInstance = null;
 
         function checkAppSecurityLock() {
             if (userSecurityPin) {
@@ -962,6 +933,36 @@
                 setTimeout(() => document.getElementById('p1').focus(), 300);
             } else {
                 document.getElementById('app-lock-screen').style.display = 'none';
+            }
+            checkRecurringNotifications();
+        }
+
+        function requestNotificationPermission() {
+            if (!("Notification" in window)) {
+                showToast("Il tuo browser non supporta le notifiche.");
+                return;
+            }
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    showToast("Notifiche push attivate con successo! 🔔");
+                    new Notification("SmartBudget", { body: "Le notifiche per le tue scadenze ricorrenti sono attive!" });
+                } else {
+                    showToast("Permesso notifiche negato.");
+                }
+            });
+        }
+
+        function checkRecurringNotifications() {
+            if (!("Notification" in window) || Notification.permission !== "granted") return;
+            const todayStr = new Date().toISOString().slice(0, 10);
+            if (data.recurring && data.recurring.length > 0) {
+                data.recurring.forEach(r => {
+                    if (r.nextDate === todayStr) {
+                        new Notification("SmartBudget - Promemoria Scadenza", {
+                            body: `Oggi scade l'operazione ricorrente: "${r.desc}"`
+                        });
+                    }
+                });
             }
         }
 
@@ -1031,7 +1032,6 @@
             document.getElementById('theme-toggle-icon').textContent = currentTheme === 'dark' ? '☀️' : '🌙';
             localStorage.setItem('smart_budget_theme', currentTheme);
             renderAnalytics();
-            renderJarsChart();
         }
 
         function exportBackupJSON() {
@@ -1147,7 +1147,6 @@
 
             updateSavingsSimulation();
             renderJars();
-            renderJarsChart();
         }
 
         function updateSavingsSimulation() {
@@ -1197,6 +1196,7 @@
             
             if (data.jars.length === 0) {
                 container.innerHTML = '<p style="color:var(--text-light); font-size:0.78rem; text-align:center;">Nessun barattolo attivo.</p>';
+                if (jarsTrendChartInstance) jarsTrendChartInstance.destroy();
                 return;
             }
 
@@ -1223,37 +1223,56 @@
                     </div>
                 `;
             });
+            renderJarsChart();
         }
 
         function renderJarsChart() {
-            const ctxEl = document.getElementById('jarsBarChart');
-            if (!ctxEl) return;
+            const ctx = document.getElementById('jarsTrendChart');
+            if (!ctx) return;
+            if (jarsTrendChartInstance) jarsTrendChartInstance.destroy();
+
+            let labels = [];
+            let datasets = [];
+            const colors = ['#6366f1', '#10b981', '#f59e0b', '#3b82f6', '#c084fc', '#ef4444'];
+
+            // Raccogliamo tutti i mesi unici registrati nello storico dei barattoli
+            let monthSet = new Set();
+            data.jars.forEach(jar => {
+                if (!jar.history) jar.history = [{ date: new Date().toISOString().slice(0,7), amount: jar.current }];
+                jar.history.forEach(h => monthSet.add(h.date));
+            });
+            labels = Array.from(monthSet).sort();
+
+            data.jars.forEach((jar, index) => {
+                let color = colors[index % colors.length];
+                let points = labels.map(m => {
+                    let found = jar.history.find(h => h.date === m);
+                    return found ? found.amount : null;
+                });
+                datasets.push({
+                    label: jar.name,
+                    data: points,
+                    borderColor: color,
+                    backgroundColor: color,
+                    tension: 0.2,
+                    fill: false
+                });
+            });
+
             const isDark = currentTheme === 'dark';
             const textColor = isDark ? '#f8fafc' : '#0f172a';
             const gridColor = isDark ? '#1e293b' : '#e2e8f0';
 
-            if (!data.jars || data.jars.length === 0) return;
-            const labels = data.jars.map(j => j.name);
-            const currentVals = data.jars.map(j => j.current);
-            const targetVals = data.jars.map(j => j.target);
-
-            if (jarsChartInstance) jarsChartInstance.destroy();
-            jarsChartInstance = new Chart(ctxEl.getContext('2d'), {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [
-                        { label: 'Accantonato', data: currentVals, backgroundColor: '#10b981', borderRadius: 4 },
-                        { label: 'Target', data: targetVals, backgroundColor: '#6366f1', borderRadius: 4 }
-                    ]
-                },
+            jarsTrendChartInstance = new Chart(ctx.getContext('2d'), {
+                type: 'line',
+                data: { labels: labels.length > 0 ? labels : [new Date().toISOString().slice(0,7)], datasets: datasets.length > 0 ? datasets : [{ label: 'Nessun dato', data: [0] }] },
                 options: {
                     responsive: true, maintainAspectRatio: false,
                     scales: {
                         x: { ticks: { color: textColor, font: { size: 9 } }, grid: { display: false } },
                         y: { ticks: { color: textColor, font: { size: 9 } }, grid: { color: gridColor } }
                     },
-                    plugins: { legend: { position: 'top', labels: { color: textColor, boxWidth: 8, font: { size: 10 } } } }
+                    plugins: { legend: { position: 'bottom', labels: { color: textColor, boxWidth: 8, font: { size: 10 } } } }
                 }
             });
         }
@@ -1265,6 +1284,12 @@
                 let amount = parseFloat(val);
                 if (isNaN(amount) || amount <= 0) { showToast("Importo non valido!"); return; }
                 jar.current += amount;
+                if (!jar.history) jar.history = [];
+                let currentMonth = new Date().toISOString().slice(0,7);
+                let historyEntry = jar.history.find(h => h.date === currentMonth);
+                if (historyEntry) historyEntry.amount = jar.current;
+                else jar.history.push({ date: currentMonth, amount: jar.current });
+
                 saveData();
                 showToast(`Versati € ${amount.toFixed(2)} in ${jar.name}!`);
             }, false, "50");
@@ -1274,41 +1299,6 @@
             data.jars = data.jars.filter(j => j.id !== id);
             saveData();
             showToast("Barattolo eliminato.");
-        }
-
-        function renderTagsAnalysis() {
-            const container = document.getElementById('tags-analysis-list');
-            if (!container) return;
-            let tagMap = {};
-
-            data.transactions.forEach(t => {
-                if (t.type === 'Uscita' && t.desc) {
-                    let matches = t.desc.match(/(#\w+)/g);
-                    if (matches) {
-                        matches.forEach(tag => {
-                            let cleanTag = tag.toLowerCase();
-                            tagMap[cleanTag] = (tagMap[cleanTag] || 0) + t.amount;
-                        });
-                    }
-                }
-            });
-
-            let sortedTags = Object.keys(tagMap).sort((a, b) => tagMap[b] - tagMap[a]);
-            if (sortedTags.length === 0) {
-                container.innerHTML = '<p style="color:var(--text-light); text-align:center; font-size:0.8rem;">Nessun hashtag trovato nelle transazioni (es. #vacanza, #auto).</p>';
-                return;
-            }
-
-            container.innerHTML = '';
-            sortedTags.forEach(tag => {
-                let total = tagMap[tag];
-                container.innerHTML += `
-                    <div class="account-card-item" style="flex-direction:row; justify-content:space-between; align-items:center;">
-                        <span class="t-tag" style="font-size:0.85rem; padding:4px 8px;">${tag}</span>
-                        <strong style="color:var(--danger); font-size:0.95rem;">€ ${total.toFixed(2)}</strong>
-                    </div>
-                `;
-            });
         }
 
         function toggleAccountsVisibility() {
@@ -1326,17 +1316,16 @@
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
             document.getElementById('tab-' + tabId).classList.add('active');
-            if (btnElement) btnElement.classList.add('active');
+            btnElement.classList.add('active');
             toggleSidebar();
             if(tabId === 'analytics') renderAnalytics();
             else if(tabId === 'savings') updateSavingsPlanUI();
-            else if(tabId === 'tags') renderTagsAnalysis();
         }
 
         function initAnalyticsSelectors() {
             const yearSelect = document.getElementById('analytics-year');
             const monthSelect = document.getElementById('analytics-month');
-            if (yearSelect && yearSelect.options.length === 0) {
+            if (yearSelect.options.length === 0) {
                 const now = new Date();
                 const currentYear = now.getFullYear();
                 for (let y = currentYear - 3; y <= currentYear + 2; y++) {
@@ -1347,20 +1336,52 @@
                 }
                 monthSelect.value = now.getMonth();
             }
+            updateTagSelectOptions();
+        }
+
+        function updateTagSelectOptions() {
+            const tagSelect = document.getElementById('analytics-tag-select');
+            if (!tagSelect) return;
+            let tagsSet = new Set();
+            data.transactions.forEach(t => {
+                let matches = t.desc.match(/#\w+/g);
+                if (matches) matches.forEach(tag => tagsSet.add(tag));
+            });
+            let currentVal = tagSelect.value;
+            tagSelect.innerHTML = '<option value="">Seleziona un #tag...</option>';
+            tagsSet.forEach(tag => {
+                tagSelect.innerHTML += `<option value="${tag}" ${tag === currentVal ? 'selected' : ''}>${tag}</option>`;
+            });
+        }
+
+        function renderTagAnalytics() {
+            const selectedTag = document.getElementById('analytics-tag-select').value;
+            const resultBox = document.getElementById('tag-analytics-result');
+            if (!selectedTag) {
+                resultBox.innerHTML = "Seleziona un hashtag per vedere il totale speso e i dettagli delle transazioni associate.";
+                return;
+            }
+            let total = 0;
+            let count = 0;
+            data.transactions.forEach(t => {
+                if (t.desc.toLowerCase().includes(selectedTag.toLowerCase())) {
+                    total += t.amount;
+                    count++;
+                }
+            });
+            resultBox.innerHTML = `🏷️ Per l'hashtag <strong>${selectedTag}</strong> risultano <strong>${count} transazioni</strong> per un totale di <strong style="color:var(--primary);">€ ${total.toFixed(2)}</strong>.`;
         }
 
         function editCategory(type, name) {
             let cat = data.categories[type].find(c => c.name === name);
             if (!cat) return;
-            openCustomPrompt(`Modifica Categoria`, `Nuovo limite o emoji per "${name}" (Formato: Limite|Emoji, es: 200|🍕):`, (val) => {
-                let parts = val.split('|');
-                let newLimit = parseFloat(parts[0]);
-                let newEmoji = parts[1] ? parts[1].trim() : cat.emoji;
-                if (!isNaN(newLimit) && newLimit >= 0) cat.limit = newLimit;
-                if (newEmoji) cat.emoji = newEmoji;
+            openCustomPrompt(`Modifica Categoria`, `Nuovo limite mensile per "${name}" (€):`, (val) => {
+                let newLimit = parseFloat(val);
+                if (isNaN(newLimit) || newLimit < 0) { showToast("Importo non valido!"); return; }
+                cat.limit = newLimit;
                 saveData();
                 showToast("Categoria aggiornata!");
-            }, false, `${cat.limit}|${cat.emoji}`);
+            }, false, cat.limit);
         }
 
         function deleteCategory(type, name) {
@@ -1619,7 +1640,7 @@
                         </div>
                         <div class="form-group">
                             <label>Emoji Icona</label>
-                            <input type="text" id="q-c-emoji" value="🍕" maxlength="4" style="text-align:center; font-size:1.2rem;">
+                            <input type="text" id="q-c-emoji" value="🏷️" maxlength="4" style="text-align:center; font-size:1.2rem;">
                         </div>
                         <div class="form-group">
                             <label>Limite Budget Mensile (€)</label>
@@ -1717,7 +1738,8 @@
             const target = parseFloat(document.getElementById('q-jar-target').value) || 0;
             const current = parseFloat(document.getElementById('q-jar-current').value) || 0;
             if (!data.jars) data.jars = [];
-            data.jars.push({ id: Date.now(), name, target, current });
+            let currentMonth = new Date().toISOString().slice(0,7);
+            data.jars.push({ id: Date.now(), name, target, current, history: [{ date: currentMonth, amount: current }] });
             saveData();
             closeQuickModal();
             showToast("Barattolo creato!");
@@ -1757,7 +1779,7 @@
             if (!catSelect) return;
             catSelect.innerHTML = '';
             if (data.categories[type]) {
-                data.categories[type].forEach(c => { catSelect.innerHTML += `<option value="${c.name}">${c.emoji || ''} ${c.name}</option>`; });
+                data.categories[type].forEach(c => { catSelect.innerHTML += `<option value="${c.name}">${c.emoji || '🏷️'} ${c.name}</option>`; });
             }
         }
 
@@ -1775,7 +1797,7 @@
             if (!catSelect) return;
             catSelect.innerHTML = '';
             if (data.categories[type]) {
-                data.categories[type].forEach(c => { catSelect.innerHTML += `<option value="${c.name}">${c.emoji || ''} ${c.name}</option>`; });
+                data.categories[type].forEach(c => { catSelect.innerHTML += `<option value="${c.name}">${c.emoji || '🏷️'} ${c.name}</option>`; });
             }
         }
 
@@ -1862,6 +1884,15 @@
             closeQuickModal();
         }
 
+        function filterByTag(tag) {
+            const searchInput = document.getElementById('search-transaction');
+            if (searchInput) {
+                searchInput.value = tag;
+                switchTab('transactions', document.querySelector('.sidebar-nav button:nth-child(2)'));
+                renderApp();
+            }
+        }
+
         function renderAnalytics() {
             initAnalyticsSelectors();
             const targetMonth = parseInt(document.getElementById('analytics-month').value);
@@ -1903,6 +1934,7 @@
             }
             document.getElementById('ana-financial-advice').innerHTML = advice;
             renderCharts(categoryBreakdown, targetYear, targetMonth);
+            renderTagAnalytics();
         }
 
         function renderCharts(categoryBreakdown, targetYear, targetMonth) {
@@ -1911,17 +1943,20 @@
             const gridColor = isDark ? '#1e293b' : '#e2e8f0';
 
             const pieCtx = document.getElementById('categoryPieChart').getContext('2d');
-            const catLabels = Object.keys(categoryBreakdown).map(catName => {
-                let catObj = data.categories['Uscita']?.find(c => c.name === catName);
-                return `${catObj ? catObj.emoji || '' : ''} ${catName}`;
-            });
+            const catLabels = Object.keys(categoryBreakdown);
             const catValues = Object.values(categoryBreakdown);
             if (pieChartInstance) pieChartInstance.destroy();
+
+            // Mappatura emoji per i grafici
+            let enhancedLabels = catLabels.map(label => {
+                let foundCat = data.categories["Uscita"] ? data.categories["Uscita"].find(c => c.name === label) : null;
+                return foundCat && foundCat.emoji ? `${foundCat.emoji} ${label}` : label;
+            });
 
             pieChartInstance = new Chart(pieCtx, {
                 type: 'doughnut',
                 data: {
-                    labels: catLabels.length > 0 ? catLabels : ['Nessuna spesa'],
+                    labels: enhancedLabels.length > 0 ? enhancedLabels : ['Nessuna spesa'],
                     datasets: [{
                         data: catValues.length > 0 ? catValues : [1],
                         backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#3b82f6', '#c084fc', '#94a3b8'],
@@ -1959,4 +1994,260 @@
                     labels: monthsLabels,
                     datasets: [
                         { label: 'Entrate', data: incomeData, backgroundColor: '#10b981', borderRadius: 4 },
-                        { label: 'U
+                        { label: 'Uscite', data: expenseData, backgroundColor: '#ef4444', borderRadius: 4 }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    scales: {
+                        x: { ticks: { color: textColor, font: { size: 9 } }, grid: { display: false } },
+                        y: { ticks: { color: textColor, font: { size: 9 } }, grid: { color: gridColor } }
+                    },
+                    plugins: { legend: { position: 'top', labels: { color: textColor, boxWidth: 8, font: { size: 10 } } } }
+                }
+            });
+        }
+
+        function renderApp() {
+            let totalNetWorth = data.accounts.reduce((sum, acc) => sum + (parseFloat(acc.balance) || 0), 0);
+            const netWorthEl = document.getElementById('net-worth');
+            const eyeBtn = document.getElementById('eye-btn');
+            const eyeAccBtn = document.getElementById('eye-accounts-btn');
+            const eyeTransBtn = document.getElementById('eye-trans-btn');
+
+            if (hideAccounts) {
+                if(netWorthEl) netWorthEl.textContent = "€ ••••••";
+                if(eyeBtn) eyeBtn.textContent = "🙈"; if(eyeAccBtn) eyeAccBtn.textContent = "🙈"; if(eyeTransBtn) eyeTransBtn.textContent = "🙈";
+            } else {
+                if(netWorthEl) netWorthEl.textContent = `€ ${totalNetWorth.toFixed(2)}`;
+                if(eyeBtn) eyeBtn.textContent = "👁️"; if(eyeAccBtn) eyeAccBtn.textContent = "👁️"; if(eyeTransBtn) eyeTransBtn.textContent = "👁️";
+            }
+
+            const salInput = document.getElementById('savings-salary');
+            const ruleInput = document.getElementById('savings-rule');
+            const targetInput = document.getElementById('goal-target');
+            const monthsInput = document.getElementById('goal-months');
+            if(salInput) salInput.value = savingsSettings.salary;
+            if(ruleInput) ruleInput.value = savingsSettings.rule;
+            if(targetInput) targetInput.value = savingsSettings.target;
+            if(monthsInput) monthsInput.value = savingsSettings.months;
+            updateSavingsPlanUI();
+
+            const now = new Date();
+            let monthlyIncome = 0, monthlyExpense = 0, categoryExpenses = {};
+            if(data.categories["Uscita"]) data.categories["Uscita"].forEach(c => categoryExpenses[c.name] = 0);
+
+            data.transactions.forEach(t => {
+                let tDate = new Date(t.date);
+                if (tDate.getMonth() === now.getMonth() && tDate.getFullYear() === now.getFullYear()) {
+                    if (t.type === 'Entrata') monthlyIncome += t.amount;
+                    else if (t.type === 'Uscita') { monthlyExpense += t.amount; categoryExpenses[t.category] = (categoryExpenses[t.category] || 0) + t.amount; }
+                }
+            });
+
+            const currentDay = now.getDate();
+            const totalDaysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+            const daysPassed = Math.max(currentDay, 1);
+            const dailyAvgExpense = monthlyExpense / daysPassed;
+            const projectedMonthExpense = dailyAvgExpense * totalDaysInMonth;
+            const projectedEndBalance = monthlyIncome - projectedMonthExpense;
+
+            const predTextEl = document.getElementById('end-month-prediction-text');
+            if (predTextEl) {
+                let displayProjExpense = `€ ${projectedMonthExpense.toFixed(2)}`;
+                let displayProjBalance = `€ ${projectedEndBalance.toFixed(2)}`;
+                predTextEl.innerHTML = `Al ritmo attuale (circa € ${dailyAvgExpense.toFixed(2)}/giorno), chiuderai il mese con una spesa stimata di <strong>${displayProjExpense}</strong> e un flusso netto previsto di <strong style="color:${projectedEndBalance >= 0 ? 'var(--success)' : 'var(--danger)'};">${displayProjBalance}</strong>.`;
+            }
+
+            let monthlyFlow = monthlyIncome - monthlyExpense;
+            const mIncEl = document.getElementById('monthly-income');
+            const mExpEl = document.getElementById('monthly-expense');
+            const mFlowEl = document.getElementById('monthly-flow');
+            if(mIncEl) mIncEl.textContent = `€ ${monthlyIncome.toFixed(2)}`;
+            if(mExpEl) mExpEl.textContent = `€ ${monthlyExpense.toFixed(2)}`;
+            if(mFlowEl) mFlowEl.textContent = `€ ${monthlyFlow.toFixed(2)}`;
+
+            let adviceText = "Gestione stabile.";
+            let savingsRateMonth = monthlyIncome > 0 ? ((monthlyIncome - monthlyExpense) / monthlyIncome) * 100 : 0;
+            if (monthlyIncome === 0 && monthlyExpense === 0) adviceText = "Nessuna transazione questo mese.";
+            else if (savingsRateMonth < 0) adviceText = "⚠️ Uscite superiori alle entrate!";
+            else if (savingsRateMonth >= 20) adviceText = `🌟 Risparmiato il ${savingsRateMonth.toFixed(1)}% questo mese.`;
+            const adviceEl = document.getElementById('advice-text');
+            if(adviceEl) adviceEl.innerHTML = adviceText;
+
+            let budgetContainer = document.getElementById('budget-alerts-container');
+            if(budgetContainer && data.categories["Uscita"]) {
+                budgetContainer.innerHTML = '';
+                data.categories["Uscita"].forEach(cat => {
+                    let spent = categoryExpenses[cat.name] || 0;
+                    let limit = cat.limit;
+                    let percentage = limit > 0 ? (spent / limit) * 100 : 0;
+                    let barColor = percentage >= 100 ? 'var(--danger)' : (percentage >= 80 ? 'var(--warning)' : 'var(--success)');
+                    budgetContainer.innerHTML += `
+                        <div class="budget-item">
+                            <div class="budget-info"><span><strong>${cat.emoji || '🔴'} ${cat.name}</strong></span><span>€ ${spent.toFixed(2)} / € ${limit.toFixed(2)}</span></div>
+                            <div class="progress-bar-container"><div class="progress-bar" style="width: ${Math.min(percentage, 100)}%; background-color: ${barColor};"></div></div>
+                        </div>`;
+                });
+            }
+
+            let catManagerList = document.getElementById('category-list-manager');
+            if (catManagerList) {
+                catManagerList.innerHTML = '';
+                ['Uscita', 'Entrata'].forEach(type => {
+                    if (data.categories[type]) {
+                        data.categories[type].forEach(c => {
+                            let limitText = type === 'Uscita' ? ` (Budget: € ${c.limit.toFixed(2)})` : '';
+                            catManagerList.innerHTML += `
+                                <div class="category-card-item">
+                                    <div class="category-name-area">
+                                        <span>${c.emoji || (type === 'Uscita' ? '🔴' : '🟢')} ${c.name}</span>
+                                        <span style="font-size:0.68rem; color:var(--text-light); font-weight:normal;">${limitText}</span>
+                                    </div>
+                                    <div class="category-actions">
+                                        ${type === 'Uscita' ? `<button class="btn-edit" onclick="editCategory('${type}', '${c.name}')">Modifica</button>` : ''}
+                                        <button class="btn-danger" onclick="deleteCategory('${type}', '${c.name}')">Elimina</button>
+                                    </div>
+                                </div>`;
+                        });
+                    }
+                });
+            }
+
+            let tList = document.getElementById('transaction-list');
+            if(tList) {
+                tList.innerHTML = '';
+                let filterType = document.getElementById('filter-type').value;
+                let filterAcc = document.getElementById('filter-account').value;
+                let searchText = document.getElementById('search-transaction').value.toLowerCase();
+                let dateFrom = document.getElementById('filter-date-from').value;
+                let dateTo = document.getElementById('filter-date-to').value;
+
+                let filtered = data.transactions.filter(t => {
+                    let matchType = filterType === 'ALL' || t.type === filterType;
+                    let matchAcc = filterAcc === 'ALL' || t.accountName === filterAcc || t.fromAccount === filterAcc || t.toAccount === filterAcc;
+                    let matchSearch = !searchText || t.desc.toLowerCase().includes(searchText) || (t.category && t.category.toLowerCase().includes(searchText));
+                    let tDateOnly = t.date.slice(0, 10);
+                    let matchDateFrom = !dateFrom || tDateOnly >= dateFrom;
+                    let matchDateTo = !dateTo || tDateOnly <= dateTo;
+                    return matchType && matchAcc && matchSearch && matchDateFrom && matchDateTo;
+                });
+
+                if(filtered.length === 0) tList.innerHTML = '<p style="color:var(--text-light); text-align:center; padding: 10px 0; font-size:0.8rem;">Nessun movimento.</p>';
+                
+                filtered.slice(0, 40).forEach(t => {
+                    let d = new Date(t.date).toLocaleDateString();
+                    let isGiroconto = t.type === 'Giroconto', isEntrata = t.type === 'Entrata';
+                    let badgeClass = isGiroconto ? 'giroconto' : (isEntrata ? 'entrata' : 'uscita');
+                    let badgeSymbol = isGiroconto ? '🔄' : (isEntrata ? '+' : '-');
+                    
+                    let formattedDesc = t.desc.replace(/(#\w+)/g, '<span class="t-tag" onclick="filterByTag(\'$1\')">$1</span>');
+                    
+                    let catObj = null;
+                    if (!isGiroconto && t.category && data.categories[t.type]) {
+                        catObj = data.categories[t.type].find(c => c.name === t.category);
+                    }
+                    let catEmojiSymbol = catObj && catObj.emoji ? catObj.emoji : '🏷️';
+                    let metaText = isGiroconto ? `Da <strong>${t.fromAccount}</strong> a <strong>${t.toAccount}</strong>` : `<span class="t-tag">${catEmojiSymbol} ${t.category}</span> • ${t.accountName}`;
+
+                    tList.innerHTML += `
+                        <div class="transaction-card">
+                            <div class="transaction-left">
+                                <div class="transaction-badge ${badgeClass}">${badgeSymbol}</div>
+                                <div class="transaction-details"><span class="t-desc">${formattedDesc}</span><span class="t-meta">${metaText} • ${d}</span></div>
+                            </div>
+                            <div class="transaction-right">
+                                <span class="transaction-amount ${badgeClass}">${isGiroconto?'🔄 ':(isEntrata?'+':'-')}€ ${t.amount.toFixed(2)}</span>
+                                <button class="btn-danger" onclick="deleteTransaction(${t.id})" style="padding:3px 6px!important; font-size:0.68rem!important;">Elimina</button>
+                            </div>
+                        </div>`;
+                });
+            }
+
+            let accList = document.getElementById('account-list');
+            if(accList) {
+                accList.innerHTML = '';
+                data.accounts.forEach((acc, index) => {
+                    let displayBalance = hideAccounts ? "€ ••••••" : `€ ${(parseFloat(acc.balance) || 0).toFixed(2)}`;
+                    accList.innerHTML += `
+                        <div class="account-card-item">
+                            <div class="account-header-row">
+                                <div class="account-name-area" onclick="setMainAccount('${acc.name}')" style="cursor:pointer;" title="Clicca per impostare come principale">
+                                    <span>${acc.name}</span>${acc.isMain ? '<span class="main-badge">⭐</span>' : '<span class="normal-badge">⭐</span>'}
+                                </div>
+                                <div class="account-balance-area">${displayBalance}</div>
+                            </div>
+                            <div class="account-actions-row">
+                                <div class="account-move-group">
+                                    <button class="btn-move" onclick="moveAccount(${index}, -1)" ${index === 0 ? 'disabled style="opacity:0.3;"' : ''}>▲</button>
+                                    <button class="btn-move" onclick="moveAccount(${index}, 1)" ${index === data.accounts.length - 1 ? 'disabled style="opacity:0.3;"' : ''}>▼</button>
+                                </div>
+                                <div class="account-mgmt-group">
+                                    <button class="btn-edit" onclick="editAccount('${acc.name}')">Modifica</button>
+                                    <button class="btn-danger" onclick="deleteAccount('${acc.name}')">Elimina</button>
+                                </div>
+                            </div>
+                        </div>`;
+                });
+            }
+
+            let rList = document.getElementById('recurring-list');
+            if(rList) {
+                rList.innerHTML = (!data.recurring || data.recurring.length === 0) ? '<p style="color:var(--text-light); text-align:center; padding: 10px 0; font-size:0.8rem;">Nessun promemoria ricorrente.</p>' : '';
+                const recurringBadge = document.getElementById('recurring-badge');
+                if (recurringBadge) recurringBadge.style.display = (data.recurring && data.recurring.length > 0) ? 'inline-block' : 'none';
+
+                if(data.recurring && data.recurring.length > 0) {
+                    let grouped = {};
+                    data.recurring.forEach(r => {
+                        let groupKey = r.type === 'Giroconto' ? '🔄 Giroconti Ricorrenti' : (r.category || 'Altre Uscite');
+                        if (!grouped[groupKey]) grouped[groupKey] = [];
+                        grouped[groupKey].push(r);
+                    });
+
+                    for (let catName in grouped) {
+                        let sectionHtml = `
+                            <div class="recurring-category-section">
+                                <div class="recurring-category-header" onclick="toggleRecurringGroup(this)">
+                                    <span>📂 ${catName} (${grouped[catName].length})</span>
+                                    <span class="toggle-icon">►</span>
+                                </div>
+                                <div class="recurring-category-body">
+                        `;
+                        grouped[catName].forEach(r => {
+                            let infoText = r.type === 'Giroconto' ? `${r.fromAccount} ➡️ ${r.toAccount}` : `${r.accountName}`;
+                            let nextDateFormatted = r.nextDate ? new Date(r.nextDate).toLocaleDateString() : 'Non impostata';
+                            let displayAmt = r.amount > 0 ? `€ ${r.amount.toFixed(2)}` : `Variabile`;
+                            let amtClass = r.amount > 0 ? 'recurring-compact-amount' : 'recurring-compact-amount variable';
+
+                            sectionHtml += `
+                                <div class="recurring-compact-item">
+                                    <div class="recurring-compact-info">
+                                        <span class="recurring-compact-title">${r.desc}</span>
+                                        <span class="recurring-compact-meta">🔄 ${r.frequency || 'Mensile'} • Scad. <strong>${nextDateFormatted}</strong> • ${infoText}</span>
+                                    </div>
+                                    <div class="recurring-compact-right">
+                                        <span class="${amtClass}">${displayAmt}</span>
+                                        <div class="recurring-compact-actions">
+                                            <button class="btn-secondary" onclick="executeRecurring(${r.id})" style="background:rgba(16,185,129,0.15)!important; color:var(--success)!important; font-weight:700;">▶️ Applica</button>
+                                            <button class="btn-danger" onclick="deleteRecurring(${r.id})">🗑️</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        sectionHtml += `</div></div>`;
+                        rList.innerHTML += sectionHtml;
+                    }
+                }
+            }
+
+            updateAccountSelect();
+            renderAnalytics();
+        }
+
+        renderApp();
+        checkAppSecurityLock();
+    </script>
+</body>
+</html>
