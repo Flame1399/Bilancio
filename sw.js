@@ -1,4 +1,4 @@
-// Versione Service Worker: 1.1 - Forza il rilevamento aggiornamenti
+// Versione Service Worker: 1.3 - Salvataggio persistente notifica
 self.addEventListener('install', (event) => {
     self.skipWaiting();
 });
@@ -16,10 +16,7 @@ self.addEventListener('message', (event) => {
 self.addEventListener('notificationclick', function(event) {
     event.notification.close();
     const itemId = event.notification.data ? event.notification.data.id : null;
-    const targetUrl = new URL(
-        itemId ? `./index.html?open_recurring=${encodeURIComponent(itemId)}` : './index.html',
-        self.location.href
-    ).href;
+    const targetUrl = new URL('./index.html', self.location.href).href;
 
     event.waitUntil(
         clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(clientList) {
@@ -28,9 +25,6 @@ self.addEventListener('notificationclick', function(event) {
                 if ('focus' in client) {
                     return client.focus().then(() => {
                         client.postMessage({ action: 'open_recurring_item', id: itemId });
-                        if (client.url.indexOf('open_recurring') === -1 && itemId) {
-                            client.navigate(targetUrl);
-                        }
                     });
                 }
             }
