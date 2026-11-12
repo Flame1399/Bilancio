@@ -843,7 +843,6 @@
 
     <script>
         let globalReg = null;
-        let pendingNotificationItemId = null;
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -938,11 +937,7 @@
                 setTimeout(() => document.getElementById('p1').focus(), 300);
             } else {
                 document.getElementById('app-lock-screen').style.display = 'none';
-                if (pendingNotificationItemId) {
-                    const idToOpen = pendingNotificationItemId;
-                    pendingNotificationItemId = null;
-                    openRecurringByNotification(idToOpen);
-                }
+                checkAndOpenPendingNotification();
             }
             checkRecurringNotifications();
         }
@@ -984,6 +979,7 @@
                             });
                             n.onclick = () => {
                                 window.focus();
+                                localStorage.setItem('smart_budget_pending_notif', r.id);
                                 openRecurringByNotification(r.id);
                             };
                         }
@@ -1045,14 +1041,10 @@
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }, 100);
 
-                // Se c'è una notifica in attesa, aprila subito dopo lo sblocco del PIN
-                if (pendingNotificationItemId) {
-                    const idToOpen = pendingNotificationItemId;
-                    pendingNotificationItemId = null;
-                    setTimeout(() => {
-                        openRecurringByNotification(idToOpen);
-                    }, 300);
-                }
+                // Controlla e apre la notifica memorizzata nel localStorage
+                setTimeout(() => {
+                    checkAndOpenPendingNotification();
+                }, 250);
             } else {
                 showToast("PIN non corretto!");
                 clearPinFields();
@@ -2480,17 +2472,26 @@
             renderAnalytics();
         }
 
-        // Ascolto messaggi di notifica dal Service Worker con controllo ritardato per il DOM
+        // Ascolto messaggi dal Service Worker e controllo persistente via localStorage
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.addEventListener('message', event => {
                 if (event.data && event.data.action === 'open_recurring_item') {
-                    if (userSecurityPin && document.getElementById('app-lock-screen').style.display !== 'none') {
-                        pendingNotificationItemId = event.data.id;
-                    } else {
-                        openRecurringByNotification(event.data.id);
+                    if (event.data.id) {
+                        localStorage.setItem('smart_budget_pending_notif', event.data.id);
+                    }
+                    if (!userSecurityPin || document.getElementById('app-lock-screen').style.display === 'none') {
+                        checkAndOpenPendingNotification();
                     }
                 }
             });
+        }
+
+        function checkAndOpenPendingNotification() {
+            const pendingId = localStorage.getItem('smart_budget_pending_notif');
+            if (pendingId) {
+                localStorage.removeItem('smart_budget_pending_notif');
+                openRecurringByNotification(pendingId);
+            }
         }
 
         function openRecurringByNotification(itemId) {
@@ -2514,11 +2515,11 @@
                             targetElement.style.background = "";
                             targetElement.style.borderColor = "";
                         }, 2500);
-                    } else if (attempts < 15) {
-                        setTimeout(() => checkAndOpen(attempts + 1), 200);
+                    } else if (attempts < 20) {
+                        setTimeout(() => checkAndOpen(attempts + 1), 250);
                     }
                 };
-                setTimeout(() => checkAndOpen(), 200);
+                setTimeout(() => checkAndOpen(), 250);
             }
         }
 
@@ -2527,11 +2528,7 @@
             const openId = urlParams.get('open_recurring');
             if (openId) {
                 window.history.replaceState({}, document.title, window.location.pathname);
-                if (userSecurityPin) {
-                    pendingNotificationItemId = openId;
-                } else {
-                    setTimeout(() => openRecurringByNotification(openId), 400);
-                }
+                localStorage.setItem('smart_budget_pending_notif', openId);
             }
         });
 
