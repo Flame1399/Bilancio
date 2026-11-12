@@ -1,10 +1,32 @@
-// Versione Service Worker: 1.5 - Gestione Home Screen & Focus
+// Versione Service Worker: 1.6 - Gestione Cache & Fix Definitivo Ricorrenti
+const CACHE_NAME = 'smartbudget-v1.6';
+
 self.addEventListener('install', (event) => {
     self.skipWaiting();
 });
 
 self.addEventListener('activate', (event) => {
-    event.waitUntil(clients.claim());
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames.map((cache) => {
+                    if (cache !== CACHE_NAME) {
+                        console.log('Eliminazione vecchia cache:', cache);
+                        return caches.delete(cache);
+                    }
+                })
+            );
+        }).then(() => clients.claim())
+    );
+});
+
+// Intercettazione delle richieste per evitare blocchi di caricamento e cache obsoleta
+self.addEventListener('fetch', (event) => {
+    event.respondWith(
+        fetch(event.request).catch(() => {
+            return caches.match(event.request);
+        })
+    );
 });
 
 self.addEventListener('message', (event) => {
