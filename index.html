@@ -1079,7 +1079,7 @@
             const percentage = target > 0 ? (totalSavedActual / target) * 100 : 0;
 
             document.getElementById('goal-current-saved').textContent = hideAccounts ? "€ ••••••" : `€ ${totalSavedActual.toFixed(2)}`;
-            document.getElementById('goal-target-label').textContent = hideAccounts ? "€ ••••••" : `€ ${target.toFixed(2)}`;
+            document.getElementById('goal-target-label').textContent = `€ ${target.toFixed(2)}`;
             document.getElementById('goal-percentage-label').textContent = `${percentage.toFixed(1)}%`;
             document.getElementById('goal-progress-bar').style.width = `${Math.min(percentage, 100)}%`;
 
@@ -1152,7 +1152,6 @@
             data.jars.forEach(jar => {
                 let pct = jar.target > 0 ? (jar.current / jar.target) * 100 : 0;
                 let displayCurrent = hideAccounts ? "€ ••••••" : `€ ${jar.current.toFixed(2)}`;
-                let displayTarget = hideAccounts ? "€ ••••••" : `€ ${jar.target.toFixed(2)}`;
                 container.innerHTML += `
                     <div style="background:var(--input-bg); border:1px solid var(--card-border); border-radius:var(--radius-md); padding:12px; margin-bottom:8px;">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
@@ -1167,7 +1166,7 @@
                         </div>
                         <div style="display:flex; justify-content:space-between; font-size:0.72rem; color:var(--text-light);">
                             <span>Accantonato: <strong>${displayCurrent}</strong></span>
-                            <span>Target: <strong>${displayTarget}</strong> (${pct.toFixed(0)}%)</span>
+                            <span>Target: <strong>€ ${jar.target.toFixed(2)}</strong> (${pct.toFixed(0)}%)</span>
                         </div>
                     </div>
                 `;
@@ -1752,8 +1751,8 @@
             let savings = periodIncome - periodExpense;
             let savingsRate = periodIncome > 0 ? (savings / periodIncome) * 100 : 0;
 
-            document.getElementById('ana-income').textContent = hideAccounts ? "€ ••••••" : `€ ${periodIncome.toFixed(2)}`;
-            document.getElementById('ana-expense').textContent = hideAccounts ? "€ ••••••" : `€ ${periodExpense.toFixed(2)}`;
+            document.getElementById('ana-income').textContent = `€ ${periodIncome.toFixed(2)}`;
+            document.getElementById('ana-expense').textContent = `€ ${periodExpense.toFixed(2)}`;
             let savingsEl = document.getElementById('ana-savings');
             savingsEl.textContent = hideAccounts ? "€ ••••••" : `€ ${savings.toFixed(2)}`;
             savingsEl.className = `value ${savings >= 0 ? 'income' : 'expense'}`;
@@ -1761,7 +1760,7 @@
             document.getElementById('ana-savings-rate').textContent = `${savingsRate.toFixed(1)}%`;
             document.getElementById('ana-net-flow').textContent = hideAccounts ? "€ ••••••" : `€ ${savings.toFixed(2)}`;
 
-            document.getElementById('analytics-summary-text').innerHTML = `Nel periodo selezionato hai registrato entrate per <strong>${hideAccounts ? '€ ••••••' : '€ ' + periodIncome.toFixed(2)}</strong> e uscite per <strong>${hideAccounts ? '€ ••••••' : '€ ' + periodExpense.toFixed(2)}</strong>.`;
+            document.getElementById('analytics-summary-text').innerHTML = `Nel periodo selezionato hai registrato entrate per <strong>€ ${periodIncome.toFixed(2)}</strong> e uscite per <strong>€ ${periodExpense.toFixed(2)}</strong>.`;
 
             let advice = "Gestione stabile.";
             if (periodIncome === 0 && periodExpense === 0) {
@@ -1888,20 +1887,18 @@
 
             const predTextEl = document.getElementById('end-month-prediction-text');
             if (predTextEl) {
-                if (hideAccounts) {
-                    predTextEl.innerHTML = `Al ritmo attuale, chiuderai il mese con una spesa stimata di <strong>€ ••••••</strong> e un flusso netto previsto di <strong>€ ••••••</strong>.`;
-                } else {
-                    predTextEl.innerHTML = `Al ritmo attuale (circa € ${dailyAvgExpense.toFixed(2)}/giorno), chiuderai il mese con una spesa stimata di <strong>€ ${projectedMonthExpense.toFixed(2)}</strong> e un flusso netto previsto di <strong style="color:${projectedEndBalance >= 0 ? 'var(--success)' : 'var(--danger)'};">€ ${projectedEndBalance.toFixed(2)}</strong>.`;
-                }
+                let displayProjExpense = hideAccounts ? "€ ••••••" : `€ ${projectedMonthExpense.toFixed(2)}`;
+                let displayProjBalance = hideAccounts ? "€ ••••••" : `€ ${projectedEndBalance.toFixed(2)}`;
+                predTextEl.innerHTML = `Al ritmo attuale, chiuderai il mese con una spesa stimata di <strong>${displayProjExpense}</strong> e un flusso netto previsto di <strong style="color:${projectedEndBalance >= 0 ? 'var(--success)' : 'var(--danger)'};">${displayProjBalance}</strong>.`;
             }
 
             let monthlyFlow = monthlyIncome - monthlyExpense;
             const mIncEl = document.getElementById('monthly-income');
             const mExpEl = document.getElementById('monthly-expense');
             const mFlowEl = document.getElementById('monthly-flow');
-            if(mIncEl) mIncEl.textContent = hideAccounts ? "€ ••••••" : `€ ${monthlyIncome.toFixed(2)}`;
-            if(mExpEl) mExpEl.textContent = hideAccounts ? "€ ••••••" : `€ ${monthlyExpense.toFixed(2)}`;
-            if(mFlowEl) mFlowEl.textContent = hideAccounts ? "€ ••••••" : `€ ${monthlyFlow.toFixed(2)}`;
+            if(mIncEl) mIncEl.textContent = `€ ${monthlyIncome.toFixed(2)}`;
+            if(mExpEl) mExpEl.textContent = `€ ${monthlyExpense.toFixed(2)}`;
+            if(mFlowEl) mFlowEl.textContent = `€ ${monthlyFlow.toFixed(2)}`;
 
             let adviceText = "Gestione stabile.";
             let savingsRateMonth = monthlyIncome > 0 ? ((monthlyIncome - monthlyExpense) / monthlyIncome) * 100 : 0;
@@ -1919,11 +1916,9 @@
                     let limit = cat.limit;
                     let percentage = limit > 0 ? (spent / limit) * 100 : 0;
                     let barColor = percentage >= 100 ? 'var(--danger)' : (percentage >= 80 ? 'var(--warning)' : 'var(--success)');
-                    let displaySpent = hideAccounts ? "€ ••••••" : `€ ${spent.toFixed(2)}`;
-                    let displayLimit = hideAccounts ? "€ ••••••" : `€ ${limit.toFixed(2)}`;
                     budgetContainer.innerHTML += `
                         <div class="budget-item">
-                            <div class="budget-info"><span><strong>${cat.name}</strong></span><span>${displaySpent} / ${displayLimit}</span></div>
+                            <div class="budget-info"><span><strong>${cat.name}</strong></span><span>€ ${spent.toFixed(2)} / € ${limit.toFixed(2)}</span></div>
                             <div class="progress-bar-container"><div class="progress-bar" style="width: ${Math.min(percentage, 100)}%; background-color: ${barColor};"></div></div>
                         </div>`;
                 });
@@ -1935,7 +1930,7 @@
                 ['Uscita', 'Entrata'].forEach(type => {
                     if (data.categories[type]) {
                         data.categories[type].forEach(c => {
-                            let limitText = type === 'Uscita' ? ` (Budget: ${hideAccounts ? '€ ••••••' : '€ ' + c.limit.toFixed(2)})` : '';
+                            let limitText = type === 'Uscita' ? ` (Budget: € ${c.limit.toFixed(2)})` : '';
                             catManagerList.innerHTML += `
                                 <div class="category-card-item">
                                     <div class="category-name-area">
@@ -1981,7 +1976,6 @@
                     
                     let formattedDesc = t.desc.replace(/(#\w+)/g, '<span class="t-tag">$1</span>');
                     let metaText = isGiroconto ? `Da <strong>${t.fromAccount}</strong> a <strong>${t.toAccount}</strong>` : `<span class="t-tag">${t.category}</span> • ${t.accountName}`;
-                    let displayAmount = hideAccounts ? "€ ••••••" : `${isGiroconto?'🔄 ':(isEntrata?'+':'-')}€ ${t.amount.toFixed(2)}`;
 
                     tList.innerHTML += `
                         <div class="transaction-card">
@@ -1990,7 +1984,7 @@
                                 <div class="transaction-details"><span class="t-desc">${formattedDesc}</span><span class="t-meta">${metaText} • ${d}</span></div>
                             </div>
                             <div class="transaction-right">
-                                <span class="transaction-amount ${badgeClass}">${displayAmount}</span>
+                                <span class="transaction-amount ${badgeClass}">${isGiroconto?'🔄 ':(isEntrata?'+':'-')}€ ${t.amount.toFixed(2)}</span>
                                 <button class="btn-danger" onclick="deleteTransaction(${t.id})" style="padding:3px 6px!important; font-size:0.68rem!important;">Elimina</button>
                             </div>
                         </div>`;
@@ -2050,7 +2044,7 @@
                         grouped[catName].forEach(r => {
                             let infoText = r.type === 'Giroconto' ? `${r.fromAccount} ➡️ ${r.toAccount}` : `${r.accountName}`;
                             let nextDateFormatted = r.nextDate ? new Date(r.nextDate).toLocaleDateString() : 'Non impostata';
-                            let displayAmt = r.amount > 0 ? (hideAccounts ? "€ ••••••" : `€ ${r.amount.toFixed(2)}`) : `Variabile`;
+                            let displayAmt = r.amount > 0 ? `€ ${r.amount.toFixed(2)}` : `Variabile`;
                             let amtClass = r.amount > 0 ? 'recurring-compact-amount' : 'recurring-compact-amount variable';
 
                             sectionHtml += `
