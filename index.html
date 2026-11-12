@@ -905,7 +905,7 @@
             },
             transactions: [],
             accounts: [
-                { name: "Conto Corrente", balance: 0, isMain: true }
+                { name: "Conto Corrente", balance: 0.00, isMain: true }
             ],
             recurring: [],
             jars: [
@@ -1085,7 +1085,7 @@
                 let d = new Date(t.date).toLocaleDateString();
                 let acc = t.type === 'Giroconto' ? `${t.fromAccount} -> ${t.toAccount}` : t.accountName;
                 let cat = t.category || 'Giroconto';
-                csvContent += `"${d}","${t.type}","${acc}","${cat}","${t.amount}","${t.desc}"\n`;
+                csvContent += `"${d}","${t.type}","${acc}","${cat}","${Number(t.amount).toFixed(2)}","${t.desc}"\n`;
             });
             const encodedUri = encodeURI(csvContent);
             const link = document.createElement("a");
@@ -1129,9 +1129,9 @@
         }
 
         function saveSavingsPlanSettings() {
-            savingsSettings.salary = parseFloat(document.getElementById('savings-salary').value) || 0;
+            savingsSettings.salary = parseFloat(parseFloat(document.getElementById('savings-salary').value || 0).toFixed(2));
             savingsSettings.rule = document.getElementById('savings-rule').value;
-            savingsSettings.target = parseFloat(document.getElementById('goal-target').value) || 0;
+            savingsSettings.target = parseFloat(parseFloat(document.getElementById('goal-target').value || 0).toFixed(2));
             savingsSettings.months = parseFloat(document.getElementById('goal-months').value) || 1;
             localStorage.setItem('smart_budget_savings_settings', JSON.stringify(savingsSettings));
             updateSavingsPlanUI();
@@ -1156,6 +1156,7 @@
                 totalSavedActual = data.accounts.reduce((sum, acc) => sum + (parseFloat(acc.balance) || 0), 0);
             }
             if (totalSavedActual < 0) totalSavedActual = 0;
+            totalSavedActual = parseFloat(totalSavedActual.toFixed(2));
 
             const target = parseFloat(savingsSettings.target) || 1;
             const percentage = target > 0 ? (totalSavedActual / target) * 100 : 0;
@@ -1185,7 +1186,7 @@
             const sliderEl = document.getElementById('sim-range-input');
             const simVal = sliderEl ? (parseFloat(sliderEl.value) || 0) : 0;
             const simValEl = document.getElementById('sim-savings-val');
-            if (simValEl) simValEl.textContent = `€ ${simVal.toFixed(0)} / mese`;
+            if (simValEl) simValEl.textContent = `€ ${simVal.toFixed(2)} / mese`;
 
             let totalSavedActual = 0;
             if (data && Array.isArray(data.accounts)) {
@@ -1194,7 +1195,7 @@
             if (totalSavedActual < 0) totalSavedActual = 0;
             
             const target = parseFloat(savingsSettings.target) || 0;
-            const remaining = target - totalSavedActual;
+            const remaining = parseFloat((target - totalSavedActual).toFixed(2));
             const resultTextEl = document.getElementById('sim-result-text');
             if (!resultTextEl) return;
 
@@ -1234,6 +1235,7 @@
 
             container.innerHTML = '';
             data.jars.forEach(jar => {
+                jar.current = parseFloat(jar.current.toFixed(2));
                 let pct = jar.target > 0 ? (jar.current / jar.target) * 100 : 0;
                 let displayCurrent = `€ ${jar.current.toFixed(2)}`;
                 container.innerHTML += `
@@ -1278,7 +1280,7 @@
                 let color = colors[index % colors.length];
                 let points = labels.map(m => {
                     let found = jar.history.find(h => h.date === m);
-                    return found ? found.amount : null;
+                    return found ? parseFloat(found.amount.toFixed(2)) : null;
                 });
                 datasets.push({
                     label: jar.name,
@@ -1312,9 +1314,9 @@
             let jar = data.jars.find(j => j.id === id);
             if (!jar) return;
             openCustomPrompt(`Versa in "${jar.name}"`, "Inserisci l'importo da versare (€):", (val) => {
-                let amount = parseFloat(val);
+                let amount = parseFloat(parseFloat(val).toFixed(2));
                 if (isNaN(amount) || amount <= 0) { showToast("Importo non valido!"); return; }
-                jar.current += amount;
+                jar.current = parseFloat((jar.current + amount).toFixed(2));
                 if (!jar.history) jar.history = [];
                 let currentMonth = new Date().toISOString().slice(0,7);
                 let historyEntry = jar.history.find(h => h.date === currentMonth);
@@ -1323,7 +1325,7 @@
 
                 saveData();
                 showToast(`Versati € ${amount.toFixed(2)} in ${jar.name}!`);
-            }, false, "50");
+            }, false, "50.00");
         }
 
         function deleteJar(id) {
@@ -1415,12 +1417,12 @@
             let cat = data.categories[type].find(c => c.name === name);
             if (!cat) return;
             openCustomPrompt(`Modifica Categoria`, `Nuovo limite mensile per "${name}" (€):`, (val) => {
-                let newLimit = parseFloat(val);
+                let newLimit = parseFloat(parseFloat(val).toFixed(2));
                 if (isNaN(newLimit) || newLimit < 0) { showToast("Importo non valido!"); return; }
                 cat.limit = newLimit;
                 saveData();
                 showToast("Categoria aggiornata!");
-            }, false, cat.limit);
+            }, false, cat.limit.toFixed(2));
         }
 
         function deleteCategory(type, name) {
@@ -1455,13 +1457,12 @@
         function editAccount(name) {
             let account = data.accounts.find(acc => acc.name === name);
             if(account) {
-                // Assicura che la tab patrimonio sia attiva senza aprire il menu laterale
                 switchTab('patrimony', document.querySelector('.sidebar-nav button:nth-child(3)'), false);
                 closeSidebar();
                 
                 document.getElementById('acc-original-name').value = account.name;
                 document.getElementById('acc-name').value = account.name;
-                document.getElementById('acc-balance').value = account.balance;
+                document.getElementById('acc-balance').value = account.balance.toFixed(2);
                 document.getElementById('account-form-title').textContent = `Modifica Conto: ${account.name}`;
                 document.getElementById('account-submit-btn').textContent = "Aggiorna Conto";
                 document.getElementById('account-cancel-btn').style.display = "inline-block";
@@ -1484,14 +1485,14 @@
             e.preventDefault();
             const originalName = document.getElementById('acc-original-name').value.trim();
             const name = document.getElementById('acc-name').value.trim();
-            const balance = parseFloat(document.getElementById('acc-balance').value);
+            // FORZA ESATTAMENTE 2 DECIMALI (centesimi)
+            const balance = parseFloat(parseFloat(document.getElementById('acc-balance').value).toFixed(2));
             
             if (originalName) {
                 let existing = data.accounts.find(acc => acc.name === originalName);
                 if (existing) {
                     existing.name = name;
                     existing.balance = balance;
-                    // Aggiorna eventuali transazioni e ricorrenti collegate al vecchio nome del conto
                     data.transactions.forEach(t => {
                         if (t.accountName === originalName) t.accountName = name;
                         if (t.fromAccount === originalName) t.fromAccount = name;
@@ -1529,11 +1530,14 @@
                 if (t.type === 'Giroconto') {
                     let accFrom = data.accounts.find(acc => acc.name === t.fromAccount);
                     let accTo = data.accounts.find(acc => acc.name === t.toAccount);
-                    if(accFrom) accFrom.balance += t.amount;
-                    if(accTo) accTo.balance -= t.amount;
+                    if(accFrom) accFrom.balance = parseFloat((accFrom.balance + t.amount).toFixed(2));
+                    if(accTo) accTo.balance = parseFloat((accTo.balance - t.amount).toFixed(2));
                 } else {
                     let account = data.accounts.find(acc => acc.name === t.accountName);
-                    if(account) { if(t.type === 'Entrata') account.balance -= t.amount; else account.balance += t.amount; }
+                    if(account) { 
+                        if(t.type === 'Entrata') account.balance = parseFloat((account.balance - t.amount).toFixed(2)); 
+                        else account.balance = parseFloat((account.balance + t.amount).toFixed(2)); 
+                    }
                 }
             }
             data.transactions = data.transactions.filter(item => item.id !== id);
@@ -1566,25 +1570,32 @@
             let finalAmount = r.amount;
             if (!finalAmount || finalAmount <= 0) {
                 openCustomPrompt(`Applica Promemoria`, `Inserisci l'importo per "${r.desc}" (€):`, (val) => {
-                    let amt = parseFloat(val);
+                    let amt = parseFloat(parseFloat(val).toFixed(2));
                     if (isNaN(amt) || amt <= 0) { showToast("Importo non valido!"); return; }
                     completeRecurringExecution(r, amt);
                 }, false, "");
             } else {
-                completeRecurringExecution(r, finalAmount);
+                completeRecurringExecution(r, parseFloat(finalAmount.toFixed(2)));
             }
         }
 
         function completeRecurringExecution(r, finalAmount) {
+            finalAmount = parseFloat(finalAmount.toFixed(2));
             let transactionDate = r.nextDate ? new Date(r.nextDate).toISOString() : new Date().toISOString();
             if(r.type === 'Giroconto') {
                 let accFrom = data.accounts.find(acc => acc.name === r.fromAccount);
                 let accTo = data.accounts.find(acc => acc.name === r.toAccount);
-                if(accFrom && accTo) { accFrom.balance -= finalAmount; accTo.balance += finalAmount; }
+                if(accFrom && accTo) { 
+                    accFrom.balance = parseFloat((accFrom.balance - finalAmount).toFixed(2)); 
+                    accTo.balance = parseFloat((accTo.balance + finalAmount).toFixed(2)); 
+                }
                 data.transactions.unshift({ id: Date.now(), type: 'Giroconto', fromAccount: r.fromAccount, toAccount: r.toAccount, amount: finalAmount, desc: r.desc, date: transactionDate });
             } else {
                 let account = data.accounts.find(acc => acc.name === r.accountName);
-                if(account) { if(r.type === 'Entrata') account.balance += finalAmount; else account.balance -= finalAmount; }
+                if(account) { 
+                    if(r.type === 'Entrata') account.balance = parseFloat((account.balance + finalAmount).toFixed(2)); 
+                    else account.balance = parseFloat((account.balance - finalAmount).toFixed(2)); 
+                }
                 data.transactions.unshift({ id: Date.now(), type: r.type, accountName: r.accountName, amount: finalAmount, category: r.category, desc: r.desc, date: transactionDate });
             }
             r.nextDate = calculateNextDueDate(r.nextDate, r.frequency || 'Mensile');
@@ -1709,7 +1720,7 @@
                     </div>
                     <div class="form-group">
                         <label>Importo (€) <span style="font-size:0.65rem; color:var(--text-light);">(Vuoto = variabile)</span></label>
-                        <input type="number" id="q-r-amount" step="0.01" value="${r.amount > 0 ? r.amount : ''}" placeholder="0.00">
+                        <input type="number" id="q-r-amount" step="0.01" value="${r.amount > 0 ? r.amount.toFixed(2) : ''}" placeholder="0.00">
                     </div>
                     <div class="form-group">
                         <label>Descrizione</label>
@@ -1742,7 +1753,8 @@
             const type = document.getElementById('q-r-type').value;
             const frequency = document.getElementById('q-r-frequency').value;
             const nextDate = document.getElementById('q-r-date').value;
-            const amount = parseFloat(document.getElementById('q-r-amount').value) || 0;
+            const amountInput = parseFloat(document.getElementById('q-r-amount').value);
+            const amount = isNaN(amountInput) ? 0 : parseFloat(amountInput.toFixed(2));
             const desc = document.getElementById('q-r-desc').value.trim();
 
             if (type === 'Giroconto') {
@@ -1844,7 +1856,7 @@
                         </div>
                         <div class="form-group">
                             <label>Limite Budget Mensile (€)</label>
-                            <input type="number" id="q-c-limit" value="150" step="10">
+                            <input type="number" id="q-c-limit" value="150.00" step="0.01">
                         </div>
                         <button type="submit">Crea Categoria</button>
                     </form>
@@ -1918,11 +1930,11 @@
                         </div>
                         <div class="form-group">
                             <label>Target Finale (€)</label>
-                            <input type="number" id="q-jar-target" step="10" placeholder="1000" required>
+                            <input type="number" id="q-jar-target" step="0.01" placeholder="1000.00" required>
                         </div>
                         <div class="form-group">
                             <label>Accantonamento Iniziale (€)</label>
-                            <input type="number" id="q-jar-current" step="10" value="0">
+                            <input type="number" id="q-jar-current" step="0.01" value="0.00">
                         </div>
                         <button type="submit">Crea Barattolo</button>
                     </form>
@@ -1936,8 +1948,8 @@
         function handleJarSubmit(e) {
             e.preventDefault();
             const name = document.getElementById('q-jar-name').value.trim();
-            const target = parseFloat(document.getElementById('q-jar-target').value) || 0;
-            const current = parseFloat(document.getElementById('q-jar-current').value) || 0;
+            const target = parseFloat(parseFloat(document.getElementById('q-jar-target').value).toFixed(2)) || 0;
+            const current = parseFloat(parseFloat(document.getElementById('q-jar-current').value).toFixed(2)) || 0;
             if (!data.jars) data.jars = [];
             let currentMonth = new Date().toISOString().slice(0,7);
             data.jars.push({ id: Date.now(), name, target, current, history: [{ date: currentMonth, amount: current }] });
@@ -2025,7 +2037,7 @@
             event.preventDefault();
             if (formType === 'transaction') {
                 const type = document.getElementById('q-t-type').value;
-                const amount = parseFloat(document.getElementById('q-t-amount').value);
+                const amount = parseFloat(parseFloat(document.getElementById('q-t-amount').value).toFixed(2));
                 const desc = document.getElementById('q-t-desc').value;
 
                 if (type === 'Giroconto') {
@@ -2034,15 +2046,18 @@
                     if (from === to) { showToast("Scegli conti differenti!"); return; }
                     let accFrom = data.accounts.find(a => a.name === from);
                     let accTo = data.accounts.find(a => a.name === to);
-                    if (accFrom && accTo) { accFrom.balance -= amount; accTo.balance += amount; }
+                    if (accFrom && accTo) { 
+                        accFrom.balance = parseFloat((accFrom.balance - amount).toFixed(2)); 
+                        accTo.balance = parseFloat((accTo.balance + amount).toFixed(2)); 
+                    }
                     data.transactions.unshift({ id: Date.now(), type: 'Giroconto', fromAccount: from, toAccount: to, amount, desc: desc || 'Giroconto', date: new Date().toISOString() });
                 } else {
                     const accountName = document.getElementById('q-t-account').value;
                     const category = document.getElementById('q-t-category').value;
                     let account = data.accounts.find(a => a.name === accountName);
                     if (account) {
-                        if (type === 'Entrata') account.balance += amount;
-                        else account.balance -= amount;
+                        if (type === 'Entrata') account.balance = parseFloat((account.balance + amount).toFixed(2));
+                        else account.balance = parseFloat((account.balance - amount).toFixed(2));
                     }
                     data.transactions.unshift({ id: Date.now(), type, accountName, amount, category, desc: desc || category, date: new Date().toISOString() });
                 }
@@ -2051,7 +2066,7 @@
                 const type = document.getElementById('q-c-type').value;
                 const name = document.getElementById('q-c-name').value.trim();
                 const emoji = document.getElementById('q-c-emoji').value.trim() || '🏷️';
-                const limit = parseFloat(document.getElementById('q-c-limit').value) || 0;
+                const limit = parseFloat(parseFloat(document.getElementById('q-c-limit').value).toFixed(2)) || 0;
                 if (!data.categories[type]) data.categories[type] = [];
                 let existing = data.categories[type].find(c => c.name.toLowerCase() === name.toLowerCase());
                 if (!existing) {
@@ -2065,7 +2080,8 @@
                 const type = document.getElementById('q-r-type').value;
                 const frequency = document.getElementById('q-r-frequency').value;
                 const nextDate = document.getElementById('q-r-date').value;
-                const amount = parseFloat(document.getElementById('q-r-amount').value) || 0;
+                const amountInput = parseFloat(document.getElementById('q-r-amount').value);
+                const amount = isNaN(amountInput) ? 0 : parseFloat(amountInput.toFixed(2));
                 const desc = document.getElementById('q-r-desc').value;
 
                 if (!data.recurring) data.recurring = [];
@@ -2185,7 +2201,8 @@
                         if (t.type === 'Uscita') mExp += t.amount;
                     }
                 });
-                incomeData.push(mInc); expenseData.push(mExp);
+                incomeData.push(parseFloat(mInc.toFixed(2))); 
+                expenseData.push(parseFloat(mExp.toFixed(2)));
             }
 
             if (barChartInstance) barChartInstance.destroy();
@@ -2211,6 +2228,7 @@
 
         function renderApp() {
             let totalNetWorth = data.accounts.reduce((sum, acc) => sum + (parseFloat(acc.balance) || 0), 0);
+            totalNetWorth = parseFloat(totalNetWorth.toFixed(2));
             const netWorthEl = document.getElementById('net-worth');
             const eyeBtn = document.getElementById('eye-btn');
             const eyeAccBtn = document.getElementById('eye-accounts-btn');
@@ -2245,13 +2263,15 @@
                     else if (t.type === 'Uscita') { monthlyExpense += t.amount; categoryExpenses[t.category] = (categoryExpenses[t.category] || 0) + t.amount; }
                 }
             });
+            monthlyIncome = parseFloat(monthlyIncome.toFixed(2));
+            monthlyExpense = parseFloat(monthlyExpense.toFixed(2));
 
             const currentDay = now.getDate();
             const totalDaysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
             const daysPassed = Math.max(currentDay, 1);
             const dailyAvgExpense = monthlyExpense / daysPassed;
-            const projectedMonthExpense = dailyAvgExpense * totalDaysInMonth;
-            const projectedEndBalance = monthlyIncome - projectedMonthExpense;
+            const projectedMonthExpense = parseFloat((dailyAvgExpense * totalDaysInMonth).toFixed(2));
+            const projectedEndBalance = parseFloat((monthlyIncome - projectedMonthExpense).toFixed(2));
 
             const predTextEl = document.getElementById('end-month-prediction-text');
             if (predTextEl) {
@@ -2260,7 +2280,7 @@
                 predTextEl.innerHTML = `Al ritmo attuale (circa € ${dailyAvgExpense.toFixed(2)}/giorno), chiuderai il mese con una spesa stimata di <strong>${displayProjExpense}</strong> e un flusso netto previsto di <strong style="color:${projectedEndBalance >= 0 ? 'var(--success)' : 'var(--danger)'};">${displayProjBalance}</strong>.`;
             }
 
-            let monthlyFlow = monthlyIncome - monthlyExpense;
+            let monthlyFlow = parseFloat((monthlyIncome - monthlyExpense).toFixed(2));
             const mIncEl = document.getElementById('monthly-income');
             const mExpEl = document.getElementById('monthly-expense');
             const mFlowEl = document.getElementById('monthly-flow');
@@ -2280,7 +2300,7 @@
             if(budgetContainer && data.categories["Uscita"]) {
                 budgetContainer.innerHTML = '';
                 data.categories["Uscita"].forEach(cat => {
-                    let spent = categoryExpenses[cat.name] || 0;
+                    let spent = parseFloat((categoryExpenses[cat.name] || 0).toFixed(2));
                     let limit = cat.limit;
                     let percentage = limit > 0 ? (spent / limit) * 100 : 0;
                     let barColor = percentage >= 100 ? 'var(--danger)' : (percentage >= 80 ? 'var(--warning)' : 'var(--success)');
@@ -2369,7 +2389,8 @@
             if(accList) {
                 accList.innerHTML = '';
                 data.accounts.forEach((acc, index) => {
-                    let displayBalance = hideAccounts ? "€ ••••••" : `€ ${(parseFloat(acc.balance) || 0).toFixed(2)}`;
+                    let cleanBalance = parseFloat((parseFloat(acc.balance) || 0).toFixed(2));
+                    let displayBalance = hideAccounts ? "€ ••••••" : `€ ${cleanBalance.toFixed(2)}`;
                     accList.innerHTML += `
                         <div class="account-card-item">
                             <div class="account-header-row">
@@ -2448,7 +2469,7 @@
             renderAnalytics();
         }
 
-        // Gestione apertura da notifica (messaggio o parametro URL)
+        // Ascolto messaggi di notifica dal Service Worker con controllo ritardato per il DOM
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.addEventListener('message', event => {
                 if (event.data && event.data.action === 'open_recurring_item') {
@@ -2462,32 +2483,32 @@
         }
 
         function openRecurringByNotification(itemId) {
-            // 1. Cambia scheda su Ricorrenti senza aprire la barra laterale
             switchTab('recurring', document.querySelector('.sidebar-nav button:nth-child(6)'), false);
             closeSidebar();
 
             if (itemId) {
-                setTimeout(() => {
+                // Attendi che il DOM renderizzi la lista delle ricorrenti
+                const checkAndOpen = (attempts = 0) => {
                     const targetElement = document.getElementById(`recurring-item-${itemId}`);
                     if (targetElement) {
-                        // 2. Apri la cartella/categoria che contiene l'elemento
                         const parentSection = targetElement.closest('.recurring-category-section');
                         if (parentSection) {
                             parentSection.classList.add('open');
                         }
-                        
-                        // 3. Scorri sull'elemento e mettilo in evidenza
                         targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         targetElement.style.transition = "background 0.5s, border-color 0.5s";
-                        targetElement.style.background = "rgba(99, 102, 241, 0.35)";
+                        targetElement.style.background = "rgba(99, 102, 241, 0.4)";
                         targetElement.style.borderColor = "var(--primary)";
                         
                         setTimeout(() => {
                             targetElement.style.background = "";
                             targetElement.style.borderColor = "";
                         }, 2500);
+                    } else if (attempts < 10) {
+                        setTimeout(() => checkAndOpen(attempts + 1), 150);
                     }
-                }, 250);
+                };
+                setTimeout(() => checkAndOpen(), 100);
             }
         }
 
@@ -2495,12 +2516,11 @@
             const urlParams = new URLSearchParams(window.location.search);
             const openId = urlParams.get('open_recurring');
             if (openId) {
-                // Pulisci il parametro dall'URL per evitare riaperture al refresh manuale
                 window.history.replaceState({}, document.title, window.location.pathname);
                 if (userSecurityPin) {
                     pendingNotificationItemId = openId;
                 } else {
-                    setTimeout(() => openRecurringByNotification(openId), 350);
+                    setTimeout(() => openRecurringByNotification(openId), 400);
                 }
             }
         });
