@@ -48,7 +48,7 @@
             padding: 12px;
             max-width: 600px;
             margin: 0 auto;
-            padding-bottom: 60px;
+            padding-bottom: 120px;
             transition: background 0.3s, color 0.3s;
         }
 
@@ -845,7 +845,6 @@
         let globalReg = null;
         let pendingNotificationItemId = null;
 
-        // Intercettazione immediata all'avvio dell'URL con parametro
         const urlParamsCheck = new URLSearchParams(window.location.search);
         const openIdFromUrl = urlParamsCheck.get('open_recurring');
         if (openIdFromUrl) {
@@ -1326,7 +1325,7 @@
         }
 
         function depositToJar(id) {
-            let jar = data.jars.find(j => j.id === id);
+            let jar = data.jars.find(j => Number(j.id) === Number(id));
             if (!jar) return;
             openCustomPrompt(`Versa in "${jar.name}"`, "Inserisci l'importo da versare (€):", (val) => {
                 let amount = parseFloat(parseFloat(val).toFixed(2));
@@ -1344,7 +1343,7 @@
         }
 
         function deleteJar(id) {
-            data.jars = data.jars.filter(j => j.id !== id);
+            data.jars = data.jars.filter(j => Number(j.id) !== Number(id));
             saveData();
             showToast("Barattolo eliminato.");
         }
@@ -1539,7 +1538,7 @@
         }
 
         function deleteTransaction(id) {
-            let t = data.transactions.find(item => item.id === id);
+            let t = data.transactions.find(item => Number(item.id) === Number(id));
             if(t) {
                 if (t.type === 'Giroconto') {
                     let accFrom = data.accounts.find(acc => acc.name === t.fromAccount);
@@ -1554,13 +1553,13 @@
                     }
                 }
             }
-            data.transactions = data.transactions.filter(item => item.id !== id);
+            data.transactions = data.transactions.filter(item => Number(item.id) !== Number(id));
             saveData();
             showToast("Transazione rimossa.");
         }
 
         function deleteRecurring(id) {
-            data.recurring = data.recurring.filter(r => r.id !== id);
+            data.recurring = data.recurring.filter(r => Number(r.id) !== Number(id));
             saveData();
             showToast("Promemoria eliminato.");
         }
@@ -1579,7 +1578,7 @@
         }
 
         function executeRecurring(id) {
-            let r = data.recurring.find(item => item.id === id);
+            let r = data.recurring.find(item => Number(item.id) === Number(id));
             if(!r) return;
             let finalAmount = r.amount;
             if (!finalAmount || finalAmount <= 0) {
@@ -1615,10 +1614,6 @@
             r.nextDate = calculateNextDueDate(r.nextDate, r.frequency || 'Mensile');
             saveData();
             showToast(`Operazione "${r.desc}" registrata con successo!`);
-        }
-
-        function toggleRecurringGroup(element) {
-            element.closest('.recurring-category-section').classList.toggle('open');
         }
 
         function toggleFabMenu(event) {
@@ -2334,6 +2329,7 @@
                 ['Uscita', 'Entrata'].forEach(type => {
                     if (data.categories[type]) {
                         data.categories[type].forEach(c => {
+                            let safeTypeName = c.name.replace(/'/g, "\\'");
                             let limitText = type === 'Uscita' ? ` (Budget: € ${c.limit.toFixed(2)})` : '';
                             catManagerList.innerHTML += `
                                 <div class="category-card-item">
@@ -2342,8 +2338,8 @@
                                         <span style="font-size:0.68rem; color:var(--text-light); font-weight:normal;">${limitText}</span>
                                     </div>
                                     <div class="category-actions">
-                                        ${type === 'Uscita' ? `<button class="btn-edit" onclick="editCategory('${type}', '${c.name}')">Modifica</button>` : ''}
-                                        <button class="btn-danger" onclick="deleteCategory('${type}', '${c.name}')">Elimina</button>
+                                        ${type === 'Uscita' ? `<button class="btn-edit" onclick="editCategory('${type}', '${safeTypeName}')">Modifica</button>` : ''}
+                                        <button class="btn-danger" onclick="deleteCategory('${type}', '${safeTypeName}')">Elimina</button>
                                     </div>
                                 </div>`;
                         });
@@ -2407,10 +2403,11 @@
                 data.accounts.forEach((acc, index) => {
                     let cleanBalance = parseFloat((parseFloat(acc.balance) || 0).toFixed(2));
                     let displayBalance = hideAccounts ? "€ ••••••" : `€ ${cleanBalance.toFixed(2)}`;
+                    let safeAccName = acc.name.replace(/'/g, "\\'");
                     accList.innerHTML += `
                         <div class="account-card-item">
                             <div class="account-header-row">
-                                <div class="account-name-area" onclick="setMainAccount('${acc.name}')" style="cursor:pointer;" title="Clicca per impostare come principale">
+                                <div class="account-name-area" onclick="setMainAccount('${safeAccName}')" style="cursor:pointer;" title="Clicca per impostare come principale">
                                     <span>${acc.name}</span>${acc.isMain ? '<span class="main-badge">⭐</span>' : '<span class="normal-badge">⭐</span>'}
                                 </div>
                                 <div class="account-balance-area">${displayBalance}</div>
@@ -2421,8 +2418,8 @@
                                     <button class="btn-move" onclick="moveAccount(${index}, 1)" ${index === data.accounts.length - 1 ? 'disabled style="opacity:0.3;"' : ''}>▼</button>
                                 </div>
                                 <div class="account-mgmt-group">
-                                    <button class="btn-edit" onclick="editAccount('${acc.name.replace(/'/g, "\\'")}')">Modifica</button>
-                                    <button class="btn-danger" onclick="deleteAccount('${acc.name.replace(/'/g, "\\'")}')">Elimina</button>
+                                    <button class="btn-edit" onclick="editAccount('${safeAccName}')">Modifica</button>
+                                    <button class="btn-danger" onclick="deleteAccount('${safeAccName}')">Elimina</button>
                                 </div>
                             </div>
                         </div>`;
@@ -2446,7 +2443,7 @@
                     for (let catName in grouped) {
                         let sectionHtml = `
                             <div class="recurring-category-section">
-                                <div class="recurring-category-header" onclick="toggleRecurringGroup(this)">
+                                <div class="recurring-category-header" onclick="this.parentElement.classList.toggle('open')">
                                     <span>📂 ${catName} (${grouped[catName].length})</span>
                                     <span class="toggle-icon">►</span>
                                 </div>
