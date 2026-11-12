@@ -1558,10 +1558,13 @@
             showToast("Transazione rimossa.");
         }
 
-        function deleteRecurring(id) {
-            data.recurring = data.recurring.filter(r => Number(r.id) !== Number(id));
-            saveData();
-            showToast("Promemoria eliminato.");
+        // Funzioni pulite per le ricorrenti basate su indice array per evitare fallimenti di lookup ID
+        function deleteRecurringItem(index) {
+            if (index >= 0 && index < data.recurring.length) {
+                data.recurring.splice(index, 1);
+                saveData();
+                showToast("Promemoria eliminato.");
+            }
         }
 
         function calculateNextDueDate(currentDateStr, frequency) {
@@ -1577,9 +1580,9 @@
             return d.toISOString().slice(0, 10);
         }
 
-        function executeRecurring(id) {
-            let r = data.recurring.find(item => Number(item.id) === Number(id));
-            if(!r) return;
+        function executeRecurringAction(index) {
+            if (index < 0 || index >= data.recurring.length) return;
+            let r = data.recurring[index];
             let finalAmount = r.amount;
             if (!finalAmount || finalAmount <= 0) {
                 openCustomPrompt(`Applica Promemoria`, `Inserisci l'importo per "${r.desc}" (€):`, (val) => {
@@ -1671,9 +1674,9 @@
             }
         }
 
-        function openEditRecurringModal(id) {
-            const r = data.recurring.find(item => Number(item.id) === Number(id));
-            if (!r) return;
+        function openEditRecurringModal(index) {
+            if (index < 0 || index >= data.recurring.length) return;
+            const r = data.recurring[index];
 
             const modal = document.getElementById('fab-modal');
             const overlay = document.getElementById('fab-modal-overlay');
@@ -1683,7 +1686,7 @@
 
             titleEl.textContent = "✏️ Modifica Promemoria Ricorrente";
             contentEl.innerHTML = `
-                <form id="edit-recurring-form" onsubmit="handleEditRecurringSubmit(event, ${r.id})">
+                <form id="edit-recurring-form" onsubmit="handleEditRecurringSubmit(event, ${index})">
                     <div class="form-group">
                         <label>Tipo</label>
                         <select id="q-r-type" onchange="onQuickRecurringTypeChange()">
@@ -1754,10 +1757,10 @@
             overlay.classList.add('active');
         }
 
-        function handleEditRecurringSubmit(event, id) {
+        function handleEditRecurringSubmit(event, index) {
             event.preventDefault();
-            const r = data.recurring.find(item => Number(item.id) === Number(id));
-            if (!r) return;
+            if (index < 0 || index >= data.recurring.length) return;
+            const r = data.recurring[index];
 
             const type = document.getElementById('q-r-type').value;
             const frequency = document.getElementById('q-r-frequency').value;
@@ -2434,10 +2437,11 @@
 
                 if(data.recurring && data.recurring.length > 0) {
                     let grouped = {};
-                    data.recurring.forEach(r => {
+                    data.recurring.forEach((r, globalIndex) => {
                         let groupKey = r.type === 'Giroconto' ? '🔄 Giroconti Ricorrenti' : (r.category || 'Altre Uscite');
                         if (!grouped[groupKey]) grouped[groupKey] = [];
-                        grouped[groupKey].push(r);
+                        // Salviamo l'oggetto insieme al suo indice originale nell'array globale
+                        grouped[groupKey].push({ item: r, index: globalIndex });
                     });
 
                     for (let catName in grouped) {
@@ -2449,7 +2453,10 @@
                                 </div>
                                 <div class="recurring-category-body">
                         `;
-                        grouped[catName].forEach(r => {
+                        
+                        grouped[catName].forEach(entry => {
+                            let r = entry.item;
+                            let idx = entry.index;
                             let infoText = r.type === 'Giroconto' ? `${r.fromAccount} ➡️ ${r.toAccount}` : `${r.accountName}`;
                             let nextDateFormatted = r.nextDate ? new Date(r.nextDate).toLocaleDateString() : 'Non impostata';
                             let displayAmt = r.amount > 0 ? `€ ${r.amount.toFixed(2)}` : `Variabile`;
@@ -2464,9 +2471,9 @@
                                     <div class="recurring-compact-right">
                                         <span class="${amtClass}">${displayAmt}</span>
                                         <div class="recurring-compact-actions">
-                                            <button class="btn-secondary" onclick="event.stopImmediatePropagation(); event.preventDefault(); executeRecurring(${r.id})" style="background:rgba(16,185,129,0.15)!important; color:var(--success)!important; font-weight:700;">▶️ Applica</button>
-                                            <button class="btn-edit" onclick="event.stopImmediatePropagation(); event.preventDefault(); openEditRecurringModal(${r.id})" title="Modifica">✏️</button>
-                                            <button class="btn-danger" onclick="event.stopImmediatePropagation(); event.preventDefault(); deleteRecurring(${r.id})" title="Elimina">🗑️</button>
+                                            <button class="btn-secondary" onclick="event.stopImmediatePropagation(); event.preventDefault(); executeRecurringAction(${idx})" style="background:rgba(16,185,129,0.15)!important; color:var(--success)!important; font-weight:700;">▶️ Applica</button>
+                                            <button class="btn-edit" onclick="event.stopImmediatePropagation(); event.preventDefault(); openEditRecurringModal(${idx})" title="Modifica">✏️</button>
+                                            <button class="btn-danger" onclick="event.stopImmediatePropagation(); event.preventDefault(); deleteRecurringItem(${idx})" title="Elimina">🗑️</button>
                                         </div>
                                     </div>
                                 </div>
