@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>SmartBudget PWA Ultimate Pro</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -48,7 +48,9 @@
             padding: 12px;
             max-width: 600px;
             margin: 0 auto;
-            padding-bottom: 130px;
+            padding-bottom: calc(130px + env(safe-area-inset-bottom, 20px));
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
             transition: background 0.3s, color 0.3s;
         }
 
@@ -75,7 +77,7 @@
 
         #update-banner {
             position: fixed;
-            top: 12px;
+            top: calc(12px + env(safe-area-inset-top, 0px));
             left: 50%;
             transform: translateX(-50%) translateY(-100px);
             width: 90%;
@@ -136,7 +138,7 @@
 
         header {
             display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 20px; padding-top: 8px; position: relative;
+            margin-bottom: 20px; padding-top: calc(8px + env(safe-area-inset-top, 0px)); position: relative;
         }
         .header-title-area { text-align: center; flex-grow: 1; }
         header h1 {
@@ -177,7 +179,7 @@
         .sidebar {
             position: fixed; top: 0; left: -280px; width: 280px; height: 100%;
             background: var(--card-bg); border-right: 1px solid var(--card-border); backdrop-filter: var(--blur);
-            z-index: 999; display: flex; flex-direction: column; padding: 24px 16px;
+            z-index: 999; display: flex; flex-direction: column; padding: calc(24px + env(safe-area-inset-top, 0px)) 16px calc(24px + env(safe-area-inset-bottom, 20px)) 16px;
             transition: left 0.3s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 10px 0 30px rgba(0,0,0,0.3);
             overflow-y: auto;
         }
@@ -409,7 +411,7 @@
         .tab-content.active { display: block; animation: fadeIn 0.25s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-        .fab-container { position: fixed; bottom: 24px; right: 24px; z-index: 997; display: flex; flex-direction: column; align-items: flex-end; }
+        .fab-container { position: fixed; bottom: calc(24px + env(safe-area-inset-bottom, 20px)); right: 24px; z-index: 997; display: flex; flex-direction: column; align-items: flex-end; }
         .fab-main {
             width: 56px; height: 56px; border-radius: 50%; background: var(--primary); color: white; font-size: 2rem; border: none; cursor: pointer;
             box-shadow: 0 6px 20px rgba(99, 102, 241, 0.4); display: flex; align-items: center; justify-content: center;
