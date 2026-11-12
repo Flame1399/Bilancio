@@ -1235,7 +1235,6 @@
             let datasets = [];
             const colors = ['#6366f1', '#10b981', '#f59e0b', '#3b82f6', '#c084fc', '#ef4444'];
 
-            // Raccogliamo tutti i mesi unici registrati nello storico dei barattoli
             let monthSet = new Set();
             data.jars.forEach(jar => {
                 if (!jar.history) jar.history = [{ date: new Date().toISOString().slice(0,7), amount: jar.current }];
@@ -1471,7 +1470,8 @@
         function calculateNextDueDate(currentDateStr, frequency) {
             let d = new Date(currentDateStr);
             if (isNaN(d.getTime())) d = new Date();
-            if (frequency === 'Settimanale') d.setDate(d.getDate() + 7);
+            if (frequency === 'Giornaliera') d.setDate(d.getDate() + 1);
+            else if (frequency === 'Settimanale') d.setDate(d.getDate() + 7);
             else if (frequency === 'Mensile') d.setMonth(d.getMonth() + 1);
             else if (frequency === 'Trimestrale') d.setMonth(d.getMonth() + 3);
             else if (frequency === 'Semestrale') d.setMonth(d.getMonth() + 6);
@@ -1684,8 +1684,9 @@
                         <div class="form-group">
                             <label>Frequenza</label>
                             <select id="q-r-frequency">
-                                <option value="Mensile">Mensile</option>
+                                <option value="Giornaliera">Giornaliera</option>
                                 <option value="Settimanale">Settimanale</option>
+                                <option value="Mensile" selected>Mensile</option>
                                 <option value="Trimestrale">Trimestrale</option>
                                 <option value="Semestrale">Semestrale</option>
                                 <option value="Annuale">Annuale</option>
@@ -1947,7 +1948,6 @@
             const catValues = Object.values(categoryBreakdown);
             if (pieChartInstance) pieChartInstance.destroy();
 
-            // Mappatura emoji per i grafici
             let enhancedLabels = catLabels.map(label => {
                 let foundCat = data.categories["Uscita"] ? data.categories["Uscita"].find(c => c.name === label) : null;
                 return foundCat && foundCat.emoji ? `${foundCat.emoji} ${label}` : label;
