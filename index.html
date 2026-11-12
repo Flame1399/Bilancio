@@ -652,7 +652,7 @@
             <div class="sim-slider-container">
                 <label>
                     <span>⚡ Simulatore Accantonamento Mensile</span>
-                    <strong id="sim-savings-val" style="color:var(--primary);">€ 360 / mese</strong>
+                    <strong id="sim-savings-val" style="color:var(--primary);">€ 360.00 / mese</strong>
                 </label>
                 <input type="range" class="sim-slider" id="sim-range-input" min="50" max="2000" step="50" value="360" oninput="updateSavingsSimulation()">
                 
@@ -891,16 +891,16 @@
         let data = JSON.parse(localStorage.getItem('smart_budget_data_autosync')) || {
             categories: {
                 Uscita: [
-                    { name: "Casa / Affitto", limit: 600, emoji: "🏠" },
-                    { name: "Spesa Alimentare", limit: 350, emoji: "🛒" },
-                    { name: "Bollette & Utenze", limit: 150, emoji: "⚡" },
-                    { name: "Trasporti / Auto", limit: 150, emoji: "🚗" },
-                    { name: "Svago & Ristoranti", limit: 120, emoji: "🍕" },
-                    { name: "Salute & Sport", limit: 80, emoji: "💊" }
+                    { name: "Casa / Affitto", limit: 600.00, emoji: "🏠" },
+                    { name: "Spesa Alimentare", limit: 350.00, emoji: "🛒" },
+                    { name: "Bollette & Utenze", limit: 150.00, emoji: "⚡" },
+                    { name: "Trasporti / Auto", limit: 150.00, emoji: "🚗" },
+                    { name: "Svago & Ristoranti", limit: 120.00, emoji: "🍕" },
+                    { name: "Salute & Sport", limit: 80.00, emoji: "💊" }
                 ],
                 Entrata: [
-                    { name: "Stipendio", limit: 0, emoji: "💰" },
-                    { name: "Investimenti / Extra", limit: 0, emoji: "📈" }
+                    { name: "Stipendio", limit: 0.00, emoji: "💰" },
+                    { name: "Investimenti / Extra", limit: 0.00, emoji: "📈" }
                 ]
             },
             transactions: [],
@@ -909,15 +909,15 @@
             ],
             recurring: [],
             jars: [
-                { id: 1, name: "Fondo Emergenza", target: 3000, current: 800, history: [{ date: new Date().toISOString().slice(0,7), amount: 800 }] },
-                { id: 2, name: "Vacanza Estiva", target: 1200, current: 350, history: [{ date: new Date().toISOString().slice(0,7), amount: 350 }] }
+                { id: 1, name: "Fondo Emergenza", target: 3000.00, current: 800.00, history: [{ date: new Date().toISOString().slice(0,7), amount: 800.00 }] },
+                { id: 2, name: "Vacanza Estiva", target: 1200.00, current: 350.00, history: [{ date: new Date().toISOString().slice(0,7), amount: 350.00 }] }
             ]
         };
 
         let savingsSettings = JSON.parse(localStorage.getItem('smart_budget_savings_settings')) || {
-            salary: 1800,
+            salary: 1800.00,
             rule: '50-30-20',
-            target: 6000,
+            target: 6000.00,
             months: 12
         };
 
@@ -1485,7 +1485,6 @@
             e.preventDefault();
             const originalName = document.getElementById('acc-original-name').value.trim();
             const name = document.getElementById('acc-name').value.trim();
-            // FORZA ESATTAMENTE 2 DECIMALI (centesimi)
             const balance = parseFloat(parseFloat(document.getElementById('acc-balance').value).toFixed(2));
             
             if (originalName) {
@@ -2227,6 +2226,9 @@
         }
 
         function renderApp() {
+            // Forza lo scroll pulito in cima ad ogni renderizzazione dell'app
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
             let totalNetWorth = data.accounts.reduce((sum, acc) => sum + (parseFloat(acc.balance) || 0), 0);
             totalNetWorth = parseFloat(totalNetWorth.toFixed(2));
             const netWorthEl = document.getElementById('net-worth');
@@ -2487,7 +2489,6 @@
             closeSidebar();
 
             if (itemId) {
-                // Attendi che il DOM renderizzi la lista delle ricorrenti
                 const checkAndOpen = (attempts = 0) => {
                     const targetElement = document.getElementById(`recurring-item-${itemId}`);
                     if (targetElement) {
