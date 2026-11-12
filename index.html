@@ -48,7 +48,7 @@
             padding: 12px;
             max-width: 600px;
             margin: 0 auto;
-            padding-bottom: calc(130px + env(safe-area-inset-bottom, 20px));
+            padding-bottom: calc(160px + env(safe-area-inset-bottom, 30px));
             min-height: 100vh;
             min-height: -webkit-fill-available;
             transition: background 0.3s, color 0.3s;
@@ -328,7 +328,7 @@
         .advice-box h3 { font-size: 0.82rem; color: #818cf8; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; font-weight: 700; }
         .advice-box p { font-size: 0.78rem; color: var(--text-light); line-height: 1.4; }
 
-        .transaction-list { max-height: 450px; overflow-y: auto; padding-right: 2px; }
+        .transaction-list { max-height: 450px; overflow-y: auto; padding-right: 2px; -webkit-overflow-scrolling: touch; }
         .transaction-card { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 10px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
         .transaction-left { display: flex; align-items: flex-start; gap: 8px; overflow: hidden; }
         .transaction-badge { width: 30px; height: 30px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.85rem; flex-shrink: 0; }
@@ -349,7 +349,8 @@
         .transaction-amount.giroconto { color: var(--info); }
 
         .recurring-category-section {
-            margin-bottom: 10px; border: 1px solid var(--card-border); border-radius: var(--radius-md); overflow: hidden; background: var(--input-bg);
+            margin-bottom: 12px; border: 1px solid var(--card-border); border-radius: var(--radius-md); overflow: hidden; background: var(--input-bg);
+            -webkit-overflow-scrolling: touch;
         }
         .recurring-category-header {
             font-size: 0.85rem; color: var(--primary); font-weight: 800; padding: 14px 12px; background: rgba(255, 255, 255, 0.02);
@@ -437,6 +438,7 @@
             background: var(--card-bg); border: 1px solid var(--card-border); backdrop-filter: var(--blur);
             width: 90%; max-width: 420px; border-radius: var(--radius-lg); z-index: 999; padding: 20px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.4); opacity: 0; visibility: hidden; transition: all 0.25s ease; max-height: 85vh; overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .fab-modal.active { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); }
         .fab-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--card-border); }
