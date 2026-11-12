@@ -1078,8 +1078,8 @@
             const target = parseFloat(savingsSettings.target) || 1;
             const percentage = target > 0 ? (totalSavedActual / target) * 100 : 0;
 
-            // Rimane visibile il patrimonio accantonato generale e le proiezioni come richiesto in precedenza
-            document.getElementById('goal-current-saved').textContent = `€ ${totalSavedActual.toFixed(2)}`;
+            // PATRIMONIO ATTUALE ACCANTONATO E PROIEZIONI ORA OSCURATI IN PRIVACY MODE COME RICHIESTO
+            document.getElementById('goal-current-saved').textContent = hideAccounts ? "€ ••••••" : `€ ${totalSavedActual.toFixed(2)}`;
             document.getElementById('goal-target-label').textContent = `€ ${target.toFixed(2)}`;
             document.getElementById('goal-percentage-label').textContent = `${percentage.toFixed(1)}%`;
             document.getElementById('goal-progress-bar').style.width = `${Math.min(percentage, 100)}%`;
@@ -1092,9 +1092,9 @@
                 slider.value = Math.round(savingsPerMonth);
             }
 
-            document.getElementById('proj-6m').textContent = `€ ${(totalSavedActual + (activeSimSaving * 6)).toFixed(2)}`;
-            document.getElementById('proj-1y').textContent = `€ ${(totalSavedActual + (activeSimSaving * 12)).toFixed(2)}`;
-            document.getElementById('proj-3y').textContent = `€ ${(totalSavedActual + (activeSimSaving * 36)).toFixed(2)}`;
+            document.getElementById('proj-6m').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (activeSimSaving * 6)).toFixed(2)}`;
+            document.getElementById('proj-1y').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (activeSimSaving * 12)).toFixed(2)}`;
+            document.getElementById('proj-3y').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (activeSimSaving * 36)).toFixed(2)}`;
 
             updateSavingsSimulation();
             renderJars();
@@ -1126,7 +1126,7 @@
                 const years = Math.floor(monthsNeeded / 12);
                 const months = monthsNeeded % 12;
                 let timeString = years > 0 ? `circa <strong>${years} anni</strong>${months > 0 ? ` e <strong>${months} mesi</strong>` : ''}` : `circa <strong>${monthsNeeded} mesi</strong>`;
-                let remainingDisplay = `€ ${remaining.toFixed(2)}`;
+                let remainingDisplay = hideAccounts ? "€ ••••••" : `€ ${remaining.toFixed(2)}`;
                 resultTextEl.innerHTML = `Continuando così, colmerai i restanti <strong>${remainingDisplay}</strong> in ${timeString}.`;
             }
 
@@ -1134,9 +1134,9 @@
             let proj1yEl = document.getElementById('proj-1y');
             let proj3yEl = document.getElementById('proj-3y');
             if (proj6mEl) {
-                proj6mEl.textContent = `€ ${(totalSavedActual + (simVal * 6)).toFixed(2)}`;
-                proj1yEl.textContent = `€ ${(totalSavedActual + (simVal * 12)).toFixed(2)}`;
-                proj3yEl.textContent = `€ ${(totalSavedActual + (simVal * 36)).toFixed(2)}`;
+                proj6mEl.textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (simVal * 6)).toFixed(2)}`;
+                proj1yEl.textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (simVal * 12)).toFixed(2)}`;
+                proj3yEl.textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (simVal * 36)).toFixed(2)}`;
             }
         }
 
@@ -1153,7 +1153,7 @@
             container.innerHTML = '';
             data.jars.forEach(jar => {
                 let pct = jar.target > 0 ? (jar.current / jar.target) * 100 : 0;
-                // Visibile anche in privacy mode come richiesto (es. i 300€ per la macchina)
+                // I singoli barattoli (es. i 300€ per la macchina) restano SEMPRE VISIBILI anche in privacy mode
                 let displayCurrent = `€ ${jar.current.toFixed(2)}`;
                 container.innerHTML += `
                     <div style="background:var(--input-bg); border:1px solid var(--card-border); border-radius:var(--radius-md); padding:12px; margin-bottom:8px;">
