@@ -1039,6 +1039,12 @@
             if ((p1 + p2 + p3 + p4) === userSecurityPin) {
                 document.getElementById('app-lock-screen').style.display = 'none';
                 clearPinFields();
+                
+                // Forza lo scroll in cima con un piccolo ritardo per neutralizzare il focus del PIN
+                setTimeout(() => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                }, 100);
+
                 if (pendingNotificationItemId) {
                     const idToOpen = pendingNotificationItemId;
                     pendingNotificationItemId = null;
