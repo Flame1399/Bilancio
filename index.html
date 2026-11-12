@@ -48,7 +48,7 @@
             padding: 12px;
             max-width: 600px;
             margin: 0 auto;
-            padding-bottom: 120px;
+            padding-bottom: 130px;
             transition: background 0.3s, color 0.3s;
         }
 
@@ -339,27 +339,27 @@
             margin-bottom: 10px; border: 1px solid var(--card-border); border-radius: var(--radius-md); overflow: hidden; background: var(--input-bg);
         }
         .recurring-category-header {
-            font-size: 0.82rem; color: var(--primary); font-weight: 800; padding: 12px; background: rgba(255, 255, 255, 0.02);
+            font-size: 0.85rem; color: var(--primary); font-weight: 800; padding: 14px 12px; background: rgba(255, 255, 255, 0.02);
             display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none; transition: background 0.2s ease;
         }
         .recurring-category-header:hover { background: rgba(255, 255, 255, 0.05); }
         .recurring-category-header .toggle-icon { font-size: 0.75rem; transition: transform 0.2s ease; color: var(--text-light); }
-        .recurring-category-body { display: none; padding: 8px 10px; border-top: 1px solid var(--card-border); background: var(--card-bg); }
-        .recurring-category-section.open .recurring-category-body { display: flex; flex-direction: column; gap: 6px; }
+        .recurring-category-body { display: none; padding: 10px; border-top: 1px solid var(--card-border); background: var(--card-bg); }
+        .recurring-category-section.open .recurring-category-body { display: flex; flex-direction: column; gap: 8px; }
         .recurring-category-section.open .toggle-icon { transform: rotate(90deg); }
 
         .recurring-compact-item {
             background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-sm);
-            padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px;
+            padding: 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px;
         }
         .recurring-compact-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex-grow: 1; }
         .recurring-compact-title { font-weight: 700; color: var(--text); font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .recurring-compact-meta { font-size: 0.68rem; color: var(--text-light); display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
-        .recurring-compact-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
-        .recurring-compact-amount { font-weight: 800; font-size: 0.82rem; color: #818cf8; white-space: nowrap; }
+        .recurring-compact-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex-shrink: 0; }
+        .recurring-compact-amount { font-weight: 800; font-size: 0.85rem; color: #818cf8; white-space: nowrap; }
         .recurring-compact-amount.variable { color: var(--warning); font-size: 0.72rem; }
-        .recurring-compact-actions { display: flex; gap: 4px; }
-        .recurring-compact-actions button { width: auto !important; padding: 3px 6px !important; font-size: 0.68rem !important; border-radius: var(--radius-sm) !important; }
+        .recurring-compact-actions { display: flex; gap: 6px; align-items: center; }
+        .recurring-compact-actions button { width: auto !important; padding: 5px 8px !important; font-size: 0.72rem !important; border-radius: var(--radius-sm) !important; cursor: pointer; }
 
         .savings-hero-box {
             background: linear-gradient(135deg, rgba(99, 102, 241, 0.18) 0%, rgba(192, 132, 252, 0.12) 100%);
@@ -2464,9 +2464,9 @@
                                     <div class="recurring-compact-right">
                                         <span class="${amtClass}">${displayAmt}</span>
                                         <div class="recurring-compact-actions">
-                                            <button class="btn-secondary" onclick="executeRecurring(${r.id})" style="background:rgba(16,185,129,0.15)!important; color:var(--success)!important; font-weight:700;">▶️ Applica</button>
-                                            <button class="btn-edit" onclick="openEditRecurringModal(${r.id})" title="Modifica">✏️</button>
-                                            <button class="btn-danger" onclick="deleteRecurring(${r.id})" title="Elimina">🗑️</button>
+                                            <button class="btn-secondary" onclick="event.stopPropagation(); executeRecurring(${r.id})" style="background:rgba(16,185,129,0.15)!important; color:var(--success)!important; font-weight:700;">▶️ Applica</button>
+                                            <button class="btn-edit" onclick="event.stopPropagation(); openEditRecurringModal(${r.id})" title="Modifica">✏️</button>
+                                            <button class="btn-danger" onclick="event.stopPropagation(); deleteRecurring(${r.id})" title="Elimina">🗑️</button>
                                         </div>
                                     </div>
                                 </div>
