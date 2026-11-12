@@ -843,6 +843,21 @@
 
     <script>
         let globalReg = null;
+        let pendingNotificationItemId = null;
+
+        // Intercettazione immediata all'avvio dell'URL con parametro (indispensabile per app in Home Screen)
+        const urlParamsCheck = new URLSearchParams(window.location.search);
+        const openIdFromUrl = urlParamsCheck.get('open_recurring');
+        if (openIdFromUrl) {
+            pendingNotificationItemId = openIdFromUrl;
+            localStorage.setItem('smart_budget_pending_notif', openIdFromUrl);
+            window.history.replaceState({}, document.title, window.location.pathname);
+        } else {
+            const storedNotif = localStorage.getItem('smart_budget_pending_notif');
+            if (storedNotif) {
+                pendingNotificationItemId = storedNotif;
+            }
+        }
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
@@ -937,7 +952,12 @@
                 setTimeout(() => document.getElementById('p1').focus(), 300);
             } else {
                 document.getElementById('app-lock-screen').style.display = 'none';
-                checkAndOpenPendingNotification();
+                if (pendingNotificationItemId) {
+                    const idToOpen = pendingNotificationItemId;
+                    pendingNotificationItemId = null;
+                    localStorage.removeItem('smart_budget_pending_notif');
+                    setTimeout(() => openRecurringByNotification(idToOpen), 300);
+                }
             }
             checkRecurringNotifications();
         }
@@ -973,15 +993,6 @@
                                 tag: `rec-${r.id}`,
                                 data: { id: r.id }
                             });
-                        } else {
-                            const n = new Notification("SmartBudget - Promemoria Scadenza", {
-                                body: `Oggi scade l'operazione ricorrente: "${r.desc}"`
-                            });
-                            n.onclick = () => {
-                                window.focus();
-                                localStorage.setItem('smart_budget_pending_notif', r.id);
-                                openRecurringByNotification(r.id);
-                            };
                         }
                     }
                 });
@@ -1036,15 +1047,18 @@
                 document.getElementById('app-lock-screen').style.display = 'none';
                 clearPinFields();
                 
-                // Forza lo scroll in cima dopo lo sblocco
                 setTimeout(() => {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }, 100);
 
-                // Controlla e apre la notifica memorizzata nel localStorage
-                setTimeout(() => {
-                    checkAndOpenPendingNotification();
-                }, 250);
+                if (pendingNotificationItemId) {
+                    const idToOpen = pendingNotificationItemId;
+                    pendingNotificationItemId = null;
+                    localStorage.removeItem('smart_budget_pending_notif');
+                    setTimeout(() => {
+                        openRecurringByNotification(idToOpen);
+                    }, 350);
+                }
             } else {
                 showToast("PIN non corretto!");
                 clearPinFields();
@@ -2227,7 +2241,6 @@
         }
 
         function renderApp() {
-            // Forza lo scroll pulito in cima ad ogni renderizzazione dell'app
             window.scrollTo({ top: 0, behavior: 'smooth' });
 
             let totalNetWorth = data.accounts.reduce((sum, acc) => sum + (parseFloat(acc.balance) || 0), 0);
@@ -2472,28 +2485,6 @@
             renderAnalytics();
         }
 
-        // Ascolto messaggi dal Service Worker e controllo persistente via localStorage
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.addEventListener('message', event => {
-                if (event.data && event.data.action === 'open_recurring_item') {
-                    if (event.data.id) {
-                        localStorage.setItem('smart_budget_pending_notif', event.data.id);
-                    }
-                    if (!userSecurityPin || document.getElementById('app-lock-screen').style.display === 'none') {
-                        checkAndOpenPendingNotification();
-                    }
-                }
-            });
-        }
-
-        function checkAndOpenPendingNotification() {
-            const pendingId = localStorage.getItem('smart_budget_pending_notif');
-            if (pendingId) {
-                localStorage.removeItem('smart_budget_pending_notif');
-                openRecurringByNotification(pendingId);
-            }
-        }
-
         function openRecurringByNotification(itemId) {
             switchTab('recurring', document.querySelector('.sidebar-nav button:nth-child(6)'), false);
             closeSidebar();
@@ -2515,22 +2506,13 @@
                             targetElement.style.background = "";
                             targetElement.style.borderColor = "";
                         }, 2500);
-                    } else if (attempts < 20) {
-                        setTimeout(() => checkAndOpen(attempts + 1), 250);
+                    } else if (attempts < 25) {
+                        setTimeout(() => checkAndOpen(attempts + 1), 200);
                     }
                 };
-                setTimeout(() => checkAndOpen(), 250);
+                setTimeout(() => checkAndOpen(), 200);
             }
         }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            const urlParams = new URLSearchParams(window.location.search);
-            const openId = urlParams.get('open_recurring');
-            if (openId) {
-                window.history.replaceState({}, document.title, window.location.pathname);
-                localStorage.setItem('smart_budget_pending_notif', openId);
-            }
-        });
 
         renderApp();
         checkAppSecurityLock();
