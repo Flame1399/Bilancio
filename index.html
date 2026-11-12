@@ -14,11 +14,11 @@
             --warning: #f59e0b;
             --info: #3b82f6;
             --bg: #070a14;
-            --card-bg: rgba(19, 28, 46, 0.7);
+            --card-bg: rgba(19, 28, 46, 0.75);
             --card-border: rgba(255, 255, 255, 0.08);
             --text: #f8fafc;
             --text-light: #94a3b8;
-            --input-bg: rgba(11, 17, 30, 0.8);
+            --input-bg: rgba(11, 17, 30, 0.85);
             --radius-lg: 22px;
             --radius-md: 14px;
             --radius-sm: 8px;
@@ -27,7 +27,7 @@
 
         [data-theme="light"] {
             --bg: #e2e8f0;
-            --card-bg: rgba(255, 255, 255, 0.8);
+            --card-bg: rgba(255, 255, 255, 0.85);
             --card-border: rgba(0, 0, 0, 0.06);
             --text: #0f172a;
             --text-light: #64748b;
@@ -52,7 +52,6 @@
             transition: background 0.3s, color 0.3s;
         }
 
-        /* Toast Notifications */
         #toast-container {
             position: fixed;
             top: 20px;
@@ -72,9 +71,7 @@
             transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             pointer-events: none;
         }
-        #toast-container.show {
-            transform: translateX(-50%) translateY(0);
-        }
+        #toast-container.show { transform: translateX(-50%) translateY(0); }
 
         #update-banner {
             position: fixed;
@@ -214,9 +211,7 @@
         }
         .card:hover { border-color: rgba(99, 102, 241, 0.2); }
 
-        .dashboard-grid {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px;
-        }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 16px; }
         .stat-box {
             background: var(--card-bg); padding: 14px 10px; border-radius: var(--radius-md);
             border: 1px solid var(--card-border); text-align: center; position: relative;
@@ -438,7 +433,7 @@
         ::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 4px; }
     </style>
 </head>
-<body data-theme="dark">
+<body data-theme="dark" onclick="handleBodyClick(event)">
 
     <div id="toast-container">Notifica</div>
 
@@ -527,7 +522,6 @@
             </div>
         </div>
 
-        <!-- Previsione Fine Mese Inteligente -->
         <div class="card" style="background: linear-gradient(135deg, rgba(99,102,241,0.12) 0%, rgba(16,185,129,0.08) 100%);">
             <h2>🔮 Previsione Chiusura Mese</h2>
             <p id="end-month-prediction-text" style="font-size: 0.82rem; color: var(--text-light); line-height: 1.4;">
@@ -800,7 +794,7 @@
         </div>
     </div>
 
-    <div class="fab-container">
+    <div class="fab-container" id="fab-container">
         <div class="fab-menu" id="fab-menu">
             <button class="fab-item" onclick="openQuickModal('transaction')" title="Nuova Transazione">
                 <span>💳</span> <span class="fab-label">Transazione</span>
@@ -812,7 +806,7 @@
                 <span>🔄</span> <span class="fab-label">Ricorrente</span>
             </button>
         </div>
-        <button class="fab-main" id="fab-main-btn" onclick="toggleFabMenu()">+</button>
+        <button class="fab-main" id="fab-main-btn" onclick="toggleFabMenu(event)">+</button>
     </div>
 
     <div class="sidebar-overlay" id="fab-modal-overlay" onclick="closeQuickModal()"></div>
@@ -934,19 +928,19 @@
         }
 
         function configureSecurityPIN() {
-            let pin = prompt("Imposta un PIN di 4 cifre (lascia vuoto per disattivare):");
-            if (pin === null) return;
-            if (pin === "") {
-                localStorage.removeItem('smart_budget_security_pin');
-                userSecurityPin = null;
-                showToast("Protezione disattivata.");
-            } else if (pin.length === 4 && !isNaN(pin)) {
-                localStorage.setItem('smart_budget_security_pin', pin);
-                userSecurityPin = pin;
-                showToast("PIN salvato con successo!");
-            } else {
-                showToast("Inserisci esattamente 4 cifre!");
-            }
+            openCustomPrompt("Imposta PIN di sicurezza (4 cifre)", "Inserisci le 4 cifre del PIN (lascia vuoto per disattivare):", (val) => {
+                if (val === "") {
+                    localStorage.removeItem('smart_budget_security_pin');
+                    userSecurityPin = null;
+                    showToast("Protezione disattivata.");
+                } else if (val.length === 4 && !isNaN(val)) {
+                    localStorage.setItem('smart_budget_security_pin', val);
+                    userSecurityPin = val;
+                    showToast("PIN salvato con successo!");
+                } else {
+                    showToast("Inserisci esattamente 4 cifre!");
+                }
+            }, true);
         }
 
         function focusNextPin(elem, nextId) {
@@ -1097,9 +1091,9 @@
                 slider.value = Math.round(savingsPerMonth);
             }
 
-            document.getElementById('proj-6m').textContent = `€ ${(totalSavedActual + (activeSimSaving * 6)).toFixed(2)}`;
-            document.getElementById('proj-1y').textContent = `€ ${(totalSavedActual + (activeSimSaving * 12)).toFixed(2)}`;
-            document.getElementById('proj-3y').textContent = `€ ${(totalSavedActual + (activeSimSaving * 36)).toFixed(2)}`;
+            document.getElementById('proj-6m').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (activeSimSaving * 6)).toFixed(2)}`;
+            document.getElementById('proj-1y').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (activeSimSaving * 12)).toFixed(2)}`;
+            document.getElementById('proj-3y').textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (activeSimSaving * 36)).toFixed(2)}`;
 
             updateSavingsSimulation();
             renderJars();
@@ -1131,16 +1125,16 @@
                 const years = Math.floor(monthsNeeded / 12);
                 const months = monthsNeeded % 12;
                 let timeString = years > 0 ? `circa <strong>${years} anni</strong>${months > 0 ? ` e <strong>${months} mesi</strong>` : ''}` : `circa <strong>${monthsNeeded} mesi</strong>`;
-                resultTextEl.innerHTML = `Continuando così, colmerai i restanti <strong>€ ${remaining.toFixed(2)}</strong> in ${timeString}.`;
+                resultTextEl.innerHTML = `Continuando così, colmerai i restanti <strong>${hideAccounts ? '€ ••••••' : '€ ' + remaining.toFixed(2)}</strong> in ${timeString}.`;
             }
 
             let proj6mEl = document.getElementById('proj-6m');
             let proj1yEl = document.getElementById('proj-1y');
             let proj3yEl = document.getElementById('proj-3y');
             if (proj6mEl) {
-                proj6mEl.textContent = `€ ${(totalSavedActual + (simVal * 6)).toFixed(2)}`;
-                proj1yEl.textContent = `€ ${(totalSavedActual + (simVal * 12)).toFixed(2)}`;
-                proj3yEl.textContent = `€ ${(totalSavedActual + (simVal * 36)).toFixed(2)}`;
+                proj6mEl.textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (simVal * 6)).toFixed(2)}`;
+                proj1yEl.textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (simVal * 12)).toFixed(2)}`;
+                proj3yEl.textContent = hideAccounts ? "€ ••••••" : `€ ${(totalSavedActual + (simVal * 36)).toFixed(2)}`;
             }
         }
 
@@ -1157,6 +1151,8 @@
             container.innerHTML = '';
             data.jars.forEach(jar => {
                 let pct = jar.target > 0 ? (jar.current / jar.target) * 100 : 0;
+                let displayCurrent = hideAccounts ? "€ ••••••" : `€ ${jar.current.toFixed(2)}`;
+                let displayTarget = hideAccounts ? "€ ••••••" : `€ ${jar.target.toFixed(2)}`;
                 container.innerHTML += `
                     <div style="background:var(--input-bg); border:1px solid var(--card-border); border-radius:var(--radius-md); padding:12px; margin-bottom:8px;">
                         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
@@ -1170,8 +1166,8 @@
                             <div class="savings-progress-fill" style="width: ${Math.min(pct, 100)}%;"></div>
                         </div>
                         <div style="display:flex; justify-content:space-between; font-size:0.72rem; color:var(--text-light);">
-                            <span>Accantonato: <strong>€ ${jar.current.toFixed(2)}</strong></span>
-                            <span>Target: <strong>€ ${jar.target.toFixed(2)}</strong> (${pct.toFixed(0)}%)</span>
+                            <span>Accantonato: <strong>${displayCurrent}</strong></span>
+                            <span>Target: <strong>${displayTarget}</strong> (${pct.toFixed(0)}%)</span>
                         </div>
                     </div>
                 `;
@@ -1181,13 +1177,13 @@
         function depositToJar(id) {
             let jar = data.jars.find(j => j.id === id);
             if (!jar) return;
-            let val = prompt(`Quanto vuoi versare in "${jar.name}" (€):`, "50");
-            if (val === null) return;
-            let amount = parseFloat(val);
-            if (isNaN(amount) || amount <= 0) { showToast("Importo non valido!"); return; }
-            jar.current += amount;
-            saveData();
-            showToast(`Versati € ${amount.toFixed(2)} in ${jar.name}!`);
+            openCustomPrompt(`Versa in "${jar.name}"`, "Inserisci l'importo da versare (€):", (val) => {
+                let amount = parseFloat(val);
+                if (isNaN(amount) || amount <= 0) { showToast("Importo non valido!"); return; }
+                jar.current += amount;
+                saveData();
+                showToast(`Versati € ${amount.toFixed(2)} in ${jar.name}!`);
+            }, false, "50");
         }
 
         function deleteJar(id) {
@@ -1236,13 +1232,13 @@
         function editCategory(type, name) {
             let cat = data.categories[type].find(c => c.name === name);
             if (!cat) return;
-            let promptVal = prompt(`Modifica limite mensile per "${name}" (€):`, cat.limit);
-            if (promptVal === null) return;
-            let newLimit = parseFloat(promptVal);
-            if (isNaN(newLimit) || newLimit < 0) { showToast("Importo non valido!"); return; }
-            cat.limit = newLimit;
-            saveData();
-            showToast("Categoria aggiornata!");
+            openCustomPrompt(`Modifica Budget Categoria`, `Nuovo limite mensile per "${name}" (€):`, (val) => {
+                let newLimit = parseFloat(val);
+                if (isNaN(newLimit) || newLimit < 0) { showToast("Importo non valido!"); return; }
+                cat.limit = newLimit;
+                saveData();
+                showToast("Categoria aggiornata!");
+            }, false, cat.limit);
         }
 
         function deleteCategory(type, name) {
@@ -1346,13 +1342,18 @@
             if(!r) return;
             let finalAmount = r.amount;
             if (!finalAmount || finalAmount <= 0) {
-                let promptVal = prompt(`Inserisci l'importo per "${r.desc}" (€):`, "");
-                if (promptVal === null) return;
-                finalAmount = parseFloat(promptVal);
-                if (isNaN(finalAmount) || finalAmount <= 0) { showToast("Importo non valido!"); return; }
+                openCustomPrompt(`Applica Promemoria`, `Inserisci l'importo per "${r.desc}" (€):`, (val) => {
+                    let amt = parseFloat(val);
+                    if (isNaN(amt) || amt <= 0) { showToast("Importo non valido!"); return; }
+                    completeRecurringExecution(r, amt);
+                }, false, "");
+            } else {
+                completeRecurringExecution(r, finalAmount);
             }
-            let transactionDate = r.nextDate ? new Date(r.nextDate).toISOString() : new Date().toISOString();
+        }
 
+        function completeRecurringExecution(r, finalAmount) {
+            let transactionDate = r.nextDate ? new Date(r.nextDate).toISOString() : new Date().toISOString();
             if(r.type === 'Giroconto') {
                 let accFrom = data.accounts.find(acc => acc.name === r.fromAccount);
                 let accTo = data.accounts.find(acc => acc.name === r.toAccount);
@@ -1372,14 +1373,59 @@
             element.closest('.recurring-category-section').classList.toggle('open');
         }
 
-        function toggleFabMenu() {
-            document.querySelector('.fab-container').classList.toggle('active');
+        function toggleFabMenu(event) {
+            if (event) event.stopPropagation();
+            document.getElementById('fab-container').classList.toggle('active');
+        }
+
+        function handleBodyClick(event) {
+            const fabContainer = document.getElementById('fab-container');
+            if (fabContainer && fabContainer.classList.contains('active')) {
+                if (!fabContainer.contains(event.target)) {
+                    fabContainer.classList.remove('active');
+                }
+            }
         }
 
         function closeQuickModal() {
             document.getElementById('fab-modal').classList.remove('active');
             document.getElementById('fab-modal-overlay').classList.remove('active');
-            document.querySelector('.fab-container').classList.remove('active');
+            document.getElementById('fab-container').classList.remove('active');
+        }
+
+        function openCustomPrompt(title, label, callback, isPassword = false, defaultValue = "") {
+            const modal = document.getElementById('fab-modal');
+            const overlay = document.getElementById('fab-modal-overlay');
+            const titleEl = document.getElementById('fab-modal-title');
+            const contentEl = document.getElementById('fab-modal-content');
+            document.getElementById('fab-container').classList.remove('active');
+
+            titleEl.textContent = title;
+            contentEl.innerHTML = `
+                <form id="custom-prompt-form" onsubmit="handleCustomPromptSubmit(event)">
+                    <div class="form-group">
+                        <label>${label}</label>
+                        <input type="${isPassword ? 'password' : 'text'}" id="custom-prompt-input" value="${defaultValue}" autocomplete="off" required>
+                    </div>
+                    <button type="submit">Conferma</button>
+                </form>
+            `;
+
+            modal.classList.add('active');
+            overlay.classList.add('active');
+            setTimeout(() => document.getElementById('custom-prompt-input').focus(), 150);
+
+            window._customPromptCallback = callback;
+        }
+
+        function handleCustomPromptSubmit(e) {
+            e.preventDefault();
+            const val = document.getElementById('custom-prompt-input').value.trim();
+            closeQuickModal();
+            if (window._customPromptCallback) {
+                window._customPromptCallback(val);
+                window._customPromptCallback = null;
+            }
         }
 
         function openQuickModal(type) {
@@ -1387,7 +1433,7 @@
             const overlay = document.getElementById('fab-modal-overlay');
             const titleEl = document.getElementById('fab-modal-title');
             const contentEl = document.getElementById('fab-modal-content');
-            document.querySelector('.fab-container').classList.remove('active');
+            document.getElementById('fab-container').classList.remove('active');
             contentEl.innerHTML = '';
 
             if (type === 'transaction') {
@@ -1706,16 +1752,16 @@
             let savings = periodIncome - periodExpense;
             let savingsRate = periodIncome > 0 ? (savings / periodIncome) * 100 : 0;
 
-            document.getElementById('ana-income').textContent = `€ ${periodIncome.toFixed(2)}`;
-            document.getElementById('ana-expense').textContent = `€ ${periodExpense.toFixed(2)}`;
+            document.getElementById('ana-income').textContent = hideAccounts ? "€ ••••••" : `€ ${periodIncome.toFixed(2)}`;
+            document.getElementById('ana-expense').textContent = hideAccounts ? "€ ••••••" : `€ ${periodExpense.toFixed(2)}`;
             let savingsEl = document.getElementById('ana-savings');
-            savingsEl.textContent = `€ ${savings.toFixed(2)}`;
+            savingsEl.textContent = hideAccounts ? "€ ••••••" : `€ ${savings.toFixed(2)}`;
             savingsEl.className = `value ${savings >= 0 ? 'income' : 'expense'}`;
 
             document.getElementById('ana-savings-rate').textContent = `${savingsRate.toFixed(1)}%`;
-            document.getElementById('ana-net-flow').textContent = `€ ${savings.toFixed(2)}`;
+            document.getElementById('ana-net-flow').textContent = hideAccounts ? "€ ••••••" : `€ ${savings.toFixed(2)}`;
 
-            document.getElementById('analytics-summary-text').innerHTML = `Nel periodo selezionato hai registrato entrate per <strong>€ ${periodIncome.toFixed(2)}</strong> e uscite per <strong>€ ${periodExpense.toFixed(2)}</strong>.`;
+            document.getElementById('analytics-summary-text').innerHTML = `Nel periodo selezionato hai registrato entrate per <strong>${hideAccounts ? '€ ••••••' : '€ ' + periodIncome.toFixed(2)}</strong> e uscite per <strong>${hideAccounts ? '€ ••••••' : '€ ' + periodExpense.toFixed(2)}</strong>.`;
 
             let advice = "Gestione stabile.";
             if (periodIncome === 0 && periodExpense === 0) {
@@ -1833,7 +1879,6 @@
                 }
             });
 
-            // Calcolo previsione fine mese intelligente
             const currentDay = now.getDate();
             const totalDaysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
             const daysPassed = Math.max(currentDay, 1);
@@ -1843,16 +1888,20 @@
 
             const predTextEl = document.getElementById('end-month-prediction-text');
             if (predTextEl) {
-                predTextEl.innerHTML = `Al ritmo attuale (circa € ${dailyAvgExpense.toFixed(2)}/giorno), chiuderai il mese con una spesa stimata di <strong>€ ${projectedMonthExpense.toFixed(2)}</strong> e un flusso netto previsto di <strong style="color:${projectedEndBalance >= 0 ? 'var(--success)' : 'var(--danger)'};">€ ${projectedEndBalance.toFixed(2)}</strong>.`;
+                if (hideAccounts) {
+                    predTextEl.innerHTML = `Al ritmo attuale, chiuderai il mese con una spesa stimata di <strong>€ ••••••</strong> e un flusso netto previsto di <strong>€ ••••••</strong>.`;
+                } else {
+                    predTextEl.innerHTML = `Al ritmo attuale (circa € ${dailyAvgExpense.toFixed(2)}/giorno), chiuderai il mese con una spesa stimata di <strong>€ ${projectedMonthExpense.toFixed(2)}</strong> e un flusso netto previsto di <strong style="color:${projectedEndBalance >= 0 ? 'var(--success)' : 'var(--danger)'};">€ ${projectedEndBalance.toFixed(2)}</strong>.`;
+                }
             }
 
             let monthlyFlow = monthlyIncome - monthlyExpense;
             const mIncEl = document.getElementById('monthly-income');
             const mExpEl = document.getElementById('monthly-expense');
             const mFlowEl = document.getElementById('monthly-flow');
-            if(mIncEl) mIncEl.textContent = `€ ${monthlyIncome.toFixed(2)}`;
-            if(mExpEl) mExpEl.textContent = `€ ${monthlyExpense.toFixed(2)}`;
-            if(mFlowEl) mFlowEl.textContent = `€ ${monthlyFlow.toFixed(2)}`;
+            if(mIncEl) mIncEl.textContent = hideAccounts ? "€ ••••••" : `€ ${monthlyIncome.toFixed(2)}`;
+            if(mExpEl) mExpEl.textContent = hideAccounts ? "€ ••••••" : `€ ${monthlyExpense.toFixed(2)}`;
+            if(mFlowEl) mFlowEl.textContent = hideAccounts ? "€ ••••••" : `€ ${monthlyFlow.toFixed(2)}`;
 
             let adviceText = "Gestione stabile.";
             let savingsRateMonth = monthlyIncome > 0 ? ((monthlyIncome - monthlyExpense) / monthlyIncome) * 100 : 0;
@@ -1870,9 +1919,11 @@
                     let limit = cat.limit;
                     let percentage = limit > 0 ? (spent / limit) * 100 : 0;
                     let barColor = percentage >= 100 ? 'var(--danger)' : (percentage >= 80 ? 'var(--warning)' : 'var(--success)');
+                    let displaySpent = hideAccounts ? "€ ••••••" : `€ ${spent.toFixed(2)}`;
+                    let displayLimit = hideAccounts ? "€ ••••••" : `€ ${limit.toFixed(2)}`;
                     budgetContainer.innerHTML += `
                         <div class="budget-item">
-                            <div class="budget-info"><span><strong>${cat.name}</strong></span><span>€ ${spent.toFixed(2)} / € ${limit.toFixed(2)}</span></div>
+                            <div class="budget-info"><span><strong>${cat.name}</strong></span><span>${displaySpent} / ${displayLimit}</span></div>
                             <div class="progress-bar-container"><div class="progress-bar" style="width: ${Math.min(percentage, 100)}%; background-color: ${barColor};"></div></div>
                         </div>`;
                 });
@@ -1884,7 +1935,7 @@
                 ['Uscita', 'Entrata'].forEach(type => {
                     if (data.categories[type]) {
                         data.categories[type].forEach(c => {
-                            let limitText = type === 'Uscita' ? ` (Budget: € ${c.limit.toFixed(2)})` : '';
+                            let limitText = type === 'Uscita' ? ` (Budget: ${hideAccounts ? '€ ••••••' : '€ ' + c.limit.toFixed(2)})` : '';
                             catManagerList.innerHTML += `
                                 <div class="category-card-item">
                                     <div class="category-name-area">
@@ -1928,9 +1979,9 @@
                     let badgeClass = isGiroconto ? 'giroconto' : (isEntrata ? 'entrata' : 'uscita');
                     let badgeSymbol = isGiroconto ? '🔄' : (isEntrata ? '+' : '-');
                     
-                    // Rilevamento automatico hashtag (#tag) nella descrizione per evidenziarli
                     let formattedDesc = t.desc.replace(/(#\w+)/g, '<span class="t-tag">$1</span>');
                     let metaText = isGiroconto ? `Da <strong>${t.fromAccount}</strong> a <strong>${t.toAccount}</strong>` : `<span class="t-tag">${t.category}</span> • ${t.accountName}`;
+                    let displayAmount = hideAccounts ? "€ ••••••" : `${isGiroconto?'🔄 ':(isEntrata?'+':'-')}€ ${t.amount.toFixed(2)}`;
 
                     tList.innerHTML += `
                         <div class="transaction-card">
@@ -1939,7 +1990,7 @@
                                 <div class="transaction-details"><span class="t-desc">${formattedDesc}</span><span class="t-meta">${metaText} • ${d}</span></div>
                             </div>
                             <div class="transaction-right">
-                                <span class="transaction-amount ${badgeClass}">${isGiroconto?'🔄 ':(isEntrata?'+':'-')}€ ${t.amount.toFixed(2)}</span>
+                                <span class="transaction-amount ${badgeClass}">${displayAmount}</span>
                                 <button class="btn-danger" onclick="deleteTransaction(${t.id})" style="padding:3px 6px!important; font-size:0.68rem!important;">Elimina</button>
                             </div>
                         </div>`;
@@ -1999,7 +2050,7 @@
                         grouped[catName].forEach(r => {
                             let infoText = r.type === 'Giroconto' ? `${r.fromAccount} ➡️ ${r.toAccount}` : `${r.accountName}`;
                             let nextDateFormatted = r.nextDate ? new Date(r.nextDate).toLocaleDateString() : 'Non impostata';
-                            let displayAmt = r.amount > 0 ? `€ ${r.amount.toFixed(2)}` : `Variabile`;
+                            let displayAmt = r.amount > 0 ? (hideAccounts ? "€ ••••••" : `€ ${r.amount.toFixed(2)}`) : `Variabile`;
                             let amtClass = r.amount > 0 ? 'recurring-compact-amount' : 'recurring-compact-amount variable';
 
                             sectionHtml += `
