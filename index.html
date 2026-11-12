@@ -280,6 +280,7 @@
         .account-name-area { display: flex; align-items: center; gap: 6px; font-weight: 700; font-size: 0.88rem; }
         .account-balance-area { font-weight: 800; color: #818cf8; font-size: 0.95rem; }
         .account-actions-row { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--card-border); padding-top: 6px; }
+        .account-move-group, .account-mgmt-group { display: flex; gap: 4px; }
 
         .category-card-item {
             background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md);
@@ -328,22 +329,36 @@
         .calendar-cell.has-event { border-color: var(--primary); background: rgba(99, 102, 241, 0.1); }
         .calendar-cell .dot { width: 5px; height: 5px; background: var(--primary); border-radius: 50%; margin-top: 2px; }
 
-        .savings-hero-box {
-            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(192, 132, 252, 0.1) 100%);
-            border: 1px solid rgba(99, 102, 241, 0.3); border-radius: var(--radius-md);
-            padding: 16px 12px; text-align: center; margin-bottom: 12px; position: relative;
+        .recurring-category-section {
+            margin-bottom: 10px; border: 1px solid var(--card-border); border-radius: var(--radius-md); overflow: hidden; background: var(--input-bg);
+            -webkit-overflow-scrolling: touch;
         }
-        .savings-hero-title { font-size: 0.68rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.8px; font-weight: 700; margin-bottom: 3px; }
-        .savings-hero-value { font-size: 1.8rem; font-weight: 900; color: var(--success); letter-spacing: -0.5px; }
+        .recurring-category-header {
+            font-size: 0.82rem; color: var(--primary); font-weight: 800; padding: 12px; background: rgba(255, 255, 255, 0.02);
+            display: flex; justify-content: space-between; align-items: center; cursor: pointer; user-select: none;
+        }
+        .recurring-category-header .toggle-icon { font-size: 0.72rem; transition: transform 0.2s ease; color: var(--text-light); }
+        .recurring-category-body { display: none; padding: 8px 10px 10px 10px; border-top: 1px solid var(--card-border); background: var(--card-bg); }
+        .recurring-category-section.open .recurring-category-body { display: flex; flex-direction: column; gap: 8px; }
+        .recurring-category-section.open .toggle-icon { transform: rotate(90deg); }
+
+        .recurring-compact-item {
+            background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-sm);
+            padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; gap: 8px;
+        }
+        .recurring-compact-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex-grow: 1; }
+        .recurring-compact-title { font-weight: 700; color: var(--text); font-size: 0.82rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .recurring-compact-meta { font-size: 0.65rem; color: var(--text-light); display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+        .recurring-compact-right { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+        .recurring-compact-amount { font-weight: 800; font-size: 0.82rem; color: #818cf8; white-space: nowrap; }
+        .recurring-compact-amount.variable { color: var(--warning); font-size: 0.7rem; }
+        .recurring-compact-actions { display: flex; gap: 4px; align-items: center; }
+        .recurring-compact-actions button { width: auto !important; padding: 4px 6px !important; font-size: 0.68rem !important; border-radius: var(--radius-sm) !important; cursor: pointer; pointer-events: auto; }
 
         .savings-progress-track {
             position: relative; width: 100%; background: var(--input-bg); border-radius: 99px; height: 12px; overflow: hidden; border: 1px solid var(--card-border); margin: 10px 0 6px 0;
         }
         .savings-progress-fill { height: 100%; width: 0%; background: linear-gradient(90deg, #10b981 0%, #38bdf8 100%); border-radius: 99px; transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
-
-        .sim-slider-container { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 12px; margin-top: 8px; }
-        .sim-slider-container label { font-size: 0.75rem; font-weight: 700; color: var(--text); margin-bottom: 6px; }
-        .sim-slider { width: 100%; accent-color: var(--primary); cursor: pointer; height: 5px; background: var(--card-border); border-radius: 4px; outline: none; }
 
         .analytics-card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 8px; }
         .analytics-mini-box { background: var(--input-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md); padding: 8px 2px; text-align: center; overflow: hidden; }
@@ -413,7 +428,6 @@
         .fab-modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1px solid var(--card-border); }
         .fab-modal-header h3 { font-size: 0.95rem; font-weight: 800; color: var(--text); }
 
-        /* Stile Print per Report PDF */
         @media print {
             body { background: white !important; color: black !important; max-width: 100% !important; padding: 0 !important; }
             header, .fab-container, .sidebar, .sidebar-overlay, button, select, input { display: none !important; }
@@ -562,7 +576,6 @@
             </div>
 
             <div class="transaction-list" id="transaction-list"></div>
-            <div id="transaction-pagination" style="text-align: center; margin-top: 10px;"></div>
         </div>
     </div>
 
@@ -723,7 +736,6 @@
             jars: []
         };
 
-        let savingsSettings = JSON.parse(localStorage.getItem('smart_budget_savings_settings')) || { salary: 1800, target: 6000 };
         let userSecurityPin = localStorage.getItem('smart_budget_security_pin') || null;
         let hideAccounts = JSON.parse(localStorage.getItem('smart_budget_hide_acc')) || false;
         
@@ -734,8 +746,6 @@
         document.body.setAttribute('data-theme', currentTheme);
 
         let pieChartInstance = null, barChartInstance = null;
-        let currentPage = 1;
-        const itemsPerPage = 20;
 
         function showToast(message) {
             const toast = document.getElementById('toast-container');
@@ -855,7 +865,6 @@
             const tc = isDark ? '#f8fafc' : '#0f172a';
             const gc = isDark ? '#1e293b' : '#e2e8f0';
 
-            // Grafico a ciambella (Cliccabile per filtraggio)
             if (pieChartInstance) pieChartInstance.destroy();
             pieChartInstance = new Chart(document.getElementById('categoryPieChart').getContext('2d'), {
                 type: 'doughnut',
@@ -877,7 +886,6 @@
                 }
             });
 
-            // Grafico a barre storico (Cliccabile)
             let monthsCount = parseInt(document.getElementById('trend-months-select').value) || 6;
             let labels = [], incs = [], exps = [];
             for (let i = monthsCount - 1; i >= 0; i--) {
@@ -910,12 +918,14 @@
             let totalNetWorth = data.accounts.reduce((sum, acc) => sum + acc.balance, 0);
             document.getElementById('net-worth').textContent = hideAccounts ? "€ ••••••" : `€ ${totalNetWorth.toFixed(2)}`;
 
-            let now = new Date(), mInc = 0, mExp = 0, catExp = {};
+            let now = new Date(), mInc = 0, mExp = 0, categoryExpenses = {};
+            if(data.categories["Uscita"]) data.categories["Uscita"].forEach(c => categoryExpenses[c.name] = 0);
+
             data.transactions.forEach(t => {
                 let td = new Date(t.date);
                 if (td.getMonth() === now.getMonth() && td.getFullYear() === now.getFullYear()) {
                     if (t.type === 'Entrata') mInc += t.amount;
-                    if (t.type === 'Uscita') { mExp += t.amount; catExp[t.category] = (catExp[t.category] || 0) + t.amount; }
+                    else if (t.type === 'Uscita') { mExp += t.amount; categoryExpenses[t.category] = (categoryExpenses[t.category] || 0) + t.amount; }
                 }
             });
 
@@ -923,26 +933,66 @@
             document.getElementById('monthly-expense').textContent = `€ ${mExp.toFixed(2)}`;
             document.getElementById('monthly-flow').textContent = `€ ${(mInc - mExp).toFixed(2)}`;
 
-            // Transazioni con paginazione
+            // Previsione fine mese
+            let currentDay = now.getDate();
+            let totalDaysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+            let daysPassed = Math.max(currentDay, 1);
+            let dailyAvgExpense = mExp / daysPassed;
+            let projectedMonthExpense = dailyAvgExpense * totalDaysInMonth;
+            let projectedEndBalance = mInc - projectedMonthExpense;
+
+            const predTextEl = document.getElementById('end-month-prediction-text');
+            if (predTextEl) {
+                predTextEl.innerHTML = `Al ritmo attuale (circa € ${dailyAvgExpense.toFixed(2)}/giorno), chiuderai il mese con una spesa stimata di <strong>€ ${projectedMonthExpense.toFixed(2)}</strong> e un flusso netto previsto di <strong style="color:${projectedEndBalance >= 0 ? 'var(--success)' : 'var(--danger)'};">€ ${projectedEndBalance.toFixed(2)}</strong>.`;
+            }
+
+            // Budget alert
+            let budgetContainer = document.getElementById('budget-alerts-container');
+            if(budgetContainer && data.categories["Uscita"]) {
+                budgetContainer.innerHTML = '';
+                data.categories["Uscita"].forEach(cat => {
+                    let spent = categoryExpenses[cat.name] || 0;
+                    let limit = cat.limit;
+                    let pct = limit > 0 ? (spent / limit) * 100 : 0;
+                    let barColor = pct >= 100 ? 'var(--danger)' : (pct >= 80 ? 'var(--warning)' : 'var(--success)');
+                    budgetContainer.innerHTML += `
+                        <div class="budget-item">
+                            <div class="budget-info"><span><strong>${cat.emoji || '🔴'} ${cat.name}</strong></span><span>€ ${spent.toFixed(2)} / € ${limit.toFixed(2)}</span></div>
+                            <div class="progress-bar-container"><div class="progress-bar" style="width: ${Math.min(pct, 100)}%; background-color: ${barColor};"></div></div>
+                        </div>`;
+                });
+            }
+
+            // Transazioni
             let tList = document.getElementById('transaction-list');
             let filtered = data.transactions.filter(t => {
                 let ft = document.getElementById('filter-type').value;
                 let fa = document.getElementById('filter-account').value;
                 let s = document.getElementById('search-transaction').value.toLowerCase();
-                return (ft === 'ALL' || t.type === ft) && (fa === 'ALL' || t.accountName === fa) && (!s || t.desc.toLowerCase().includes(s) || (t.category && t.category.toLowerCase().includes(s)));
+                let df = document.getElementById('filter-date-from').value;
+                let dt = document.getElementById('filter-date-to').value;
+                let tDateOnly = t.date.slice(0, 10);
+                return (ft === 'ALL' || t.type === ft) && 
+                       (fa === 'ALL' || t.accountName === fa || t.fromAccount === fa || t.toAccount === fa) && 
+                       (!s || t.desc.toLowerCase().includes(s) || (t.category && t.category.toLowerCase().includes(s))) &&
+                       (!df || tDateOnly >= df) && (!dt || tDateOnly <= dt);
             });
 
-            tList.innerHTML = filtered.length === 0 ? '<p style="color:var(--text-light); text-align:center;">Nessuna transazione.</p>' : '';
-            let paginated = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-            
-            paginated.forEach(t => {
+            tList.innerHTML = filtered.length === 0 ? '<p style="color:var(--text-light); text-align:center; padding:10px;">Nessuna transazione trovata.</p>' : '';
+            filtered.slice(0, 50).forEach(t => {
+                let isG = t.type === 'Giroconto', isE = t.type === 'Entrata';
+                let symbol = isG ? '🔄' : (isE ? '+' : '-');
+                let badgeClass = isG ? 'giroconto' : (isE ? 'entrata' : 'uscita');
                 tList.innerHTML += `<div class="transaction-card">
                     <div class="transaction-left">
-                        <div class="transaction-badge ${t.type.toLowerCase()}">${t.type === 'Entrata' ? '+' : '-'}</div>
-                        <div class="transaction-details"><span class="t-desc">${t.desc}</span><span class="t-meta">${t.category || 'Giroconto'} • ${new Date(t.date).toLocaleDateString()}</span></div>
+                        <div class="transaction-badge ${badgeClass}">${symbol}</div>
+                        <div class="transaction-details">
+                            <span class="t-desc">${t.desc}</span>
+                            <span class="t-meta">${isG ? `Da ${t.fromAccount} a ${t.toAccount}` : `${t.category} • ${t.accountName}`} • ${new Date(t.date).toLocaleDateString()}</span>
+                        </div>
                     </div>
                     <div class="transaction-right">
-                        <span class="transaction-amount ${t.type.toLowerCase()}">${t.type==='Entrata'?'+':'-'}€ ${t.amount.toFixed(2)}</span>
+                        <span class="transaction-amount ${badgeClass}">${symbol}€ ${t.amount.toFixed(2)}</span>
                         <button class="btn-danger" onclick="deleteTransaction(${t.id})" style="padding:2px 6px!important; font-size:0.65rem!important;">Elimina</button>
                     </div>
                 </div>`;
@@ -950,18 +1000,237 @@
 
             // Conti
             let accList = document.getElementById('account-list');
-            accList.innerHTML = '';
-            data.accounts.forEach(acc => {
-                accList.innerHTML += `<div class="account-card-item">
-                    <div class="account-header-row"><div class="account-name-area"><span>${acc.name}</span></div><div class="account-balance-area">${acc.currency || '€'} ${acc.balance.toFixed(2)}</div></div>
-                </div>`;
-            });
+            if (accList) {
+                accList.innerHTML = '';
+                data.accounts.forEach((acc, index) => {
+                    let disp = hideAccounts ? "€ ••••••" : `${acc.currency || '€'} ${acc.balance.toFixed(2)}`;
+                    let safeName = acc.name.replace(/'/g, "\\'");
+                    accList.innerHTML += `<div class="account-card-item">
+                        <div class="account-header-row">
+                            <div class="account-name-area" onclick="setMainAccount('${safeName}')" style="cursor:pointer;">
+                                <span>${acc.name}</span>${acc.isMain ? '<span class="main-badge">⭐</span>' : ''}
+                            </div>
+                            <div class="account-balance-area">${disp}</div>
+                        </div>
+                        <div class="account-actions-row">
+                            <div class="account-move-group">
+                                <button class="btn-move" onclick="moveAccount(${index}, -1)" ${index === 0 ? 'disabled style="opacity:0.3;"' : ''}>▲</button>
+                                <button class="btn-move" onclick="moveAccount(${index}, 1)" ${index === data.accounts.length - 1 ? 'disabled style="opacity:0.3;"' : ''}>▼</button>
+                            </div>
+                            <div class="account-mgmt-group">
+                                <button class="btn-edit" onclick="editAccount('${safeName}')">Modifica</button>
+                                <button class="btn-danger" onclick="deleteAccount('${safeName}')">Elimina</button>
+                            </div>
+                        </div>
+                    </div>`;
+                });
+            }
+
+            // Gestore Categorie
+            let catManager = document.getElementById('category-list-manager');
+            if (catManager) {
+                catManager.innerHTML = '';
+                ['Uscita', 'Entrata'].forEach(type => {
+                    if (data.categories[type]) {
+                        data.categories[type].forEach(c => {
+                            let safeCName = c.name.replace(/'/g, "\\'");
+                            catManager.innerHTML += `<div class="category-card-item">
+                                <div class="category-name-area">
+                                    <span>${c.emoji || '🏷️'} ${c.name}</span>
+                                    <span style="font-size:0.65rem; color:var(--text-light);">${type === 'Uscita' ? `Budget: € ${c.limit.toFixed(2)}` : ''}</span>
+                                </div>
+                                <div class="category-actions">
+                                    ${type === 'Uscita' ? `<button class="btn-edit" onclick="editCategory('${type}', '${safeCName}')">Modifica</button>` : ''}
+                                    <button class="btn-danger" onclick="deleteCategory('${type}', '${safeCName}')">Elimina</button>
+                                </div>
+                            </div>`;
+                        });
+                    }
+                });
+            }
+
+            // Ricorrenti
+            let rList = document.getElementById('recurring-list');
+            if (rList) {
+                rList.innerHTML = (!data.recurring || data.recurring.length === 0) ? '<p style="color:var(--text-light); text-align:center; padding:10px;">Nessun promemoria ricorrente.</p>' : '';
+                if (data.recurring && data.recurring.length > 0) {
+                    data.recurring.forEach((r, idx) => {
+                        rList.innerHTML += `<div class="recurring-compact-item">
+                            <div class="recurring-compact-info">
+                                <span class="recurring-compact-title">${r.desc}</span>
+                                <span class="recurring-compact-meta">🔄 ${r.frequency} • Scad: ${r.nextDate}</span>
+                            </div>
+                            <div class="recurring-compact-right">
+                                <span class="recurring-compact-amount">${r.amount > 0 ? `€ ${r.amount.toFixed(2)}` : 'Variabile'}</span>
+                                <div class="recurring-compact-actions">
+                                    <button class="btn-secondary" onclick="executeRecurring(${idx})" style="color:var(--success)!important;">▶️ Applica</button>
+                                    <button class="btn-danger" onclick="deleteRecurring(${idx})">🗑️</button>
+                                </div>
+                            </div>
+                        </div>`;
+                    });
+                }
+            }
+
+            // Barattoli (Jars)
+            let jarsCont = document.getElementById('jars-container');
+            if (jarsCont) {
+                jarsCont.innerHTML = (!data.jars || data.jars.length === 0) ? '<p style="color:var(--text-light); text-align:center;">Nessun obiettivo attivo.</p>' : '';
+                if (data.jars) {
+                    data.jars.forEach(jar => {
+                        let pct = jar.target > 0 ? (jar.current / jar.target) * 100 : 0;
+                        jarsCont.innerHTML += `<div style="background:var(--input-bg); border:1px solid var(--card-border); border-radius:var(--radius-md); padding:10px; margin-bottom:8px;">
+                            <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                                <strong style="font-size:0.85rem;">🏺 ${jar.name}</strong>
+                                <button class="btn-danger" onclick="deleteJar(${jar.id})" style="padding:2px 6px!important;">✕</button>
+                            </div>
+                            <div class="savings-progress-track"><div class="savings-progress-fill" style="width:${Math.min(pct,100)}%;"></div></div>
+                            <div style="display:flex; justify-content:space-between; font-size:0.7rem; color:var(--text-light);">
+                               <span>€ ${jar.current.toFixed(2)}</span><span>Target: € ${jar.target.toFixed(2)} (${pct.toFixed(0)}%)</span>
+                            </div>
+                        </div>`;
+                    });
+                }
+            }
+
+            updateAccountSelects();
+        }
+
+        function updateAccountSelects() {
+            const filterAcc = document.getElementById('filter-account');
+            if (filterAcc) {
+                let cur = filterAcc.value;
+                filterAcc.innerHTML = '<option value="ALL">Tutti i Conti</option>';
+                data.accounts.forEach(a => filterAcc.innerHTML += `<option value="${a.name}">${a.name}</option>`);
+                filterAcc.value = cur;
+            }
         }
 
         function deleteTransaction(id) {
-            data.transactions = data.transactions.filter(t => t.id !== id);
+            let t = data.transactions.find(item => item.id === id);
+            if (t) {
+                let acc = data.accounts.find(a => a.name === t.accountName);
+                if (acc) {
+                    if (t.type === 'Entrata') acc.balance -= t.amount;
+                    else acc.balance += t.amount;
+                }
+            }
+            data.transactions = data.transactions.filter(item => item.id !== id);
             saveData();
             showToast("Transazione rimossa.");
+        }
+
+        function setMainAccount(name) {
+            data.accounts.forEach(a => a.isMain = (a.name === name));
+            saveData();
+            showToast(`Conto principale: ${name}`);
+        }
+
+        function moveAccount(index, dir) {
+            let ni = index + dir;
+            if (ni < 0 || ni >= data.accounts.length) return;
+            let temp = data.accounts[index]; data.accounts[index] = data.accounts[ni]; data.accounts[ni] = temp;
+            saveData();
+        }
+
+        function deleteAccount(name) {
+            data.accounts = data.accounts.filter(a => a.name !== name);
+            if (data.accounts.length > 0 && !data.accounts.some(a => a.isMain)) data.accounts[0].isMain = true;
+            saveData();
+            showToast("Conto eliminato.");
+        }
+
+        function editAccount(name) {
+            let acc = data.accounts.find(a => a.name === name);
+            if (acc) {
+                switchTab('patrimony', document.querySelector('.sidebar-nav button:nth-child(3)'));
+                document.getElementById('acc-original-name').value = acc.name;
+                document.getElementById('acc-name').value = acc.name;
+                document.getElementById('acc-currency').value = acc.currency || '€';
+                document.getElementById('acc-balance').value = acc.balance.toFixed(2);
+                document.getElementById('account-form-title').textContent = `Modifica: ${acc.name}`;
+                document.getElementById('account-submit-btn').textContent = "Aggiorna Conto";
+                document.getElementById('account-cancel-btn').style.display = "inline-block";
+            }
+        }
+
+        function cancelEditAccount() {
+            document.getElementById('account-form').reset();
+            document.getElementById('acc-original-name').value = "";
+            document.getElementById('account-form-title').textContent = "Aggiungi / Crea Conto";
+            document.getElementById('account-submit-btn').textContent = "Salva Conto";
+            document.getElementById('account-cancel-btn').style.display = "none";
+        }
+
+        document.getElementById('account-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let orig = document.getElementById('acc-original-name').value;
+            let name = document.getElementById('acc-name').value.trim();
+            let currency = document.getElementById('acc-currency').value;
+            let balance = parseFloat(parseFloat(document.getElementById('acc-balance').value).toFixed(2));
+
+            if (orig) {
+                let acc = data.accounts.find(a => a.name === orig);
+                if (acc) { acc.name = name; acc.currency = currency; acc.balance = balance; }
+            } else {
+                data.accounts.push({ name, currency, balance, isMain: data.accounts.length === 0 });
+            }
+            saveData();
+            cancelEditAccount();
+            showToast("Conto salvato!");
+        });
+
+        function deleteCategory(type, name) {
+            data.categories[type] = data.categories[type].filter(c => c.name !== name);
+            saveData();
+            showToast("Categoria eliminata.");
+        }
+
+        function editCategory(type, name) {
+            let cat = data.categories[type].find(c => c.name === name);
+            if (cat) {
+                let newLim = prompt(`Nuovo limite mensile per "${name}" (€):`, cat.limit);
+                if (newLim !== null) {
+                    cat.limit = parseFloat(parseFloat(newLim).toFixed(2)) || 0;
+                    saveData();
+                    showToast("Categoria aggiornata!");
+                }
+            }
+        }
+
+        function deleteJar(id) {
+            data.jars = data.jars.filter(j => j.id !== id);
+            saveData();
+            showToast("Barattolo eliminato.");
+        }
+
+        function deleteRecurring(idx) {
+            data.recurring.splice(idx, 1);
+            saveData();
+            showToast("Promemoria eliminato.");
+        }
+
+        function executeRecurring(idx) {
+            let r = data.recurring[idx];
+            let amt = r.amount;
+            if (!amt || amt <= 0) {
+                amt = parseFloat(prompt(`Inserisci importo per "${r.desc}" (€):`)) || 0;
+            }
+            if (amt <= 0) { showToast("Importo non valido"); return; }
+
+            let acc = data.accounts.find(a => a.name === r.accountName);
+            if (acc) {
+                if (r.type === 'Entrata') acc.balance += amt; else acc.balance -= amt;
+            }
+            data.transactions.unshift({ id: Date.now(), type: r.type, accountName: r.accountName, category: r.category, amount: amt, desc: r.desc, date: new Date().toISOString() });
+            
+            // Calcola prossima scadenza mensile
+            let d = new Date(r.nextDate);
+            d.setMonth(d.getMonth() + 1);
+            r.nextDate = d.toISOString().slice(0, 10);
+
+            saveData();
+            showToast("Operazione ricorrente registrata!");
         }
 
         function toggleFabMenu(e) { e.stopPropagation(); document.getElementById('fab-container').classList.toggle('active'); }
@@ -976,32 +1245,120 @@
             
             if (type === 'transaction') {
                 document.getElementById('fab-modal-title').textContent = "💳 Nuova Transazione";
-                content.innerHTML = `<form onsubmit="handleQuickSubmit(event)">
-                    <div class="form-group"><label>Tipo</label><select id="qt-type"><option value="Uscita">Uscita</option><option value="Entrata">Entrata</option></select></div>
-                    <div class="form-group"><label>Conto</label><select id="qt-acc">${data.accounts.map(a=>`<option value="${a.name}">${a.name}</option>`).join('')}</select></div>
-                    <div class="form-group"><label>Categoria</label><input type="text" id="qt-cat" placeholder="Es. Spesa" required></div>
-                    <div class="form-group"><label>Importo (€)</label><input type="number" id="qt-amt" step="0.01" required></div>
-                    <div class="form-group"><label>Descrizione / Tag</label><input type="text" id="qt-desc" placeholder="Nota #tag"></div>
+                content.innerHTML = `<form onsubmit="handleQuickSubmit(event, 'transaction')">
+                    <div class="form-group"><label>Tipo</label><select id="qt-type" onchange="updateCatSelect()"><option value="Uscita">Uscita</option><option value="Entrata">Entrata</option><option value="Giroconto">Giroconto 🔄</option></select></div>
+                    <div id="qt-std">
+                        <div class="form-group"><label>Conto</label><select id="qt-acc">${data.accounts.map(a=>`<option value="${a.name}">${a.name}</option>`).join('')}</select></div>
+                        <div class="form-group"><label>Categoria</label><select id="qt-cat"></select></div>
+                    </div>
+                    <div id="qt-tr" style="display:none;">
+                        <div class="form-group"><label>Da Conto</label><select id="qt-from">${data.accounts.map(a=>`<option value="${a.name}">${a.name}</option>`).join('')}</select></div>
+                        <div class="form-group"><label>A Conto</label><select id="qt-to">${data.accounts.map(a=>`<option value="${a.name}">${a.name}</option>`).join('')}</select></div>
+                    </div>
+                    <div class="form-group"><label>Importo</label><input type="number" id="qt-amt" step="0.01" required></div>
+                    <div class="form-group"><label>Descrizione / #tag</label><input type="text" id="qt-desc" placeholder="Nota o #tag"></div>
                     <button type="submit">Salva</button>
+                </form>`;
+                updateCatSelect();
+            } else if (type === 'category') {
+                document.getElementById('fab-modal-title').textContent = "🏷️ Nuova Categoria";
+                content.innerHTML = `<form onsubmit="handleQuickSubmit(event, 'category')">
+                    <div class="form-group"><label>Tipo</label><select id="qc-type"><option value="Uscita">Uscita</option><option value="Entrata">Entrata</option></select></div>
+                    <div class="form-group"><label>Nome Categoria</label><input type="text" id="qc-name" required></div>
+                    <div class="form-group"><label>Emoji</label><input type="text" id="qc-emoji" value="🏷️" maxlength="4" style="text-align:center;"></div>
+                    <div class="form-group"><label>Budget Mensile (€)</label><input type="number" id="qc-limit" value="150.00" step="0.01"></div>
+                    <button type="submit">Crea Categoria</button>
+                </form>`;
+            } else if (type === 'recurring') {
+                document.getElementById('fab-modal-title').textContent = "🔄 Nuovo Promemoria";
+                content.innerHTML = `<form onsubmit="handleQuickSubmit(event, 'recurring')">
+                    <div class="form-group"><label>Tipo</label><select id="qr-type"><option value="Uscita">Uscita</option><option value="Entrata">Entrata</option></select></div>
+                    <div class="form-group"><label>Conto</label><select id="qr-acc">${data.accounts.map(a=>`<option value="${a.name}">${a.name}</option>`).join('')}</select></div>
+                    <div class="form-group"><label>Categoria</label><input type="text" id="qr-cat" placeholder="Es. Affitto" required></div>
+                    <div class="form-group"><label>Frequenza</label><select id="qr-freq"><option value="Mensile">Mensile</option><option value="Annuale">Annuale</option></select></div>
+                    <div class="form-group"><label>Prossima Scadenza</label><input type="date" id="qr-date" value="${new Date().toISOString().slice(0,10)}" required></div>
+                    <div class="form-group"><label>Importo (€) <span style="font-size:0.6rem;">(Vuoto = variabile)</span></label><input type="number" id="qr-amt" step="0.01"></div>
+                    <div class="form-group"><label>Descrizione</label><input type="text" id="qr-desc" required></div>
+                    <button type="submit">Crea Promemoria</button>
+                </form>`;
+            } else if (type === 'jar') {
+                document.getElementById('fab-modal-title').textContent = "🏺 Nuovo Barattolo";
+                content.innerHTML = `<form onsubmit="handleQuickSubmit(event, 'jar')">
+                    <div class="form-group"><label>Nome Obiettivo</label><input type="text" id="qj-name" required></div>
+                    <div class="form-group"><label>Target Finale (€)</label><input type="number" id="qj-target" step="0.01" required></div>
+                    <div class="form-group"><label>Accantonamento Iniziale (€)</label><input type="number" id="qj-current" value="0" step="0.01"></div>
+                    <button type="submit">Crea Barattolo</button>
                 </form>`;
             }
             modal.classList.add('active'); overlay.classList.add('active');
         }
 
-        function handleQuickSubmit(e) {
-            e.preventDefault();
-            let type = document.getElementById('qt-type').value;
-            let accountName = document.getElementById('qt-acc').value;
-            let category = document.getElementById('qt-cat').value;
-            let amount = parseFloat(document.getElementById('qt-amt').value);
-            let desc = document.getElementById('qt-desc').value || category;
-
-            let acc = data.accounts.find(a => a.name === accountName);
-            if (acc) {
-                if (type === 'Entrata') acc.balance += amount; else acc.balance -= amount;
+        function updateCatSelect() {
+            let t = document.getElementById('qt-type').value;
+            let std = document.getElementById('qt-std');
+            let tr = document.getElementById('qt-tr');
+            let catSel = document.getElementById('qt-cat');
+            if (t === 'Giroconto') {
+                std.style.display = 'none'; tr.style.display = 'block';
+            } else {
+                std.style.display = 'block'; tr.style.display = 'none';
+                catSel.innerHTML = '';
+                if (data.categories[t]) {
+                    data.categories[t].forEach(c => catSel.innerHTML += `<option value="${c.name}">${c.emoji || '🏷️'} ${c.name}</option>`);
+                }
             }
-            data.transactions.unshift({ id: Date.now(), type, accountName, category, amount, desc, date: new Date().toISOString() });
-            saveData(); closeQuickModal(); showToast("Registrato con successo!");
+        }
+
+        function handleQuickSubmit(e, type) {
+            e.preventDefault();
+            if (type === 'transaction') {
+                let t = document.getElementById('qt-type').value;
+                let amt = parseFloat(parseFloat(document.getElementById('qt-amt').value).toFixed(2));
+                let desc = document.getElementById('qt-desc').value;
+                if (t === 'Giroconto') {
+                    let from = document.getElementById('qt-from').value;
+                    let to = document.getElementById('qt-to').value;
+                    if (from === to) { showToast("Scegli conti differenti"); return; }
+                    let af = data.accounts.find(a => a.name === from);
+                    let at = data.accounts.find(a => a.name === to);
+                    if (af && at) { af.balance -= amt; at.balance += amt; }
+                    data.transactions.unshift({ id: Date.now(), type: 'Giroconto', fromAccount: from, toAccount: to, amount: amt, desc: desc || 'Giroconto', date: new Date().toISOString() });
+                } else {
+                    let accName = document.getElementById('qt-acc').value;
+                    let cat = document.getElementById('qt-cat').value;
+                    let acc = data.accounts.find(a => a.name === accName);
+                    if (acc) {
+                        if (t === 'Entrata') acc.balance += amt; else acc.balance -= amt;
+                    }
+                    data.transactions.unshift({ id: Date.now(), type: t, accountName: accName, category: cat, amount: amt, desc: desc || cat, date: new Date().toISOString() });
+                }
+            } else if (type === 'category') {
+                let ct = document.getElementById('qc-type').value;
+                let name = document.getElementById('qc-name').value.trim();
+                let emoji = document.getElementById('qc-emoji').value.trim() || '🏷️';
+                let limit = parseFloat(document.getElementById('qc-limit').value) || 0;
+                if (!data.categories[ct]) data.categories[ct] = [];
+                data.categories[ct].push({ name, limit, emoji });
+            } else if (type === 'recurring') {
+                let rt = document.getElementById('qr-type').value;
+                let accName = document.getElementById('qr-acc').value;
+                let cat = document.getElementById('qr-cat').value;
+                let freq = document.getElementById('qr-freq').value;
+                let nextDate = document.getElementById('qr-date').value;
+                let amt = parseFloat(document.getElementById('qr-amt').value) || 0;
+                let desc = document.getElementById('qr-desc').value;
+                if (!data.recurring) data.recurring = [];
+                data.recurring.push({ id: Date.now(), type: rt, accountName: accName, category: cat, frequency: freq, nextDate, amount: amt, desc });
+            } else if (type === 'jar') {
+                let name = document.getElementById('qj-name').value;
+                let target = parseFloat(document.getElementById('qj-target').value) || 0;
+                let current = parseFloat(document.getElementById('qj-current').value) || 0;
+                if (!data.jars) data.jars = [];
+                data.jars.push({ id: Date.now(), name, target, current });
+            }
+            saveData();
+            closeQuickModal();
+            showToast("Salvato con successo!");
         }
 
         function configureSecurityPIN() {
@@ -1016,7 +1373,7 @@
             let a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'backup.json'; a.click();
         }
         function exportTransactionsCSV() {
-            let csv = "Data,Tipo,Conto,Categoria,Importo,Descrizione\n" + data.transactions.map(t => `"${t.date}","${t.type}","${t.accountName}","${t.category}","${t.amount}","${t.desc}"`).join("\n");
+            let csv = "Data,Tipo,Conto,Categoria,Importo,Descrizione\n" + data.transactions.map(t => `"${t.date}","${t.type}","${t.accountName||''}","${t.category||''}","${t.amount}","${t.desc}"`).join("\n");
             let a = document.createElement('a'); a.href = 'data:text/csv;charset=utf-8,' + encodeURI(csv); a.download = 'report.csv'; a.click();
         }
         function importBackupJSON(e) {
