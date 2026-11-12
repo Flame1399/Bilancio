@@ -2464,9 +2464,9 @@
                                     <div class="recurring-compact-right">
                                         <span class="${amtClass}">${displayAmt}</span>
                                         <div class="recurring-compact-actions">
-                                            <button class="btn-secondary" onclick="event.stopPropagation(); executeRecurring(${r.id})" style="background:rgba(16,185,129,0.15)!important; color:var(--success)!important; font-weight:700;">▶️ Applica</button>
-                                            <button class="btn-edit" onclick="event.stopPropagation(); openEditRecurringModal(${r.id})" title="Modifica">✏️</button>
-                                            <button class="btn-danger" onclick="event.stopPropagation(); deleteRecurring(${r.id})" title="Elimina">🗑️</button>
+                                            <button class="btn-secondary" onclick="event.stopImmediatePropagation(); event.preventDefault(); executeRecurring(${r.id})" style="background:rgba(16,185,129,0.15)!important; color:var(--success)!important; font-weight:700;">▶️ Applica</button>
+                                            <button class="btn-edit" onclick="event.stopImmediatePropagation(); event.preventDefault(); openEditRecurringModal(${r.id})" title="Modifica">✏️</button>
+                                            <button class="btn-danger" onclick="event.stopImmediatePropagation(); event.preventDefault(); deleteRecurring(${r.id})" title="Elimina">🗑️</button>
                                         </div>
                                     </div>
                                 </div>
