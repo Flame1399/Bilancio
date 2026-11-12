@@ -845,7 +845,7 @@
         let globalReg = null;
         let pendingNotificationItemId = null;
 
-        // Intercettazione immediata all'avvio dell'URL con parametro (indispensabile per app in Home Screen)
+        // Intercettazione immediata all'avvio dell'URL con parametro
         const urlParamsCheck = new URLSearchParams(window.location.search);
         const openIdFromUrl = urlParamsCheck.get('open_recurring');
         if (openIdFromUrl) {
@@ -1677,7 +1677,7 @@
         }
 
         function openEditRecurringModal(id) {
-            const r = data.recurring.find(item => item.id === id);
+            const r = data.recurring.find(item => Number(item.id) === Number(id));
             if (!r) return;
 
             const modal = document.getElementById('fab-modal');
@@ -1761,7 +1761,7 @@
 
         function handleEditRecurringSubmit(event, id) {
             event.preventDefault();
-            const r = data.recurring.find(item => item.id === id);
+            const r = data.recurring.find(item => Number(item.id) === Number(id));
             if (!r) return;
 
             const type = document.getElementById('q-r-type').value;
