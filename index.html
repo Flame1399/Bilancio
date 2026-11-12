@@ -1040,15 +1040,18 @@
                 document.getElementById('app-lock-screen').style.display = 'none';
                 clearPinFields();
                 
-                // Forza lo scroll in cima con un piccolo ritardo per neutralizzare il focus del PIN
+                // Forza lo scroll in cima dopo lo sblocco
                 setTimeout(() => {
                     window.scrollTo({ top: 0, behavior: 'smooth' });
                 }, 100);
 
+                // Se c'è una notifica in attesa, aprila subito dopo lo sblocco del PIN
                 if (pendingNotificationItemId) {
                     const idToOpen = pendingNotificationItemId;
                     pendingNotificationItemId = null;
-                    openRecurringByNotification(idToOpen);
+                    setTimeout(() => {
+                        openRecurringByNotification(idToOpen);
+                    }, 300);
                 }
             } else {
                 showToast("PIN non corretto!");
@@ -2511,11 +2514,11 @@
                             targetElement.style.background = "";
                             targetElement.style.borderColor = "";
                         }, 2500);
-                    } else if (attempts < 10) {
-                        setTimeout(() => checkAndOpen(attempts + 1), 150);
+                    } else if (attempts < 15) {
+                        setTimeout(() => checkAndOpen(attempts + 1), 200);
                     }
                 };
-                setTimeout(() => checkAndOpen(), 100);
+                setTimeout(() => checkAndOpen(), 200);
             }
         }
 
