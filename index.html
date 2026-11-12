@@ -958,9 +958,16 @@
             if (data.recurring && data.recurring.length > 0) {
                 data.recurring.forEach(r => {
                     if (r.nextDate === todayStr) {
-                        new Notification("SmartBudget - Promemoria Scadenza", {
-                            body: `Oggi scade l'operazione ricorrente: "${r.desc}"`
-                        });
+                        if (globalReg && globalReg.showNotification) {
+                            globalReg.showNotification("SmartBudget - Promemoria Scadenza", {
+                                body: `Oggi scade l'operazione ricorrente: "${r.desc}"`,
+                                data: { id: r.id }
+                            });
+                        } else {
+                            new Notification("SmartBudget - Promemoria Scadenza", {
+                                body: `Oggi scade l'operazione ricorrente: "${r.desc}"`
+                            });
+                        }
                     }
                 });
             }
@@ -2221,7 +2228,7 @@
                             let amtClass = r.amount > 0 ? 'recurring-compact-amount' : 'recurring-compact-amount variable';
 
                             sectionHtml += `
-                                <div class="recurring-compact-item">
+                                <div class="recurring-compact-item" id="recurring-item-${r.id}">
                                     <div class="recurring-compact-info">
                                         <span class="recurring-compact-title">${r.desc}</span>
                                         <span class="recurring-compact-meta">🔄 ${r.frequency || 'Mensile'} • Scad. <strong>${nextDateFormatted}</strong> • ${infoText}</span>
@@ -2245,6 +2252,38 @@
             updateAccountSelect();
             renderAnalytics();
         }
+
+        // Gestione apertura da notifica (messaggio o parametro URL)
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.addEventListener('message', event => {
+                if (event.data && event.data.action === 'open_recurring_item') {
+                    openRecurringByNotification(event.data.id);
+                }
+            });
+        }
+
+        function openRecurringByNotification(itemId) {
+            switchTab('recurring', document.querySelector('.sidebar-nav button:nth-child(6)'));
+            if (itemId) {
+                setTimeout(() => {
+                    let targetElement = document.getElementById(`recurring-item-${itemId}`);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        targetElement.style.transition = "background 0.5s";
+                        targetElement.style.background = "rgba(99, 102, 241, 0.3)";
+                        setTimeout(() => targetElement.style.background = "", 1500);
+                    }
+                }, 300);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const openId = urlParams.get('open_recurring');
+            if (openId) {
+                setTimeout(() => openRecurringByNotification(openId), 500);
+            }
+        });
 
         renderApp();
         checkAppSecurityLock();
