@@ -1,54 +1,29 @@
-const CACHE_NAME = 'smartbudget-cache-v2';
-const FILES_TO_CACHE = [
-    './index.html',
-    'https://cdn.jsdelivr.net/npm/chart.js'
-];
-
-// Installazione del Service Worker e memorizzazione in cache dei file essenziali
 self.addEventListener('install', (event) => {
-    event.waitUntil(
-        caches.open(CACHE_NAME).then((cache) => {
-            return cache.addAll(FILES_TO_CACHE);
-        })
-    );
-    // Forza l'attivazione immediata della nuova versione senza attendere la chiusura delle schede
     self.skipWaiting();
 });
 
-// Attivazione del Service Worker e pulizia delle vecchie cache obsolete
 self.addEventListener('activate', (event) => {
+    event.waitUntil(clients.claim());
+});
+
+self.addEventListener('notificationclick', function(event) {
+    event.notification.close();
+    const itemId = event.notification.data ? event.notification.data.id : null;
+
     event.waitUntil(
-        caches.keys().then((keyList) => {
-            return Promise.all(
-                keyList.map((key) => {
-                    if (key !== CACHE_NAME) {
-                        return caches.delete(key);
-                    }
-                })
-            );
-        })
-    );
-    // Prende immediatamente il controllo di tutte le pagine aperte
-    return self.clients.claim();
-});
-
-// Intercettazione delle richieste di rete (Strategia: Cache First, con fallback alla rete)
-self.addEventListener('fetch', (event) => {
-    event.respondWith(
-        caches.match(event.request).then((response) => {
-            return response || fetch(event.request).catch(() => {
-                // Se sei offline e richiedi la pagina principale, restituisce index.html
-                if (event.request.mode === 'navigate') {
-                    return caches.match('./index.html');
+        clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function(clientList) {
+            for (let i = 0; i < clientList.length; i++) {
+                let client = clientList[i];
+                if ('focus' in client) {
+                    client.focus();
+                    client.postMessage({ action: 'open_recurring_item', id: itemId });
+                    return;
                 }
-            });
+            }
+            if (clients.openWindow) {
+                const targetUrl = itemId ? `./index.html?open_recurring=${itemId}` : `./index.html`;
+                return clients.openWindow(targetUrl);
+            }
         })
     );
-});
-
-// Ascolto del comando inviato dal pulsante "Aggiorna ora" dell'interfaccia
-self.addEventListener('message', (event) => {
-    if (event.data && event.data.type === 'SKIP_WAITING') {
-        self.skipWaiting();
-    }
 });
